@@ -1,0 +1,4 @@
+name: Horizon
+version: '1.0.0'
+main: cz.goldzone.horizon.Main
+api-version: '1.21'
