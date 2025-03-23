@@ -38,7 +38,7 @@ public class DelWarpCommand implements CommandExecutor {
         configManager.getConfig("warps.yml").set(name, null);
         configManager.saveConfig("warps.yml");
 
-        player.sendMessage(Lang.getPrefix("Warps") + "<white>Warp <red>" + name + " <white>has been deleted!");
+        player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been deleted!");
         return true;
     }
 }

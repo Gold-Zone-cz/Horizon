@@ -35,7 +35,6 @@ public final class Main extends JavaPlugin {
     private void registerCommands() {
         Map.of(
                 "horizon", new HorizonCommand(),
-                "playerwarps", new PlayerWarpsCommand(),
                 "warp", new WarpCommand(),
                 "warps", new WarpsListCommand(),
                 "setwarp", new SetWarpCommand(),

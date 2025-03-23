@@ -18,17 +18,17 @@ public class HorizonCommand implements CommandExecutor {
                 configManager.reloadAllConfigs();
                 sender.sendMessage(Lang.getPrefix("Horizon") + "§aAll configurations have been reloaded.");
             }
+            if (args.length == 0) {
+                sender.sendMessage("<white>");
+                sender.sendMessage(Lang.getPrefix("Horizon") + "<gray>Available commands:");
+                sender.sendMessage("<white>");
+                sender.sendMessage("<#333333>【 <red>/horizon reload <#333333>】 <gray>Reload all configurations");
+                sender.sendMessage("<white>");
+            }
         } else {
             sender.sendMessage("Unknown command. Type \"/help\" for help.");
         }
 
-        if (args.length == 0 && sender.hasPermission("horizon.admin.reload")) {
-            sender.sendMessage("<white>");
-            sender.sendMessage(Lang.getPrefix("Horizon") + "<gray>Available commands:");
-            sender.sendMessage("<white>");
-            sender.sendMessage("<#333333>【 <red>/horizon reload <#333333>】 <gray>Reload all configurations");
-            sender.sendMessage("<white>");
-        }
 
         return false;
     }
