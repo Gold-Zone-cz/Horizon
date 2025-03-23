@@ -6,7 +6,6 @@ api-version: '1.21'
 commands:
   horizon:
     description: Main command for Horizon plugin
-  playerwarps:
     aliases:
       - pw
       - pwarp
