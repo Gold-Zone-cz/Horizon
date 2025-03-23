@@ -2,3 +2,15 @@ name: Horizon
 version: '1.0.0'
 main: cz.goldzone.horizon.Main
 api-version: '1.21'
+
+commands:
+  horizon:
+    description: Main command for Horizon plugin
+  playerwarps:
+    aliases:
+      - pw
+      - pwarp
+  warp:
+  warps:
+  setwarp:
+  delwarp:

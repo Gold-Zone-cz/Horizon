@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Horizon.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Horizon.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Horizon.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Horizon.test.iml" />
     </modules>
   </component>
 </project>

@@ -9,12 +9,24 @@ version = '1.0.0'
 repositories {
     mavenCentral()
     maven {
-        name = "papermc-repo"
-        url = "https://repo.papermc.io/repository/maven-public/"
+        url "https://libraries.minecraft.net/"
+    }
+    maven {
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        url = "https://repo.codemc.io/repository/maven-snapshots/"
     }
     maven {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven {
+        name = "goldzoneRepoReleases"
+        url = "https://repo.gold-zone.cz/releases"
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
 }
 
@@ -22,12 +34,25 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 
     compileOnly files("libs/Neuron-shared.jar")
+    compileOnly "me.clip:placeholderapi:2.11.6"
+
     implementation 'net.md-5:bungeecord-chat:1.20-R0.2'
+    implementation "com.github.cryptomorin:XSeries:13.1.0"
     implementation "com.google.code.gson:gson:2.10.1"
+    implementation "dev.digitality:digitalgui:1.0.2"
 
     implementation "org.projectlombok:lombok:1.18.32"
     annotationProcessor "org.projectlombok:lombok:1.18.32"
 }
+
+shadowJar {
+    minimize {
+        exclude(dependency("dev.digitality:digitalgui:.*"))
+        exclude(dependency("net.md-5:bungeecord-config:.*"))
+    }
+    archiveClassifier = null
+}
+
 def targetJavaVersion = 21
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
@@ -47,10 +72,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
-    def props = [version: version]
+    def props = ["version": version]
     inputs.properties props
-    filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
+    filteringCharset "UTF-8"
+    filesMatching(["*.yml", "*.properties", "*.json"]) {
         expand props
     }
 }
