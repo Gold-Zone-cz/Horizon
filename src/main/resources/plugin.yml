@@ -10,6 +10,18 @@ commands:
       - pw
       - pwarp
   warp:
+    description: Teleports to warp
   warps:
+    description: List of warps
   setwarp:
+    description: Set warp
   delwarp:
+    description: Delete warp
+  sethome:
+    description: Set home
+  delhome:
+    description: Delete home
+  home:
+    description: Teleports to home
+  homes:
+    description: List of homes

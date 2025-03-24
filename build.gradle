@@ -51,6 +51,7 @@ shadowJar {
         exclude(dependency("net.md-5:bungeecord-config:.*"))
     }
     archiveClassifier = null
+    archiveFileName = "${project.name}.jar"
 }
 
 def targetJavaVersion = 21
