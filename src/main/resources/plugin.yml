@@ -25,3 +25,18 @@ commands:
     description: Teleports to home
   homes:
     description: List of homes
+  wb:
+    description: Opens a crafting table
+  enderchest:
+    description: Opens an ender chest
+    aliases:
+      - ec
+      - echest
+  i:
+    description: Admin command for giving items
+    aliases:
+      - item
+  balance:
+    description: Shows balance of player(s)
+    aliases:
+      - bal
