@@ -20,7 +20,7 @@ public class BalanceCommand implements CommandExecutor {
         long balance = MoneyManager.getMoneyAvailable(player).getAmount();
 
         if (args.length == 0) {
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Your balance is <red>" + balance + "$");
+            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Your balance is <red>$" + balance);
             return true;
         }
 

@@ -19,9 +19,9 @@ public class ConfirmGUI implements IGUI {
     @Override
     public Inventory getInventory() {
         Inventory inv = Bukkit.createInventory(this, 27, "Are you sure?");
-        DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
         int[] confirmSlots = {0, 9, 18, 1, 10, 19, 2, 11, 20};
+        int[] emptySlots = {3, 12, 21, 4, 13, 22, 5, 14, 23};
         int[] cancelSlots = {6, 15, 24, 7, 16, 25, 8, 17, 26};
 
         for (int confirmSlot : confirmSlots) {
@@ -32,6 +32,12 @@ public class ConfirmGUI implements IGUI {
                 onConfirm.run();
             });
             inv.setItem(confirm.getSlot(), confirm);
+        }
+
+        for (int emptySlot : emptySlots) {
+            InteractiveItem empty = new InteractiveItem(Objects.requireNonNull(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem()), emptySlot);
+            empty.setDisplayName(" ");
+            inv.setItem(empty.getSlot(), empty);
         }
 
         for (int cancelSlot : cancelSlots) {

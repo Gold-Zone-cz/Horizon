@@ -39,18 +39,18 @@ public class WarpCommand implements CommandExecutor {
             player.sendMessage("<white>");
             player.sendMessage(Lang.getPrefix("Warps") + "<gray>Available commands:");
             player.sendMessage("<white>");
-            player.sendMessage("<#333333>【 <red>/setwarp <name> <#333333>】 <gray>Create a warp");
-            player.sendMessage("<#333333>【 <red>/delwarp <name> <#333333>】 <gray>Delete a warp");
+            player.sendMessage("<dark_gray>【 <red>/setwarp <name> <dark_gray>】 <gray>Create a warp");
+            player.sendMessage("<dark_gray>【 <red>/delwarp <name> <dark_gray>】 <gray>Delete a warp");
             player.sendMessage("<white>");
-            player.sendMessage("<#333333>【 <red>/warp <name> <#333333>】 <gray>Teleport to a warp");
-            player.sendMessage("<#333333>【 <red>/warps <#333333>】 <gray>Show all warps");
+            player.sendMessage("<dark_gray>【 <red>/warp <name> <dark_gray>】 <gray>Teleport to a warp");
+            player.sendMessage("<dark_gray>【 <red>/warps <dark_gray>】 <gray>Show all warps");
             player.sendMessage("<white>");
         } else {
             player.sendMessage("<white>");
             player.sendMessage(Lang.getPrefix("Warps") + "<gray>Available commands:");
             player.sendMessage("<white>");
-            player.sendMessage("<#333333>【 <red>/warp <name> <#333333>】 <gray>Teleport to a warp");
-            player.sendMessage("<#333333>【 <red>/warps <#333333>】 <gray>Show all warps");
+            player.sendMessage("<dark_gray>【 <red>/warp <name> <dark_gray>】 <gray>Teleport to a warp");
+            player.sendMessage("<dark_gray>【 <red>/warps <dark_gray>】 <gray>Show all warps");
             player.sendMessage("<white>");
         }
     }
