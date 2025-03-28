@@ -13,7 +13,7 @@ import java.util.Map;
 public class ConfigManager {
     private final JavaPlugin plugin;
     private final Map<String, FileConfiguration> configs = new HashMap<>();
-    private final String[] configFiles = {"warps.yml", "player_warps.yml"};
+    private final String[] configFiles = {"warps.yml", "player_warps.yml", "votes.yml"};
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -23,7 +23,7 @@ public class ConfigManager {
     private void loadConfigs() {
         File dataFolder = plugin.getDataFolder();
         if (!dataFolder.exists() && !dataFolder.mkdirs()) {
-            Bukkit.getLogger().severe("[Horizon] Failed to create the data folder.");
+            Bukkit.getLogger().warning("[Horizon] Failed to create the data folder.");
             return;
         }
 
@@ -31,16 +31,22 @@ public class ConfigManager {
             File file = new File(dataFolder, fileName);
             if (!file.exists()) {
                 try {
-                    if (file.createNewFile()) {
-                        Bukkit.getLogger().info("[Horizon] Created " + fileName);
-                    } else {
-                        Bukkit.getLogger().severe("[Horizon] Failed to create " + fileName);
-                    }
+                    saveDefaultConfig(fileName);
                 } catch (IOException e) {
-                    Bukkit.getLogger().severe("[Horizon] Error while creating " + fileName + ": " + e.getMessage());
+                    Bukkit.getLogger().warning("[Horizon] Error while creating " + fileName + ": " + e.getMessage());
                 }
             }
             configs.put(fileName, YamlConfiguration.loadConfiguration(file));
+        }
+    }
+
+    private void saveDefaultConfig(String fileName) throws IOException {
+        File file = new File(plugin.getDataFolder(), fileName);
+        if (file.createNewFile()) {
+            Bukkit.getLogger().info("[Horizon] Created " + fileName);
+            plugin.saveResource(fileName, false);
+        } else {
+            Bukkit.getLogger().warning("[Horizon] Failed to create " + fileName);
         }
     }
 
@@ -56,7 +62,7 @@ public class ConfigManager {
                 config.save(file);
                 Bukkit.getLogger().info("[Horizon] Saved " + fileName);
             } catch (IOException e) {
-                Bukkit.getLogger().severe("[Horizon] Failed to save " + fileName + ": " + e.getMessage());
+                Bukkit.getLogger().warning("[Horizon] Failed to save " + fileName + ": " + e.getMessage());
             }
         }
     }

@@ -7,10 +7,13 @@ import dev.digitality.digitalgui.api.IGUI;
 import dev.digitality.digitalgui.api.InteractiveItem;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class CategoriesGUI implements IGUI {
+
+    @NotNull
     @Override
     public Inventory getInventory() {
         Inventory inv = Bukkit.createInventory(this, 45, "Choose a category");

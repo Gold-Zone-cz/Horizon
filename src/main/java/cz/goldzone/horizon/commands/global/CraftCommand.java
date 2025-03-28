@@ -1,6 +1,7 @@
 package cz.goldzone.horizon.commands.global;
 
 import cz.goldzone.neuron.shared.Lang;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +17,7 @@ public class CraftCommand implements CommandExecutor {
         }
 
         if (player.hasPermission("horizon.player.craft")) {
-            player.openWorkbench(player.getLocation(), true);
+            player.openInventory(Bukkit.createInventory(player, org.bukkit.event.inventory.InventoryType.WORKBENCH));
         } else {
             player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command! Use /vip for more information.");
         }

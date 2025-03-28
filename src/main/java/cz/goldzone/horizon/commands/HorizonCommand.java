@@ -6,12 +6,13 @@ import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class HorizonCommand implements CommandExecutor {
 
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if (sender.hasPermission("horizon.admin.reload")) {
             if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
                 ConfigManager configManager = Main.getConfigManager();

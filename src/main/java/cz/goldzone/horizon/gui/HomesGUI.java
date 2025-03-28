@@ -10,12 +10,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class HomesGUI implements IGUI {
-    private List<String> homes;
-    private Player player;
+    private final List<String> homes;
+    private final Player player;
 
     public HomesGUI(List<String> homes, Player player) {
         this.homes = homes;
@@ -23,6 +24,7 @@ public class HomesGUI implements IGUI {
     }
 
 
+    @NotNull
     @Override
     public Inventory getInventory() {
         Inventory inv = Bukkit.createInventory(this, 36, "Your homes");

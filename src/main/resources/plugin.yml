@@ -1,4 +1,5 @@
 name: Horizon
+author: MrJogger_
 version: '1.0.0'
 main: cz.goldzone.horizon.Main
 api-version: '1.21'
@@ -6,21 +7,18 @@ api-version: '1.21'
 commands:
   horizon:
     description: Main command for Horizon plugin
-    aliases:
-      - pw
-      - pwarp
   warp:
     description: Teleports to warp
   warps:
     description: List of warps
   setwarp:
-    description: Set warp
+    description: Set a warp
   delwarp:
-    description: Delete warp
+    description: Delete a warp
   sethome:
-    description: Set home
+    description: Set home location
   delhome:
-    description: Delete home
+    description: Delete home location
   home:
     description: Teleports to home
   homes:
@@ -32,6 +30,7 @@ commands:
     aliases:
       - ec
       - echest
+      - ender
   i:
     description: Admin command for giving items
     aliases:
@@ -40,3 +39,27 @@ commands:
     description: Shows balance of player(s)
     aliases:
       - bal
+  anvil:
+    description: Opens an anvil
+  pay:
+    description: Pay money to another player
+  paytoggle:
+    description: Toggle pay requests
+  repair:
+    description: Repairs item in hand
+    aliases:
+      - fix
+  hat:
+    description: Puts item in hand on head
+  tv:
+    description: Time vote
+    aliases:
+      - timevote
+  tpa:
+    description: Teleport request
+  tpaccept:
+    description: Accept teleport request
+  tpdeny:
+    description: Deny teleport request
+  tptoggle:
+    description: Toggle teleport requests

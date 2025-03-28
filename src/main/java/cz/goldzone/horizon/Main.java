@@ -5,12 +5,13 @@ import cz.goldzone.horizon.commands.HorizonCommand;
 import cz.goldzone.horizon.commands.PlayerWarpsCommand;
 import cz.goldzone.horizon.commands.admin.ItemCommand;
 import cz.goldzone.horizon.commands.economy.BalanceCommand;
-import cz.goldzone.horizon.commands.global.CraftCommand;
-import cz.goldzone.horizon.commands.global.EnderChestCommand;
+import cz.goldzone.horizon.commands.economy.PayCommand;
+import cz.goldzone.horizon.commands.global.*;
 import cz.goldzone.horizon.commands.home.DelHomeCommand;
 import cz.goldzone.horizon.commands.home.HomeCommand;
 import cz.goldzone.horizon.commands.home.HomeListCommand;
 import cz.goldzone.horizon.commands.home.SetHomeCommand;
+import cz.goldzone.horizon.commands.player.TpToggleCommand;
 import cz.goldzone.horizon.commands.player.TpaAcceptCommand;
 import cz.goldzone.horizon.commands.player.TpaCommand;
 import cz.goldzone.horizon.commands.player.TpaDenyCommand;
@@ -18,16 +19,17 @@ import cz.goldzone.horizon.commands.warp.WarpsListCommand;
 import cz.goldzone.horizon.commands.warp.DelWarpCommand;
 import cz.goldzone.horizon.commands.warp.SetWarpCommand;
 import cz.goldzone.horizon.commands.warp.WarpCommand;
-import cz.goldzone.horizon.managers.HomesManager;
-import cz.goldzone.horizon.managers.MoneyManager;
-import cz.goldzone.horizon.managers.TeleportManager;
+import cz.goldzone.horizon.managers.*;
+import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
+import cz.goldzone.horizon.placeholders.VotePlaceholders;
+import cz.goldzone.horizon.timevote.TimeVoteCommand;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
-import cz.goldzone.horizon.managers.ConfigManager;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 
 public final class Main extends JavaPlugin {
 
@@ -44,11 +46,23 @@ public final class Main extends JavaPlugin {
         configManager = new ConfigManager(this);
 
         registerCommands();
+        registerPlaceholders();
 
         HomesManager.createHomesTable();
         MoneyManager.createBalanceTable();
+        VoteManager.loadVotes();
 
         getLogger().info("Plugin successfully started with all configuration files loaded!");
+    }
+
+    private void registerPlaceholders() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new VotePlaceholders().register();
+            new MoneyPlaceholders().register();
+            getLogger().info("PlaceholderAPI support enabled.");
+        } else {
+            getLogger().warning("PlaceholderAPI not found. Placeholders will not work.");
+        }
     }
 
     private void registerCommands() {
@@ -72,12 +86,19 @@ public final class Main extends JavaPlugin {
         commands.put("tpdeny", new TpaDenyCommand(teleportManager));
         commands.put("i", new ItemCommand());
         commands.put("balance", new BalanceCommand());
+        commands.put("anvil", new AnvilCommand());
+        commands.put("pay", new PayCommand());
+        commands.put("tptoggle", new TpToggleCommand());
+        commands.put("repair", new RepairCommand());
+        commands.put("hat", new HatCommand());
+        commands.put("tv", new TimeVoteCommand());
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
-                getCommand(cmd).setExecutor(executor);
-                getCommand(cmd).setTabCompleter(new FillTab());
+                Objects.requireNonNull(getCommand(cmd)).setExecutor(executor);
+                Objects.requireNonNull(getCommand(cmd)).setTabCompleter(new FillTabManager());
             }
         });
     }
+
 }

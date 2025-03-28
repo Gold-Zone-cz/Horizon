@@ -28,15 +28,32 @@ repositories {
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
+    maven {
+        url 'https://jitpack.io'
+    }
+    maven {
+        name "goldzoneRepoPrivate"
+        url "https://repo.gold-zone.cz/private"
+
+        credentials {
+            username project.findProperty("goldzoneRepo.username") ?: System.getenv("GOLDZONE_REPO_USERNAME")
+            password project.findProperty("goldzoneRepo.password") ?: System.getenv("GOLDZONE_REPO_PASSWORD")
+        }
+
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    compileOnly "org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT"
 
-    compileOnly files("libs/Neuron-shared.jar")
+    compileOnly "cz.goldzone:neuron-shared:1.0.0-SNAPSHOT"
     compileOnly "me.clip:placeholderapi:2.11.6"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
 
-    implementation 'net.md-5:bungeecord-chat:1.20-R0.2'
+    implementation "net.md-5:bungeecord-chat:1.20-R0.2"
     implementation "com.github.cryptomorin:XSeries:13.1.0"
     implementation "com.google.code.gson:gson:2.10.1"
     implementation "dev.digitality:digitalgui:1.0.2"

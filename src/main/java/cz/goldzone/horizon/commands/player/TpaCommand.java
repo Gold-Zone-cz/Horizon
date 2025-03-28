@@ -41,6 +41,11 @@ public class TpaCommand implements CommandExecutor {
             return false;
         }
 
+        if (!TpToggleCommand.isTpEnabled(requestTarget)) {
+            player.sendMessage(Lang.getPrefix("Teleport") + "<red>" + requestTarget.getName() + " has teleport requests disabled!");
+            return false;
+        }
+
         requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<gray>Player <red>" + player.getName() + "<gray> wants to teleport to you.");
 
         TextComponent acceptMessage = new TextComponent("<green>[✔ ACCEPT]");

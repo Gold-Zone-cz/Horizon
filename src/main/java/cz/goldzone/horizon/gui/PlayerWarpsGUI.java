@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,7 @@ public class PlayerWarpsGUI implements IGUI {
         this.category = category;
     }
 
+    @NotNull
     @Override
     public Inventory getInventory() {
         Inventory inv = Bukkit.createInventory(this, 54, ChatColor.stripColor(category.getDisplayName()));

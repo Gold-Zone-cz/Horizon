@@ -26,7 +26,7 @@ public class ItemCommand implements CommandExecutor {
             return true;
         }
 
-        if (!player.hasPermission("horizon.admin.give")) {
+        if (!player.hasPermission("horizon.admin.economy")) {
             player.sendMessage("Unknown command. Type \"/help\" for help.");
             return false;
         }
