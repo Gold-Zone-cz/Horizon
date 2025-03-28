@@ -3,6 +3,7 @@ package cz.goldzone.horizon;
 import com.google.gson.Gson;
 import cz.goldzone.horizon.commands.HorizonCommand;
 import cz.goldzone.horizon.commands.PlayerWarpsCommand;
+import cz.goldzone.horizon.commands.admin.FreezeCommand;
 import cz.goldzone.horizon.commands.admin.ItemCommand;
 import cz.goldzone.horizon.commands.economy.BalanceCommand;
 import cz.goldzone.horizon.commands.economy.PayCommand;
@@ -92,6 +93,7 @@ public final class Main extends JavaPlugin {
         commands.put("repair", new RepairCommand());
         commands.put("hat", new HatCommand());
         commands.put("tv", new TimeVoteCommand());
+        commands.put("freeze", new FreezeCommand());
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {

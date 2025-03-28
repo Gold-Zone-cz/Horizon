@@ -63,3 +63,5 @@ commands:
     description: Deny teleport request
   tptoggle:
     description: Toggle teleport requests
+  freeze:
+    description: Freeze player
