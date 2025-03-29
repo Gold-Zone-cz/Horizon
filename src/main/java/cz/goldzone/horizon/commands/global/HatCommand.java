@@ -1,6 +1,7 @@
 package cz.goldzone.horizon.commands.global;
 
 import cz.goldzone.neuron.shared.Lang;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,15 +12,26 @@ import org.jetbrains.annotations.NotNull;
 public class HatCommand implements CommandExecutor {
 
     private boolean setHat(Player player) {
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType().isAir()) {
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        ItemStack currentHat = player.getInventory().getHelmet();
+
+        if (itemInHand.getType().isAir()) {
             player.sendMessage(Lang.getPrefix("Hat") + "<red>You must hold an item in your hand!");
             return false;
         }
 
-        player.getInventory().setHelmet(item.clone());
-        item.setAmount(0);
-        player.sendMessage(Lang.getPrefix("Hat") + "<red>" + item + " <gray>has been set as your hat!");
+        if (currentHat != null && currentHat.getType() != Material.AIR) {
+            if (player.getInventory().firstEmpty() != -1) {
+                player.getInventory().addItem(currentHat);
+            } else {
+                player.getWorld().dropItemNaturally(player.getLocation(), currentHat);
+                player.sendMessage(Lang.getPrefix("Hat") + "<red>Inventory full!\n Your previous hat was dropped on the ground!");
+            }
+        }
+
+        player.getInventory().setHelmet(itemInHand.clone());
+        player.sendMessage(Lang.getPrefix("Hat") + "<red>" + itemInHand.getType() + " <gray>has been set as your hat!");
+        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 
         return true;
     }
@@ -34,7 +46,7 @@ public class HatCommand implements CommandExecutor {
         if (player.hasPermission("horizon.player.hat")) {
             return setHat(player);
         } else {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command! Use /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\nUse /vip for more information.");
         }
 
         return true;
