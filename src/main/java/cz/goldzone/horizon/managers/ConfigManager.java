@@ -13,7 +13,7 @@ import java.util.Map;
 public class ConfigManager {
     private final JavaPlugin plugin;
     private final Map<String, FileConfiguration> configs = new HashMap<>();
-    private final String[] configFiles = {"warps.yml", "player_warps.yml", "votes.yml"};
+    private final String[] configFiles = {"warps.yml", "player_warps.yml", "votes.yml", "config.yml", "jail.yml"};
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -41,12 +41,16 @@ public class ConfigManager {
     }
 
     private void saveDefaultConfig(String fileName) throws IOException {
-        File file = new File(plugin.getDataFolder(), fileName);
-        if (file.createNewFile()) {
-            Bukkit.getLogger().info("[Horizon] Created " + fileName);
-            plugin.saveResource(fileName, false);
+        if (fileName.equals("config.yml")) {
+            plugin.saveDefaultConfig();
         } else {
-            Bukkit.getLogger().warning("[Horizon] Failed to create " + fileName);
+            File file = new File(plugin.getDataFolder(), fileName);
+            if (file.createNewFile()) {
+                Bukkit.getLogger().info("[Horizon] Created " + fileName);
+                plugin.saveResource(fileName, false);
+            } else {
+                Bukkit.getLogger().warning("[Horizon] Failed to create " + fileName);
+            }
         }
     }
 

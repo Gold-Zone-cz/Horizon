@@ -51,7 +51,7 @@ public class FreezeCommand implements CommandExecutor {
             }
 
             if (!isPositive(timeArg)) {
-                player.sendMessage(Lang.getPrefix("Admin") + "§cInvalid number!");
+                player.sendMessage(Lang.getPrefix("Admin") + "<red>Invalid number!");
                 return false;
             }
 
@@ -61,8 +61,8 @@ public class FreezeCommand implements CommandExecutor {
             this.freeze(target, minutes, player.getName());
 
             String freezeMessage = minutes == 0 ?
-                    "Administrator " + player.getName() + " unfroze " + target.getName() + "." :
-                    "Administrator " + player.getName() + " froze " + target.getName() + " for " + minutes + " minutes.";
+                    "<gray>Administrator <red>" + player.getName() + " <gray>unfroze <red>" + target.getName() :
+                    "<gray>Administrator <red>" + player.getName() + " <gray>froze <red>" + target.getName() + " <gray>for <red>" + minutes + " <gray>minutes.";
             Bukkit.broadcastMessage(Lang.getPrefix("Admin") + freezeMessage);
 
             return true;

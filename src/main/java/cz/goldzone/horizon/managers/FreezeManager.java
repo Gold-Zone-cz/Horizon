@@ -61,12 +61,14 @@ public class FreezeManager implements Listener {
         player.setHealth(20);
         player.setFoodLevel(20);
 
-        player.sendTitle("<red><bold>FROZEN!", "<gray>You have been frozen for " + minutes + " minutes.", 10, 70, 20);
+        player.sendTitle("<red><bold>FROZEN!", "<gray>You have been frozen for " + minutes + " minutes.", 0, 50, 0);
         player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.0f, 1.0f);
         if (log) {
-            StaffNotify.sendMessage("<red>" + player.getName() +
-                    " <gray>has been frozen by <red>" + staff +
-                    " <gray>for <red>" + minutes + " <gray>minutes.", false, true);
+            String eventText = "FREEZE: " + player.getName() + " for " + minutes + " minutes";
+            Player staffPlayer = Bukkit.getPlayer(staff);
+            if (staffPlayer != null) {
+                StaffNotify.setStaffNotify(staffPlayer, eventText);
+            }
         }
     }
 

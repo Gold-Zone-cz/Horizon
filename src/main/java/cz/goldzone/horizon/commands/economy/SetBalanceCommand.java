@@ -23,7 +23,7 @@ public class SetBalanceCommand implements CommandExecutor {
             return false;
         }
 
-        Player target = Bukkit.getPlayer(args[1]);
+        Player target = Bukkit.getPlayer(args[2]);
         if (target == null) {
             sender.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found!");
             return false;
@@ -31,7 +31,7 @@ public class SetBalanceCommand implements CommandExecutor {
 
         double amount;
         try {
-            amount = Double.parseDouble(args[2]);
+            amount = Double.parseDouble(args[3]);
             if (amount < 0) {
                 sender.sendMessage(Lang.getPrefix("Economy") + "<red>Amount cannot be negative!");
                 return false;

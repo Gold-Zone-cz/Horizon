@@ -70,3 +70,9 @@ commands:
     aliases:
       - randomteleport
       - rt
+  jail:
+    description: Jail player
+  unjail:
+    description: Unjail player
+  setjail:
+    description: Set jail location

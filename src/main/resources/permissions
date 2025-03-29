@@ -2,6 +2,7 @@ horizon.admin.netherlist
 horizon.admin.reload
 horizon.admin.warp
 horizon.admin.economy
+horizon.admin.jail
 
 horizon.staff.spectate
 horizon.staff.scan

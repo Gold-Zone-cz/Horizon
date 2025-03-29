@@ -47,9 +47,8 @@ public class JailCommand implements CommandExecutor {
 
         String reason = args.length > 2 ? String.join(" ", Arrays.copyOfRange(args, 2, args.length)) : "No reason provided";
 
-        JailManager.jail(target, duration, reason, player.getName());
-
         if (target != null) {
+            JailManager.jail(target, duration, reason, player.getName());
             player.sendMessage(Lang.getPrefix("Horizon") + "<gray>You have jailed <red>" + target.getName() + " <green>for <red>" + duration + " <gray>minutes.");
         }
         return true;

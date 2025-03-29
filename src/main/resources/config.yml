@@ -2,3 +2,5 @@ xrayWorlds:
   - world
   - world_nether
 timeVoteWorld: world
+
+webhook_url: https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ

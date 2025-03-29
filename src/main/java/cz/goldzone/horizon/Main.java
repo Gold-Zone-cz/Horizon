@@ -3,8 +3,7 @@ package cz.goldzone.horizon;
 import com.google.gson.Gson;
 import cz.goldzone.horizon.commands.HorizonCommand;
 import cz.goldzone.horizon.commands.PlayerWarpsCommand;
-import cz.goldzone.horizon.commands.admin.FreezeCommand;
-import cz.goldzone.horizon.commands.admin.ItemCommand;
+import cz.goldzone.horizon.commands.admin.*;
 import cz.goldzone.horizon.commands.economy.BalanceCommand;
 import cz.goldzone.horizon.commands.economy.PayCommand;
 import cz.goldzone.horizon.commands.global.*;
@@ -20,10 +19,12 @@ import cz.goldzone.horizon.commands.warp.WarpsListCommand;
 import cz.goldzone.horizon.commands.warp.DelWarpCommand;
 import cz.goldzone.horizon.commands.warp.SetWarpCommand;
 import cz.goldzone.horizon.commands.warp.WarpCommand;
+import cz.goldzone.horizon.listeners.JoinListener;
 import cz.goldzone.horizon.managers.*;
 import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
 import cz.goldzone.horizon.timevote.TimeVoteCommand;
+import cz.goldzone.neuron.shared.api.discord.webhook.WebhookClient;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -34,6 +35,8 @@ import java.util.*;
 
 public final class Main extends JavaPlugin {
 
+    @Getter
+    private static WebhookClient webhookClient;
     @Getter
     private static final Gson gson = new Gson();
     @Getter
@@ -49,18 +52,27 @@ public final class Main extends JavaPlugin {
         registerCommands();
         registerListeners();
         registerPlaceholders();
+        registerVault();
 
         HomesManager.createHomesTable();
         MoneyManager.createBalanceTable();
+        FreezeManager.startTask();
+        JailManager.startTask();
         VoteManager.loadVotes();
+
+        loadWebhook();
 
         getLogger().info("Horizon successfully loaded.");
     }
 
+    @Override
+    public void onDisable() {
+        getLogger().info("Horizon successfully unloaded.");
+    }
+
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new CraftCommand(), this);
-        getServer().getPluginManager().registerEvents(new AnvilCommand(), this);
         getServer().getPluginManager().registerEvents(new FreezeManager(), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(), this);
     }
 
     private void registerPlaceholders() {
@@ -101,7 +113,12 @@ public final class Main extends JavaPlugin {
         commands.put("hat", new HatCommand());
         commands.put("tv", new TimeVoteCommand());
         commands.put("freeze", new FreezeCommand());
+        commands.put("unfreeze", new FreezeCommand());
         commands.put("rtp", new RandomTeleportCommand());
+        commands.put("setjail", new SetJailCommand());
+        commands.put("jail", new JailCommand());
+        commands.put("unjail", new UnJailCommand());
+
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
@@ -114,5 +131,18 @@ public final class Main extends JavaPlugin {
                 }
             }
         });
+    }
+
+    private void registerVault() {
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            getLogger().info("Vault found. Economy features will work.");
+        } else {
+            getLogger().warning("Vault not found. Economy features will not work.");
+        }
+    }
+
+    private static void loadWebhook() {
+        webhookClient = WebhookClient.withUrl(Objects.requireNonNull(configManager.getConfig("config.yml").getString("webhook_url")));
+        getInstance().getLogger().info("Webhook client initialized successfully.");
     }
 }
