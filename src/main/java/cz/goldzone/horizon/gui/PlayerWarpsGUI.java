@@ -1,72 +1,108 @@
 package cz.goldzone.horizon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.enums.Category;
-import cz.goldzone.horizon.managers.ConfigManager;
-import dev.digitality.digitalgui.DigitalGUI;
+import cz.goldzone.horizon.managers.PlayerWarpsManager;
 import dev.digitality.digitalgui.api.IGUI;
-import dev.digitality.digitalgui.api.InteractiveItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
 public class PlayerWarpsGUI implements IGUI {
-    private final Category category;
-    private final ConfigManager configManager = Main.getConfigManager();
 
-    public PlayerWarpsGUI(Category category) {
-        this.category = category;
+    private static final int PAGE_SIZE = 28;
+    private final Player player;
+    private int page = 0;
+    private Category selectedCategory;
+
+    public PlayerWarpsGUI(Player player, Category selectedCategory) {
+        this.player = player;
+        this.selectedCategory = selectedCategory;
     }
 
     @NotNull
     @Override
     public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 54, ChatColor.stripColor(category.getDisplayName()));
-        DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
+        Inventory inventory = Bukkit.createInventory(this, 54, "Player Warps");
 
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-            FileConfiguration warpsConfig = configManager.getConfig("warps.yml");
+        List<String> warps = PlayerWarpsManager.getPlayerWarps(player).stream()
+                .filter(warp -> selectedCategory == null || PlayerWarpsManager.getPlayerWarpCategory(warp) == selectedCategory)
+                .toList();
 
-            List<String> warps = warpsConfig.getKeys(false).stream()
-                    .filter(key -> category.name().equalsIgnoreCase(warpsConfig.getString(key + ".category")))
-                    .limit(28)
-                    .toList();
+        int start = page * PAGE_SIZE;
+        int end = Math.min(start + PAGE_SIZE, warps.size());
 
-            int slot = 10;
-
-            for (String warp : warps) {
-                InteractiveItem item = new InteractiveItem(Objects.requireNonNull(XMaterial.PLAYER_HEAD.parseItem()), slot);
-                item.setSkullOwner(configManager.getConfig("player_warps.yml").getString(warp + ".owner"));
-                item.setLore(
-                        "§r\n",
-                        "§7Click to teleport to this player warp\n",
-                        "§r"
-                );
-                item.setDisplayName("§e" + warp);
-                item.onClick((player, clickType) -> {
-                    Location location = (Location) configManager.getConfig("player_warps.yml").get(warp + ".playerlocation");
-                    if (location != null) {
-                        player.teleport(location);
-                        player.sendMessage("§fSuccessfully teleported to §a" + warp + "§a's §fwarp");
-                    } else {
-                        player.sendMessage("§cWarp location not found.");
-                    }
-                });
-
-                inv.setItem(slot, item);
-
-                if ((slot - 7) % 9 == 0) slot += 3;
-                else slot++;
+        for (int i = start; i < end; i++) {
+            String warpName = warps.get(i);
+            ItemStack item = new ItemStack(Objects.requireNonNull(XMaterial.ENDER_PEARL.parseItem()));
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + warpName));
+                item.setItemMeta(meta);
             }
-        });
+            inventory.setItem(i - start, item);
+        }
 
-        return inv;
+        if (page > 0) {
+            inventory.setItem(45, createButton("&aPrevious Page", XMaterial.ARROW));
+        }
+        if (end < warps.size()) {
+            inventory.setItem(53, createButton("&aNext Page", XMaterial.ARROW));
+        }
+
+        for (Category category : Category.values()) {
+            inventory.setItem(category.getSlot(), createButton(category.getDisplayName(), XMaterial.matchXMaterial(category.getMaterial())));
+        }
+
+        return inventory;
+    }
+
+    public void handleClick(InventoryClickEvent event) {
+        event.setCancelled(true);
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null || clickedItem.getItemMeta() == null) return;
+
+        String displayName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+
+        if (displayName.equalsIgnoreCase("Previous Page")) {
+            if (page > 0) {
+                page--;
+                player.openInventory(getInventory());
+            }
+        } else if (displayName.equalsIgnoreCase("Next Page")) {
+            if ((page + 1) * PAGE_SIZE < PlayerWarpsManager.getPlayerWarps(player).size()) {
+                page++;
+                player.openInventory(getInventory());
+            }
+        } else {
+            for (Category category : Category.values()) {
+                if (displayName.equalsIgnoreCase(ChatColor.stripColor(category.getDisplayName()))) {
+                    selectedCategory = category;
+                    page = 0;
+                    player.openInventory(getInventory());
+                    return;
+                }
+            }
+
+            PlayerWarpsManager.teleportToPlayerWarp(player, displayName);
+        }
+    }
+
+    private ItemStack createButton(String name, XMaterial material) {
+        ItemStack item = new ItemStack(Objects.requireNonNull(material.parseItem()));
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 }

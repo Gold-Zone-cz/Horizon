@@ -20,16 +20,21 @@ public class CategoriesGUI implements IGUI {
         DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
         for (Category category : Category.values()) {
-            InteractiveItem mobItem = new InteractiveItem(Objects.requireNonNull(category.getMaterial()), category.getSlot(), category.name());
-            mobItem.setLore(
-                    "§r\n",
-                    "§7Click to view warps in category" + category.getDisplayName() + "\n",
-                    "§r"
-            );
-            mobItem.onClick((player, clickType) -> {
-                player.openInventory(new PlayerWarpsGUI(category).getInventory());
-            });
+            InteractiveItem categoryItem = createCategoryItem(category);
+            categoryItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, category).getInventory()));
+            inv.setItem(category.getSlot(), categoryItem);
         }
+
         return inv;
+    }
+
+    private InteractiveItem createCategoryItem(Category category) {
+        InteractiveItem item = new InteractiveItem(Objects.requireNonNull(category.getMaterial()), category.getSlot(), category.name());
+        item.setLore(
+                " ",
+                "<gray>Click to view player warps in this category",
+                " "
+        );
+        return item;
     }
 }
