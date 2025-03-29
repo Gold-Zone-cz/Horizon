@@ -27,9 +27,20 @@ public class FreezeCommand implements CommandExecutor {
             return false;
         }
 
+        if (args[0].equalsIgnoreCase(player.getName())) {
+            sender.sendMessage(Lang.getPrefix("Admin") + "<red>You cannot freeze yourself!");
+            return true;
+        }
+
+
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
             sender.sendMessage(Lang.getPrefix("Admin") + "<red>Player is not available!");
+            return true;
+        }
+
+        if (target.hasPermission("horizon.admin.freeze")) {
+            sender.sendMessage(Lang.getPrefix("Admin") + "<red>You cannot freeze this player!");
             return true;
         }
 
@@ -40,7 +51,7 @@ public class FreezeCommand implements CommandExecutor {
         } else {
             FreezeManager.freezePlayer(target);
             sender.sendMessage(Lang.getPrefix("Admin") + "<red>Player " + target.getName() + " has been frozen.");
-            target.sendMessage(Lang.getPrefix("Admin") + "<red>You have been frozen.");
+            target.sendMessage(Lang.getPrefix("Admin") + "<red>You have been frozen.\n<bold>Leaving the server will result in a ban.");
         }
 
         return true;

@@ -65,3 +65,8 @@ commands:
     description: Toggle teleport requests
   freeze:
     description: Freeze player
+  rtp:
+    description: Random teleport
+    aliases:
+      - randomteleport
+      - rt

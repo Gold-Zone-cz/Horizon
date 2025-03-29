@@ -21,7 +21,7 @@ public class PayToggleCommand implements CommandExecutor {
         }
 
         if (!player.hasPermission("horizon.player.paytoggle")) {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command! Use /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\n Use /vip for more information.");
             return true;
         }
 

@@ -13,12 +13,7 @@ public class SetBalanceCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Lang.get("core.only_pl", sender));
-            return true;
-        }
-
-        if (!player.hasPermission("horizon.admin.economy")) {
+        if (!sender.hasPermission("horizon.admin.economy")) {
             sender.sendMessage("Unknown command. Type \"/help\" for help.");
             return true;
         }
@@ -47,10 +42,9 @@ public class SetBalanceCommand implements CommandExecutor {
         }
 
         MoneyManager moneyManager = new MoneyManager(target);
+
         moneyManager.setAmount((long) amount);
-
-        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You have set <red>" + target.getName() + "'s <gray>balance to <red>" + amount);
-
+        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You have set <red>" + target.getName() + "'s <gray>balance to <red>$" + amount);
         return true;
     }
 }

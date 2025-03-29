@@ -1,5 +1,6 @@
 package cz.goldzone.horizon.managers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,16 +20,25 @@ public class FreezeManager implements Listener {
 
     public static void freezePlayer(Player player) {
         frozenPlayers.add(player.getUniqueId());
+        player.setWalkSpeed(0);
+        player.setFlying(false);
+        player.setAllowFlight(false);
+        player.setVelocity(player.getVelocity().zero());
     }
 
     public static void unfreezePlayer(Player player) {
         frozenPlayers.remove(player.getUniqueId());
+        player.setWalkSpeed(0.2f);
+        player.setFlying(false);
+        player.setAllowFlight(false);
+        player.setVelocity(player.getVelocity().zero());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (isFrozen(player)) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tempban " + player.getName() + " 3d Leaving the server while frozen");
             unfreezePlayer(player);
         }
     }

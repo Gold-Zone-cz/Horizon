@@ -27,6 +27,7 @@ public class HomesGUI implements IGUI {
     @NotNull
     @Override
     public Inventory getInventory() {
+
         Inventory inv = Bukkit.createInventory(this, 36, "Your homes");
         DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
@@ -44,7 +45,7 @@ public class HomesGUI implements IGUI {
             InteractiveItem item = new InteractiveItem(Objects.requireNonNull(XMaterial.RED_BED.parseItem()), slot);
             item.setDisplayName("<red><smallcaps>" + homeName + "</smallcaps> <gray>(" + creationDate + "<gray>)");
             item.setLore("<gray>\n" +
-                    "<red>➥ <gray>Location: <red>" + homeLocation.getWorld().getName() + "\n" +
+                    "<red>➥ <gray>Location: <red>" + Objects.requireNonNull(homeLocation.getWorld()).getName() + "\n" +
                     "<red>➥ <gray>XYZ: <red>" + homeLocation.getBlockX() + " " + homeLocation.getBlockY() + " " + homeLocation.getBlockZ() + "\n" +
                     "<gray>\n" +
                     "<red>➥ <gray>Left click to <green>teleport\n" + "<red>➥ <gray>Right click to <red>delete\n" + "<gray>");
@@ -53,14 +54,12 @@ public class HomesGUI implements IGUI {
                 player.sendMessage(Lang.getPrefix("Homes") + "<gray>You have been teleported to home <red>" + homeName);
             });
 
-            item.onRightClick((player) -> {
-                player.openInventory(new ConfirmGUI(
-                        () -> {
-                            HomesManager.deleteHome(player, homeName);
-                            player.sendMessage(Lang.getPrefix("Homes") + "<gray>Your home <red>" + homeName + " <gray>has been successfully deleted");
-                        }
-                ).getInventory());
-            });
+            item.onRightClick(player ->
+                    player.openInventory(new ConfirmGUI(() -> {
+                        HomesManager.deleteHome(player, homeName);
+                        player.sendMessage(Lang.getPrefix("Homes") + "<gray>Your home <red>" + homeName + " <gray>has been successfully deleted");
+                    }).getInventory())
+            );
 
             inv.setItem(item.getSlot(), item);
 

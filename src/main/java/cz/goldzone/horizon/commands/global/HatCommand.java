@@ -16,7 +16,7 @@ public class HatCommand implements CommandExecutor {
         ItemStack currentHat = player.getInventory().getHelmet();
 
         if (itemInHand.getType().isAir()) {
-            player.sendMessage(Lang.getPrefix("Hat") + "<red>You must hold an item in your hand!");
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>You must hold an item in your hand!");
             return false;
         }
 
@@ -25,12 +25,15 @@ public class HatCommand implements CommandExecutor {
                 player.getInventory().addItem(currentHat);
             } else {
                 player.getWorld().dropItemNaturally(player.getLocation(), currentHat);
-                player.sendMessage(Lang.getPrefix("Hat") + "<red>Inventory full!\n Your previous hat was dropped on the ground!");
+                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Inventory full!\n Your previous hat was dropped on the ground!");
             }
         }
 
+        String itemName = itemInHand.getType().toString().toLowerCase().replace("_", " ");
+        itemName = itemName.substring(0, 1).toUpperCase() + itemName.substring(1);
+
         player.getInventory().setHelmet(itemInHand.clone());
-        player.sendMessage(Lang.getPrefix("Hat") + "<red>" + itemInHand.getType() + " <gray>has been set as your hat!");
+        player.sendMessage(Lang.getPrefix("Horizon") + "<red>" + itemName + " <gray>has been set as your hat!");
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 
         return true;

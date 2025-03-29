@@ -17,23 +17,24 @@ public class BalanceCommand implements CommandExecutor {
             return true;
         }
 
-        long balance = MoneyManager.getMoneyAvailable(player).getAmount();
-
         if (args.length == 0) {
+            long balance = MoneyManager.getMoneyAvailable(player).getAmount();
             player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Your balance is <red>$" + balance);
             return true;
         }
 
+        if (args.length == 1 && args[0].equalsIgnoreCase("set")) {
+            return new SetBalanceCommand().onCommand(sender, command, label, args);
+        }
+
         if (args.length == 1) {
             Player target = player.getServer().getPlayer(args[0]);
-
             if (target == null) {
                 player.sendMessage(Lang.getPrefix("Horizon") + "<red>Player not found!");
                 return false;
             }
-
             long targetBalance = MoneyManager.getMoneyAvailable(target).getAmount();
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Balance of <red>" + target.getName() + "<gray> is <red>$" + targetBalance);
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>" + target.getName() + "<gray> has <red>$" + targetBalance + "<gray> in their account.");
             return true;
         }
 

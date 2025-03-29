@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class EnderChestCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Lang.get("core.only_pl", sender));
             return true;
@@ -18,7 +18,7 @@ public class EnderChestCommand implements CommandExecutor {
         if (player.hasPermission("horizon.player.ec")) {
             player.openInventory(player.getEnderChest());
         } else {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command! Use /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\n Use /vip for more information.");
         }
 
         return true;

@@ -1,7 +1,6 @@
 package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -43,15 +42,6 @@ public class FillTabManager implements TabCompleter {
                 suggestions.add("create");
                 suggestions.add("delete");
                 suggestions.add("list");
-            }
-
-            // Item command
-            if (command.getName().equalsIgnoreCase("i") || sender.hasPermission("horizon.admin.economy")) {
-                for (Material material : Material.values()) {
-                    if (material.isItem() && material != Material.AIR && material.name().toLowerCase().startsWith(args[0].toLowerCase())) {
-                        suggestions.add(material.name().toLowerCase());
-                    }
-                }
             }
 
             // Warp and delwarp commands

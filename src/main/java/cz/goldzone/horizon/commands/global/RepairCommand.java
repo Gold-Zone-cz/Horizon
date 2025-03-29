@@ -51,6 +51,6 @@ public class RepairCommand implements CommandExecutor {
     }
 
     private double calculateRepairCost(int damage) {
-        return damage * 0.5;
+        return damage * 2.5;
     }
 }
