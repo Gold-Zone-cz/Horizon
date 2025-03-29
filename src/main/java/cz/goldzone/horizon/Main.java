@@ -47,13 +47,20 @@ public final class Main extends JavaPlugin {
         configManager = new ConfigManager(this);
 
         registerCommands();
+        registerListeners();
         registerPlaceholders();
 
         HomesManager.createHomesTable();
         MoneyManager.createBalanceTable();
         VoteManager.loadVotes();
 
-        getLogger().info("Plugin successfully started with all configuration files loaded!");
+        getLogger().info("Horizon successfully loaded.");
+    }
+
+    private void registerListeners() {
+        getServer().getPluginManager().registerEvents(new CraftCommand(), this);
+        getServer().getPluginManager().registerEvents(new AnvilCommand(), this);
+        getServer().getPluginManager().registerEvents(new FreezeManager(), this);
     }
 
     private void registerPlaceholders() {
@@ -94,13 +101,18 @@ public final class Main extends JavaPlugin {
         commands.put("hat", new HatCommand());
         commands.put("tv", new TimeVoteCommand());
         commands.put("freeze", new FreezeCommand());
+        commands.put("rtp", new RandomTeleportCommand());
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
                 Objects.requireNonNull(getCommand(cmd)).setExecutor(executor);
-                Objects.requireNonNull(getCommand(cmd)).setTabCompleter(new FillTabManager());
+
+                if (cmd.equals("i")) {
+                    Objects.requireNonNull(getCommand(cmd)).setTabCompleter(new FillTabItemManager());
+                } else {
+                    Objects.requireNonNull(getCommand(cmd)).setTabCompleter(new FillTabManager());
+                }
             }
         });
     }
-
 }
