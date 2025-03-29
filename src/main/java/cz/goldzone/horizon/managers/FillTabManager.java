@@ -27,7 +27,7 @@ public class FillTabManager implements TabCompleter {
             }
 
             // Time vote command
-            if (command.getName().equalsIgnoreCase("timevote")) {
+            if (command.getName().equalsIgnoreCase("tv")) {
                 suggestions.add("day");
                 suggestions.add("night");
             }
@@ -38,7 +38,7 @@ public class FillTabManager implements TabCompleter {
             }
 
             // Player Warp command
-            if (command.getName().equalsIgnoreCase("pwarp")) {
+            if (command.getName().equalsIgnoreCase("pw")) {
                 suggestions.add("create");
                 suggestions.add("delete");
                 suggestions.add("list");
@@ -79,6 +79,39 @@ public class FillTabManager implements TabCompleter {
                 }
             }
         }
+        // Pay command
+        if (args.length == 2 && command.getName().equalsIgnoreCase("pay")) {
+            for (Player onlinePlayer : Main.getInstance().getServer().getOnlinePlayers()) {
+                if (!onlinePlayer.getName().equalsIgnoreCase(sender.getName())) {
+                    suggestions.add(onlinePlayer.getName());
+                }
+            }
+        }
+
+        if (args.length == 3 && command.getName().equalsIgnoreCase("pay")) {
+            suggestions.add("<amount>");
+        }
+
+        // Tpa command
+        if (args.length == 2 && command.getName().equalsIgnoreCase("tpa")) {
+            for (Player onlinePlayer : Main.getInstance().getServer().getOnlinePlayers()) {
+                if (!onlinePlayer.getName().equalsIgnoreCase(sender.getName())) {
+                    suggestions.add(onlinePlayer.getName());
+                }
+            }
+        }
+
+        // Balance logic
+        if (args.length == 2 && command.getName().equalsIgnoreCase("balance") && args[0].equalsIgnoreCase("set")) {
+            for (Player onlinePlayer : Main.getInstance().getServer().getOnlinePlayers()) {
+                suggestions.add(onlinePlayer.getName());
+            }
+        }
+
+        if (args.length == 3 && command.getName().equalsIgnoreCase("balance") && args[0].equalsIgnoreCase("set")) {
+            suggestions.add("<amount>");
+        }
+
         return suggestions.isEmpty() ? null : suggestions;
     }
 }

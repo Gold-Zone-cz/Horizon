@@ -23,7 +23,7 @@ public class SetBalanceCommand implements CommandExecutor {
             return false;
         }
 
-        Player target = Bukkit.getPlayer(args[2]);
+        Player target = Bukkit.getPlayer(args[1]);
         if (target == null) {
             sender.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found!");
             return false;
@@ -31,20 +31,20 @@ public class SetBalanceCommand implements CommandExecutor {
 
         double amount;
         try {
-            amount = Double.parseDouble(args[3]);
+            amount = Double.parseDouble(args[2]);
             if (amount < 0) {
                 sender.sendMessage(Lang.getPrefix("Economy") + "<red>Amount cannot be negative!");
                 return false;
             }
         } catch (NumberFormatException e) {
-            sender.sendMessage(Lang.getPrefix("Economy") + "<red>Invalid amount!");
+            sender.sendMessage(Lang.getPrefix("Economy") + "<red>Invalid amount! Please enter a valid number.");
             return false;
         }
 
         MoneyManager moneyManager = new MoneyManager(target);
-
         moneyManager.setAmount((long) amount);
-        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You have set <red>" + target.getName() + "'s <gray>balance to <red>$" + amount);
+
+        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You have set <red>" + target.getName() + " <gray>balance to <red>$" + amount);
         return true;
     }
 }

@@ -78,3 +78,11 @@ commands:
     description: Unjail player
   setjail:
     description: Set jail location
+  netherlist:
+    description: List of people in nether
+  playerwarps:
+    description: List of player warps
+    aliases:
+      - pw
+      - playerwarp
+

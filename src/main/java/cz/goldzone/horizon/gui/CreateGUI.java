@@ -10,12 +10,8 @@ import dev.digitality.digitalgui.api.InteractiveItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Objects;
 
 public class CreateGUI implements IGUI {
     private final String playerWarpName;
@@ -27,37 +23,33 @@ public class CreateGUI implements IGUI {
     @NotNull
     @Override
     public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 45, "Select Player Warp Category");
+        Inventory inv = Bukkit.createInventory(this, 27, "Select category for " + playerWarpName);
         DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        for (Category category : Category.values()) {
-            InteractiveItem categoryItem = createCategoryItem(category);
-            categoryItem.onClick((player, clickType) -> selectCategory(player, category));
-            inv.setItem(category.getSlot(), categoryItem);
-        }
+        InteractiveItem farmItem = new InteractiveItem(Category.FARM.getMaterial(), Category.FARM.getSlot());
+        farmItem.setDisplayName(Category.FARM.getDisplayName());
+        farmItem.setLore("<gray>Click to select this category");
+        farmItem.onClick((player, clickType) -> selectCategory(player, Category.FARM));
+        inv.setItem(farmItem.getSlot(), farmItem);
+
+        InteractiveItem shopItem = new InteractiveItem(Category.SHOP.getMaterial(), Category.SHOP.getSlot());
+        shopItem.setDisplayName(Category.SHOP.getDisplayName());
+        shopItem.setLore("<gray>Click to select this category");
+        shopItem.onClick((player, clickType) -> selectCategory(player, Category.SHOP));
+        inv.setItem(shopItem.getSlot(), shopItem);
+
+        InteractiveItem miscItem = new InteractiveItem(Category.MISC.getMaterial(), Category.MISC.getSlot());
+        miscItem.setDisplayName(Category.MISC.getDisplayName());
+        miscItem.setLore("<gray>Click to select this category");
+        miscItem.onClick((player, clickType) -> selectCategory(player, Category.MISC));
+        inv.setItem(miscItem.getSlot(), miscItem);
 
         return inv;
     }
 
-    private InteractiveItem createCategoryItem(Category category) {
-        ItemStack item = new ItemStack(Objects.requireNonNull(category.getMaterial()));
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName("<yellow>" + category.getDisplayName());
-            meta.setLore(List.of(
-                    "",
-                    "<gray>Click to select your warp category:",
-                    "<gold>" + category.getDisplayName(),
-                    ""
-            ));
-            item.setItemMeta(meta);
-        }
-        return new InteractiveItem(item, category.getSlot());
-    }
-
     private void selectCategory(Player player, Category category) {
         PlayerWarpsManager.createPlayerWarp(player, playerWarpName, category);
-        player.sendMessage(Lang.getPrefix("PlayerWarps") + "<green>Warp created successfully!");
+        player.sendMessage(Lang.getPrefix("PlayerWarps") + "<green>Player warp created successfully!");
         player.closeInventory();
     }
 }

@@ -9,32 +9,42 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 
 public class CategoriesGUI implements IGUI {
 
     @NotNull
     @Override
     public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 45, "Choose a category");
+        Inventory inv = Bukkit.createInventory(this, 36, "Choose a category to view player warps");
         DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        for (Category category : Category.values()) {
-            InteractiveItem categoryItem = createCategoryItem(category);
-            categoryItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, category).getInventory()));
-            inv.setItem(category.getSlot(), categoryItem);
-        }
-
-        return inv;
-    }
-
-    private InteractiveItem createCategoryItem(Category category) {
-        InteractiveItem item = new InteractiveItem(Objects.requireNonNull(category.getMaterial()), category.getSlot(), category.name());
-        item.setLore(
+        InteractiveItem farmItem = new InteractiveItem(Category.FARM.getMaterial(), Category.FARM.getSlot(), Category.FARM.getDisplayName());
+        farmItem.setLore(
                 " ",
                 "<gray>Click to view player warps in this category",
                 " "
         );
-        return item;
+        farmItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, Category.FARM).getInventory()));
+        inv.setItem(farmItem.getSlot(), farmItem);
+
+        InteractiveItem shopItem = new InteractiveItem(Category.SHOP.getMaterial(), Category.SHOP.getSlot(), Category.SHOP.getDisplayName());
+        shopItem.setLore(
+                " ",
+                "<gray>Click to view player warps in this category",
+                " "
+        );
+        shopItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, Category.SHOP).getInventory()));
+        inv.setItem(shopItem.getSlot(), shopItem);
+
+        InteractiveItem miscItem = new InteractiveItem(Category.MISC.getMaterial(), Category.MISC.getSlot(), Category.MISC.getDisplayName());
+        miscItem.setLore(
+                " ",
+                "<gray>Click to view player warps in this category",
+                " "
+        );
+        miscItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, Category.MISC).getInventory()));
+        inv.setItem(miscItem.getSlot(), miscItem);
+
+        return inv;
     }
 }

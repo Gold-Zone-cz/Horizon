@@ -1,8 +1,9 @@
 package cz.goldzone.horizon;
 
 import com.google.gson.Gson;
+import cz.goldzone.horizon.admin.NetherListCommand;
 import cz.goldzone.horizon.commands.HorizonCommand;
-import cz.goldzone.horizon.commands.PlayerWarpsCommand;
+import cz.goldzone.horizon.commands.playerwarps.PlayerWarpsCommand;
 import cz.goldzone.horizon.commands.admin.*;
 import cz.goldzone.horizon.commands.economy.BalanceCommand;
 import cz.goldzone.horizon.commands.economy.PayCommand;
@@ -19,6 +20,7 @@ import cz.goldzone.horizon.commands.warp.WarpsListCommand;
 import cz.goldzone.horizon.commands.warp.DelWarpCommand;
 import cz.goldzone.horizon.commands.warp.SetWarpCommand;
 import cz.goldzone.horizon.commands.warp.WarpCommand;
+import cz.goldzone.horizon.listeners.ClickListener;
 import cz.goldzone.horizon.listeners.JoinListener;
 import cz.goldzone.horizon.managers.*;
 import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
@@ -56,6 +58,7 @@ public final class Main extends JavaPlugin {
 
         HomesManager.createHomesTable();
         MoneyManager.createBalanceTable();
+        PlayerWarpsManager.createPlayerWarpTable();
         FreezeManager.startTask();
         JailManager.startTask();
         VoteManager.loadVotes();
@@ -73,6 +76,7 @@ public final class Main extends JavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new FreezeManager(), this);
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
+        getServer().getPluginManager().registerEvents(new ClickListener(), this);
     }
 
     private void registerPlaceholders() {
@@ -90,11 +94,12 @@ public final class Main extends JavaPlugin {
 
         Map<String, CommandExecutor> commands = new HashMap<>();
         commands.put("horizon", new HorizonCommand());
+        commands.put("netherlist", new NetherListCommand());
         commands.put("warp", new WarpCommand());
         commands.put("warps", new WarpsListCommand());
         commands.put("setwarp", new SetWarpCommand());
         commands.put("delwarp", new DelWarpCommand());
-        commands.put("pwarp", new PlayerWarpsCommand());
+        commands.put("playerwarps", new PlayerWarpsCommand());
         commands.put("sethome", new SetHomeCommand());
         commands.put("delhome", new DelHomeCommand());
         commands.put("home", new HomeCommand());

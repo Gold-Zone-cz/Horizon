@@ -45,21 +45,22 @@ public class PlayerWarpsGUI implements IGUI {
             ItemStack item = new ItemStack(Objects.requireNonNull(XMaterial.ENDER_PEARL.parseItem()));
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + warpName));
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "<red>" + warpName));
                 item.setItemMeta(meta);
             }
             inventory.setItem(i - start, item);
         }
 
         if (page > 0) {
-            inventory.setItem(45, createButton("&aPrevious Page", XMaterial.ARROW));
+            inventory.setItem(45, createButton("<green>Previous Page", XMaterial.ARROW));
         }
         if (end < warps.size()) {
-            inventory.setItem(53, createButton("&aNext Page", XMaterial.ARROW));
+            inventory.setItem(53, createButton("<green>Next Page", XMaterial.ARROW));
         }
 
         for (Category category : Category.values()) {
-            inventory.setItem(category.getSlot(), createButton(category.getDisplayName(), XMaterial.matchXMaterial(category.getMaterial())));
+            XMaterial material = XMaterial.matchXMaterial(category.getMaterial());
+            inventory.setItem(category.getSlot(), createButton(category.getDisplayName(), material));
         }
 
         return inventory;
