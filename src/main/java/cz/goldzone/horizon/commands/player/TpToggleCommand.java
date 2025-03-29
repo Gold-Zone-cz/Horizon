@@ -30,7 +30,7 @@ public class TpToggleCommand implements CommandExecutor {
         tpToggleMap.put(playerUUID, !isEnabled);
 
         String status = isEnabled ? "<red>disabled" : "<green>enabled";
-        player.sendMessage(Lang.getPrefix("Economy") + "<gray>Teleports are now " + status);
+        player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Teleports are now " + status);
 
         return true;
     }

@@ -30,7 +30,7 @@ public class PayToggleCommand implements CommandExecutor {
         payToggleMap.put(playerUUID, !isEnabled);
 
         String status = isEnabled ? "<red>disabled" : "<green>enabled";
-        player.sendMessage(Lang.getPrefix("Economy") + "<gray>Payments are now " + status);
+        player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Payments are now " + status);
 
         return true;
     }
