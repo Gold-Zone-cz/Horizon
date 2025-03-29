@@ -64,10 +64,15 @@ public class SetJailCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length != 0) {
+            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/setjail");
+            return false;
+        }
+
         FileConfiguration config = Main.getConfigManager().getConfig("jail.yml");
 
         if (config.get("JailPlace") != null && !confirmationSet.contains(player.getUniqueId())) {
-            player.sendMessage(Lang.getPrefix("Horizon") + "<red>Jail location already exists! Retype the command to overwrite it.");
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>Jail location already exists!\n <gray>Retype the command to overwrite it.");
             confirmationSet.add(player.getUniqueId());
             Main.getInstance().getServer().getScheduler().runTaskLater(Main.getInstance(), () -> confirmationSet.remove(player.getUniqueId()), 600L);
             return true;
@@ -87,7 +92,7 @@ public class SetJailCommand implements CommandExecutor {
         set(loc);
         load();
 
-        player.sendMessage(Lang.getPrefix("Jail") + "<gray>Jail location has been set!");
+        player.sendMessage(Lang.getPrefix("Jail") + "<gray>Location has been set!");
         return true;
     }
 }

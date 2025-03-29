@@ -40,10 +40,16 @@ public class FreezeCommand implements CommandExecutor {
             return false;
         }
 
+
         if (args.length == 2) {
             final String targetName = args[0];
             final String timeArg = args[1];
             final Player target = Bukkit.getPlayer(targetName);
+
+            if (target != null && target == player) {
+                player.sendMessage(Lang.getPrefix("Admin") + "<red>You cannot freeze yourself!");
+                return false;
+            }
 
             if (target == null || !target.isOnline()) {
                 player.sendMessage(Lang.getPrefix("Admin") + "<red>Player not found!");
@@ -61,9 +67,9 @@ public class FreezeCommand implements CommandExecutor {
             this.freeze(target, minutes, player.getName());
 
             String freezeMessage = minutes == 0 ?
-                    "<gray>Administrator <red>" + player.getName() + " <gray>unfroze <red>" + target.getName() :
-                    "<gray>Administrator <red>" + player.getName() + " <gray>froze <red>" + target.getName() + " <gray>for <red>" + minutes + " <gray>minutes.";
-            Bukkit.broadcastMessage(Lang.getPrefix("Admin") + freezeMessage);
+                    "<gray>Staff <red>" + player.getName() + " <gray>unfroze <red>" + target.getName() :
+                    "<gray>Staff <red>" + player.getName() + " <gray>froze <red>" + target.getName() + " <gray>for <red>" + minutes + " <gray>minutes.";
+            Bukkit.broadcastMessage(Lang.getPrefix("Notify") + freezeMessage);
 
             return true;
         } else {

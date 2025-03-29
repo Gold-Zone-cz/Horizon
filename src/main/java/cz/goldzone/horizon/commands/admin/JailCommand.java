@@ -35,6 +35,11 @@ public class JailCommand implements CommandExecutor {
             return false;
         }
 
+        if (targetPlayer == player) {
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>You cannot jail yourself!");
+            return false;
+        }
+
         Player target = Bukkit.getPlayer(args[0]);
 
         int duration;
@@ -49,7 +54,7 @@ public class JailCommand implements CommandExecutor {
 
         if (target != null) {
             JailManager.jail(target, duration, reason, player.getName());
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>You have jailed <red>" + target.getName() + " <green>for <red>" + duration + " <gray>minutes.");
+            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>You have jailed <red>" + target.getName() + " <gray>for <red>" + duration + " <gray>minutes.");
         }
         return true;
     }

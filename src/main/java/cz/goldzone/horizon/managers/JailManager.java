@@ -161,8 +161,8 @@ public class JailManager implements Listener {
         target.setHealth(20);
         target.setFoodLevel(20);
         target.setGameMode(GameMode.ADVENTURE);
-        target.sendMessage(Lang.getPrefix("Horizon") + "<red>You have been placed in jail! Reason: " + reason);
-        target.sendTitle("<red><bold>JAIL", "<gray>You have been jailed!", 0, 50, 0);
+        target.sendMessage(Lang.getPrefix("Horizon") + "<gray>You have been placed in jail! Reason: <red>" + reason);
+        target.sendTitle("<red><bold>JAIL", "<gray>You have been jailed!", 0, 100, 0);
         target.setAllowFlight(false);
         target.setFlying(false);
         target.playSound(target.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.0f, 1.0f);

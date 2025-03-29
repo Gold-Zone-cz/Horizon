@@ -20,7 +20,7 @@ public class TpToggleCommand implements CommandExecutor {
             return true;
         }
 
-        if (!player.hasPermission("horizon.player.tpatoggle")) {
+        if (!player.hasPermission("horizon.player.tptoggle")) {
             player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command! Use /vip for more information.");
             return true;
         }
@@ -30,7 +30,7 @@ public class TpToggleCommand implements CommandExecutor {
         tpToggleMap.put(playerUUID, !isEnabled);
 
         String status = isEnabled ? "<red>disabled" : "<green>enabled";
-        player.sendMessage(Lang.getPrefix("Economy") + "<gray>Teleports are now " + status + "<gray>!");
+        player.sendMessage(Lang.getPrefix("Economy") + "<gray>Teleports are now " + status);
 
         return true;
     }

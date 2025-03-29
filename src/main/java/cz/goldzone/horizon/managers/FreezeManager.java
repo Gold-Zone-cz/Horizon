@@ -2,6 +2,7 @@ package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.admin.StaffNotify;
+import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -47,6 +48,9 @@ public class FreezeManager implements Listener {
         if (isFrozen(player)) {
             frozenPlayers.remove(player);
             freezingStaff.remove(player);
+            player.sendMessage(Lang.getPrefix("Admin") + "<gray>You have been unfrozen!");
+            player.sendTitle("<green><bold>UNFROZEN!", "<gray>You have been unfrozen.", 0, 100, 0);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         }
     }
 
@@ -61,6 +65,7 @@ public class FreezeManager implements Listener {
         player.setHealth(20);
         player.setFoodLevel(20);
 
+        player.sendMessage(Lang.getPrefix("Admin") + "<gray>You have been frozen for <red>" + minutes + " <gray>minutes!");
         player.sendTitle("<red><bold>FROZEN!", "<gray>You have been frozen for " + minutes + " minutes.", 0, 50, 0);
         player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.0f, 1.0f);
         if (log) {

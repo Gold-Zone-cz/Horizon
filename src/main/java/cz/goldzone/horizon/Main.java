@@ -108,17 +108,17 @@ public final class Main extends JavaPlugin {
         commands.put("balance", new BalanceCommand());
         commands.put("anvil", new AnvilCommand());
         commands.put("pay", new PayCommand());
+        commands.put("paytoggle", new TpToggleCommand());
         commands.put("tptoggle", new TpToggleCommand());
         commands.put("repair", new RepairCommand());
         commands.put("hat", new HatCommand());
         commands.put("tv", new TimeVoteCommand());
         commands.put("freeze", new FreezeCommand());
-        commands.put("unfreeze", new FreezeCommand());
+        commands.put("unfreeze", new UnFreezeCommand());
         commands.put("rtp", new RandomTeleportCommand());
         commands.put("setjail", new SetJailCommand());
         commands.put("jail", new JailCommand());
         commands.put("unjail", new UnJailCommand());
-
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
@@ -135,7 +135,7 @@ public final class Main extends JavaPlugin {
 
     private void registerVault() {
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-            getLogger().info("Vault found. Economy features will work.");
+            getLogger().info("Vault support enabled.");
         } else {
             getLogger().warning("Vault not found. Economy features will not work.");
         }

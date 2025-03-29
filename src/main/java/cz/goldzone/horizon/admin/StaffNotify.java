@@ -16,10 +16,10 @@ public class StaffNotify {
 
     private static final Logger logger = Logger.getLogger(StaffNotify.class.getName());
 
-    public static void sendMessage(final String msg, final boolean log) {
+    public static void sendMessage(final String msg) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
             if (player.hasPermission("horizon.staff.notify")) {
-                player.sendMessage(Lang.getPrefix("StaffNotify") + msg);
+                player.sendMessage(Lang.getPrefix("Notify") + msg);
             }
         }
     }
