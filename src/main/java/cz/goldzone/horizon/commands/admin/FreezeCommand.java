@@ -10,6 +10,24 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class FreezeCommand implements CommandExecutor {
+
+    private static boolean isPositive(final String number) {
+        try {
+            final long value = Long.parseLong(number);
+            return value >= 0;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+
+    private void freeze (Player player, final int minutes, final String staff) {
+        if (minutes == 0) {
+            FreezeManager.unfreezePlayer(player);
+        } else {
+            FreezeManager.freezePlayer(player, minutes, staff, true);
+        }
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -17,43 +35,40 @@ public class FreezeCommand implements CommandExecutor {
             return true;
         }
 
-        if (!player.hasPermission("horizon.admin.freeze")) {
-            sender.sendMessage("Unknown command. Type \"/help\" for help.");
-            return true;
-        }
-
-        if (args.length != 1) {
-            sender.sendMessage(Lang.getPrefix("Admin") + "<gray>Usage: <red>/freeze <player>");
+        if (!player.hasPermission("horizon.staff.freeze")) {
+            player.sendMessage(Lang.getPrefix("Freeze") + Lang.format(Lang.get("core.no_perm", player)));
             return false;
         }
 
-        if (args[0].equalsIgnoreCase(player.getName())) {
-            sender.sendMessage(Lang.getPrefix("Admin") + "<red>You cannot freeze yourself!");
+        if (args.length == 2) {
+            final String targetName = args[0];
+            final String timeArg = args[1];
+            final Player target = Bukkit.getPlayer(targetName);
+
+            if (target == null || !target.isOnline()) {
+                player.sendMessage(Lang.getPrefix("Admin") + "<red>Player not found!");
+                return false;
+            }
+
+            if (!isPositive(timeArg)) {
+                player.sendMessage(Lang.getPrefix("Admin") + "§cInvalid number!");
+                return false;
+            }
+
+            int minutes = Integer.parseInt(timeArg);
+            if (minutes > 10) minutes = 10;
+
+            this.freeze(target, minutes, player.getName());
+
+            String freezeMessage = minutes == 0 ?
+                    "Administrator " + player.getName() + " unfroze " + target.getName() + "." :
+                    "Administrator " + player.getName() + " froze " + target.getName() + " for " + minutes + " minutes.";
+            Bukkit.broadcastMessage(Lang.getPrefix("Admin") + freezeMessage);
+
             return true;
-        }
-
-
-        Player target = Bukkit.getPlayer(args[0]);
-        if (target == null) {
-            sender.sendMessage(Lang.getPrefix("Admin") + "<red>Player is not available!");
-            return true;
-        }
-
-        if (target.hasPermission("horizon.admin.freeze")) {
-            sender.sendMessage(Lang.getPrefix("Admin") + "<red>You cannot freeze this player!");
-            return true;
-        }
-
-        if (FreezeManager.isFrozen(target)) {
-            FreezeManager.unfreezePlayer(target);
-            sender.sendMessage(Lang.getPrefix("Admin") + "<green>Player " + target.getName() + " has been unfrozen.");
-            target.sendMessage(Lang.getPrefix("Admin") + "<green>You have been unfrozen.");
         } else {
-            FreezeManager.freezePlayer(target);
-            sender.sendMessage(Lang.getPrefix("Admin") + "<red>Player " + target.getName() + " has been frozen.");
-            target.sendMessage(Lang.getPrefix("Admin") + "<red>You have been frozen.\n<bold>Leaving the server will result in a ban.");
+            player.sendMessage(Lang.getPrefix("Admin") + "<gray>Usage: <red>/freeze <player> <minutes>");
         }
-
         return true;
     }
 }
