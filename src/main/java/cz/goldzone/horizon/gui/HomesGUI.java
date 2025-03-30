@@ -42,7 +42,7 @@ public class HomesGUI implements IGUI {
                 continue;
             }
 
-            InteractiveItem item = new InteractiveItem(Objects.requireNonNull(XMaterial.RED_BED.parseItem()), slot);
+            InteractiveItem item = new InteractiveItem(Objects.requireNonNull(XMaterial.RED_BED.parseItem()));
             item.setDisplayName("<red><smallcaps>" + homeName + "</smallcaps> <gray>(" + creationDate + "<gray>)");
             item.setLore("<gray>\n" +
                     "<red>➥ <gray>Location: <red>" + Objects.requireNonNull(homeLocation.getWorld()).getName() + "\n" +
@@ -61,7 +61,7 @@ public class HomesGUI implements IGUI {
                     }).getInventory())
             );
 
-            inv.setItem(item.getSlot(), item);
+            inv.setItem(slot, item);
 
             if ((slot - 7) % 9 == 0)
                 slot += 3;

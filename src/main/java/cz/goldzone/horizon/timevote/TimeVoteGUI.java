@@ -18,12 +18,12 @@ public class TimeVoteGUI implements IGUI {
 
         int[] borderSlots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
         for (int borderSlot : borderSlots) {
-            InteractiveItem borderItem = new InteractiveItem(Objects.requireNonNull(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem()), borderSlot);
+            InteractiveItem borderItem = new InteractiveItem(Objects.requireNonNull(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem()));
             borderItem.setDisplayName(" ");
-            inv.setItem(borderItem.getSlot(), borderItem);
+            inv.setItem(borderSlot, borderItem);
         }
 
-        InteractiveItem dayVoteItem = new InteractiveItem(Objects.requireNonNull(XMaterial.WHITE_WOOL.parseItem()), 12);
+        InteractiveItem dayVoteItem = new InteractiveItem(Objects.requireNonNull(XMaterial.WHITE_WOOL.parseItem()));
         dayVoteItem.setDisplayName("<yellow>Vote for Day");
         dayVoteItem.onClick((player, clickType) -> {
             player.sendMessage("<gray>You voted for Day!");
@@ -33,9 +33,9 @@ public class TimeVoteGUI implements IGUI {
                 player.sendMessage("<red>You can only vote once!");
             }
         });
-        inv.setItem(dayVoteItem.getSlot(), dayVoteItem);
+        inv.setItem(12, dayVoteItem);
 
-        InteractiveItem nightVoteItem = new InteractiveItem(Objects.requireNonNull(XMaterial.BLACK_WOOL.parseItem()), 14);
+        InteractiveItem nightVoteItem = new InteractiveItem(Objects.requireNonNull(XMaterial.BLACK_WOOL.parseItem()));
         nightVoteItem.setDisplayName("<blue>Vote for Night");
         nightVoteItem.onClick((player, clickType) -> {
             player.sendMessage("<gray>You voted for Night!");
@@ -45,7 +45,7 @@ public class TimeVoteGUI implements IGUI {
                 player.sendMessage("<red>You can only vote once!");
             }
         });
-        inv.setItem(nightVoteItem.getSlot(), nightVoteItem);
+        inv.setItem(14, nightVoteItem);
 
         return inv;
     }

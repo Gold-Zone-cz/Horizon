@@ -26,23 +26,23 @@ public class CreateGUI implements IGUI {
         Inventory inv = Bukkit.createInventory(this, 27, "Select category for " + playerWarpName);
         DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        InteractiveItem farmItem = new InteractiveItem(Category.FARM.getMaterial(), Category.FARM.getSlot());
+        InteractiveItem farmItem = new InteractiveItem(Category.FARM.getMaterial());
         farmItem.setDisplayName(Category.FARM.getDisplayName());
         farmItem.setLore("<gray>Click to select this category");
         farmItem.onClick((player, clickType) -> selectCategory(player, Category.FARM));
-        inv.setItem(farmItem.getSlot(), farmItem);
+        inv.setItem(Category.FARM.getSlot(), farmItem);
 
-        InteractiveItem shopItem = new InteractiveItem(Category.SHOP.getMaterial(), Category.SHOP.getSlot());
+        InteractiveItem shopItem = new InteractiveItem(Category.SHOP.getMaterial());
         shopItem.setDisplayName(Category.SHOP.getDisplayName());
         shopItem.setLore("<gray>Click to select this category");
         shopItem.onClick((player, clickType) -> selectCategory(player, Category.SHOP));
-        inv.setItem(shopItem.getSlot(), shopItem);
+        inv.setItem(Category.SHOP.getSlot(), shopItem);
 
-        InteractiveItem miscItem = new InteractiveItem(Category.MISC.getMaterial(), Category.MISC.getSlot());
+        InteractiveItem miscItem = new InteractiveItem(Category.MISC.getMaterial());
         miscItem.setDisplayName(Category.MISC.getDisplayName());
         miscItem.setLore("<gray>Click to select this category");
         miscItem.onClick((player, clickType) -> selectCategory(player, Category.MISC));
-        inv.setItem(miscItem.getSlot(), miscItem);
+        inv.setItem(Category.MISC.getSlot(), miscItem);
 
         return inv;
     }

@@ -29,7 +29,7 @@ public class RandomTeleportGUI implements Listener, IGUI {
         Inventory inv = Bukkit.createInventory(this, 27, "Random Teleport");
         DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        InteractiveItem worldItem = new InteractiveItem(Objects.requireNonNull(XMaterial.GRASS_BLOCK.parseItem()), 11);
+        InteractiveItem worldItem = new InteractiveItem(Objects.requireNonNull(XMaterial.GRASS_BLOCK.parseItem()));
         worldItem.setDisplayName("<green><bold>World");
         worldItem.setLore("""
                 
@@ -49,6 +49,7 @@ public class RandomTeleportGUI implements Listener, IGUI {
             }
 
             player.closeInventory();
+
             player.sendMessage(Lang.getPrefix("RTP") + "Teleporting in 3 seconds...");
             new BukkitRunnable() {
                 @Override
@@ -64,9 +65,10 @@ public class RandomTeleportGUI implements Listener, IGUI {
                     player.sendMessage(Lang.getPrefix("RTP") + "Teleported to the world!");
                 }
             }.runTaskLater(Main.getInstance(), 60L);
+            inv.setItem(11, XMaterial.GRASS_BLOCK.parseItem());
         });
 
-        InteractiveItem netherItem = new InteractiveItem(Objects.requireNonNull(XMaterial.NETHERRACK.parseItem()), 12);
+        InteractiveItem netherItem = new InteractiveItem(Objects.requireNonNull(XMaterial.NETHERRACK.parseItem()));
         netherItem.setDisplayName("<red><bold>Nether");
         netherItem.setLore("""
                 
@@ -101,9 +103,10 @@ public class RandomTeleportGUI implements Listener, IGUI {
                     player.sendMessage(Lang.getPrefix("RTP") + "Teleported to the Nether!");
                 }
             }.runTaskLater(Main.getInstance(), 60L);
+            inv.setItem(12, XMaterial.NETHERRACK.parseItem());
         });
 
-        InteractiveItem endItem = new InteractiveItem(Objects.requireNonNull(XMaterial.END_STONE.parseItem()), 13);
+        InteractiveItem endItem = new InteractiveItem(Objects.requireNonNull(XMaterial.END_STONE.parseItem()));
         endItem.setDisplayName("<yellow><bold>End");
         endItem.setLore("""
                 
@@ -138,6 +141,7 @@ public class RandomTeleportGUI implements Listener, IGUI {
                     player.sendMessage(Lang.getPrefix("RTP") + "Teleported to the End!");
                 }
             }.runTaskLater(Main.getInstance(), 60L);
+            inv.setItem(13, XMaterial.END_STONE.parseItem());
         });
 
         return inv;

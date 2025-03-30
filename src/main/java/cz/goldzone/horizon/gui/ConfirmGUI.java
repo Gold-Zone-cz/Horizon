@@ -1,13 +1,13 @@
 package cz.goldzone.horizon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.digitality.digitalgui.DigitalGUI;
 import dev.digitality.digitalgui.api.IGUI;
 import dev.digitality.digitalgui.api.InteractiveItem;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ConfirmGUI implements IGUI {
@@ -27,29 +27,27 @@ public class ConfirmGUI implements IGUI {
         int[] cancelSlots = {6, 15, 24, 7, 16, 25, 8, 17, 26};
 
         for (int confirmSlot : confirmSlots) {
-            InteractiveItem confirm = new InteractiveItem(Objects.requireNonNull(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()), confirmSlot);
+            InteractiveItem confirm = new InteractiveItem(Objects.requireNonNull(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()));
             confirm.setDisplayName("<green>Confirm");
             confirm.onClick((player, clickType) -> {
                 player.closeInventory();
                 onConfirm.run();
             });
-            inv.setItem(confirm.getSlot(), confirm);
+            inv.setItem(confirmSlot, confirm);
         }
 
         for (int emptySlot : emptySlots) {
-            InteractiveItem empty = new InteractiveItem(Objects.requireNonNull(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem()), emptySlot);
+            InteractiveItem empty = new InteractiveItem(Objects.requireNonNull(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem()));
             empty.setDisplayName(" ");
-            inv.setItem(empty.getSlot(), empty);
+            inv.setItem(emptySlot, empty);
         }
 
-        for (int cancelSlot : cancelSlots) {
-            InteractiveItem cancel = new InteractiveItem(Objects.requireNonNull(XMaterial.RED_STAINED_GLASS_PANE.parseItem()), cancelSlot);
+        Arrays.stream(cancelSlots).forEach(cancelSlot -> {
+            InteractiveItem cancel = new InteractiveItem(Objects.requireNonNull(XMaterial.RED_STAINED_GLASS_PANE.parseItem()));
             cancel.setDisplayName("<red>Cancel");
-            cancel.onClick((player, clickType) -> {
-                player.closeInventory();
-            });
-            inv.setItem(cancel.getSlot(), cancel);
-        }
+            cancel.onClick((player, clickType) -> player.closeInventory());
+            inv.setItem(cancelSlot, cancel);
+        });
 
         return inv;
     }
