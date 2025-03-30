@@ -1,6 +1,6 @@
 package cz.goldzone.horizon.placeholders;
 
-import cz.goldzone.horizon.managers.MoneyManager;
+import cz.goldzone.horizon.managers.EconomyManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class MoneyPlaceholders extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
 
         if (identifier.equals("player_money")) {
-            return String.valueOf(MoneyManager.getMoneyAvailable(player).getAmount());
+            return String.valueOf(EconomyManager.getBalance(player));
         }
 
         return null;

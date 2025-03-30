@@ -1,6 +1,6 @@
 package cz.goldzone.horizon.commands.global;
 
-import cz.goldzone.horizon.managers.MoneyManager;
+import cz.goldzone.horizon.managers.EconomyManager;
 import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,15 +33,14 @@ public class RepairCommand implements CommandExecutor {
 
         double repairCost = calculateRepairCost(damageable.getDamage());
 
-        MoneyManager moneyManager = new MoneyManager(player);
-        double playerBalance = moneyManager.getAmount();
+        double playerBalance = EconomyManager.getBalance(player);
 
         if (playerBalance < repairCost) {
             player.sendMessage(Lang.getPrefix("Repair") + "<gray>You don't have enough money. Repair costs <red>$" + repairCost);
             return true;
         }
 
-        moneyManager.subtract((int) repairCost);
+        EconomyManager.withdraw(player, repairCost);
         damageable.setDamage(0);
         item.setItemMeta(damageable);
 

@@ -39,6 +39,7 @@ commands:
     description: Shows balance of player(s)
     aliases:
       - bal
+      - money
   anvil:
     description: Opens an anvil
   pay:
@@ -85,4 +86,8 @@ commands:
     aliases:
       - pw
       - playerwarp
+  baltop:
+    description: Show the top players with the highest balance
+
+
 

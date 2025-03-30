@@ -74,18 +74,17 @@ public class BalanceCommand implements CommandExecutor {
     }
 
     private UUID getUUIDFromDatabase(String playerName) {
-        try (
-                @Cleanup Connection connection = Core.getMySQL().getConnection();
-                @Cleanup PreparedStatement ps = connection.prepareStatement("SELECT uuid FROM players WHERE name = ?")
-        ) {
-            ps.setString(1, playerName);
+        try {
+            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup PreparedStatement statement = connection.prepareStatement("SELECT uuid FROM players WHERE name = ?");
+            statement.setString(1, playerName);
+            @Cleanup ResultSet resultSet = statement.executeQuery();
 
-            @Cleanup ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return UUID.fromString(rs.getString("uuid"));
+            if (resultSet.next()) {
+                return UUID.fromString(resultSet.getString("uuid"));
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error fetching UUID for player: " + playerName, e);
+            LOGGER.log(Level.SEVERE, "Error retrieving UUID from database", e);
         }
         return null;
     }

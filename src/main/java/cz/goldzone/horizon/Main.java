@@ -3,6 +3,7 @@ package cz.goldzone.horizon;
 import com.google.gson.Gson;
 import cz.goldzone.horizon.admin.NetherListCommand;
 import cz.goldzone.horizon.commands.HorizonCommand;
+import cz.goldzone.horizon.commands.economy.BalTopCommand;
 import cz.goldzone.horizon.commands.playerwarps.PlayerWarpsCommand;
 import cz.goldzone.horizon.commands.admin.*;
 import cz.goldzone.horizon.commands.economy.BalanceCommand;
@@ -57,7 +58,7 @@ public final class Main extends JavaPlugin {
         registerVault();
 
         HomesManager.createHomesTable();
-        MoneyManager.createBalanceTable();
+        EconomyManager.createBalanceTable();
         PlayerWarpsManager.createPlayerWarpTable();
         FreezeManager.startTask();
         JailManager.startTask();
@@ -124,6 +125,7 @@ public final class Main extends JavaPlugin {
         commands.put("setjail", new SetJailCommand());
         commands.put("jail", new JailCommand());
         commands.put("unjail", new UnJailCommand());
+        commands.put("baltop", new BalTopCommand());
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
@@ -140,7 +142,11 @@ public final class Main extends JavaPlugin {
 
     private void registerVault() {
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-            getLogger().info("Vault support enabled.");
+            if (EconomyManager.setupEconomy()) {
+                getLogger().info("Vault economy support enabled.");
+            } else {
+                getLogger().warning("Vault found, but no economy provider is available.");
+            }
         } else {
             getLogger().warning("Vault not found. Economy features will not work.");
         }
