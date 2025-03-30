@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PayCommand implements CommandExecutor {
 
     public PayCommand() {
-        if (EconomyManager.hasEconomy()) {
+        if (!EconomyManager.hasEconomy()) {
             Bukkit.getLogger().warning("Vault or Economy plugin not found!");
         }
     }

@@ -25,7 +25,7 @@ public class BalanceCommand implements CommandExecutor {
     private static final Logger LOGGER = Logger.getLogger(BalanceCommand.class.getName());
 
     public BalanceCommand() {
-        if (EconomyManager.hasEconomy()) {
+        if (!EconomyManager.hasEconomy()) {
             Bukkit.getLogger().warning("Vault or Economy plugin not found!");
         }
     }
@@ -42,7 +42,7 @@ public class BalanceCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
+        if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
             return new SetBalanceCommand().onCommand(sender, command, label, args);
         }
 

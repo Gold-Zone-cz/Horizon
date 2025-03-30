@@ -18,7 +18,7 @@ import java.util.Map;
 public class BalTopCommand implements CommandExecutor {
 
     public BalTopCommand() {
-        if (EconomyManager.hasEconomy()) {
+        if (!EconomyManager.hasEconomy()) {
             Bukkit.getLogger().warning("Vault or Economy plugin not found!");
         }
     }

@@ -43,7 +43,7 @@ public class StaffNotify {
         Timestamp currentTime = Timestamp.valueOf(LocalDateTime.now());
 
         try {
-        @Cleanup Connection connection = Core.getMySQL().getConnection();
+        @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
         @Cleanup PreparedStatement statement = connection.prepareStatement("INSERT INTO events_suspect (NICK, TEXT, TIME) VALUES (?, ?, ?)");
         statement.setString(1, player.getName());
         statement.setString(2, eventText);

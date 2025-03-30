@@ -3,7 +3,9 @@ package cz.goldzone.horizon.gui;
 import com.cryptomorin.xseries.XMaterial;
 import cz.goldzone.horizon.enums.Category;
 import cz.goldzone.horizon.managers.PlayerWarpsManager;
+import dev.digitality.digitalgui.DigitalGUI;
 import dev.digitality.digitalgui.api.IGUI;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,15 +15,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+@Slf4j
 public class PlayerWarpsGUI implements IGUI {
 
     private static final int PAGE_SIZE = 28;
     private final Player player;
     private int page = 0;
-    private Category selectedCategory;
+    private final Category selectedCategory;
 
     public PlayerWarpsGUI(Player player, Category selectedCategory) {
         this.player = player;
@@ -31,39 +33,69 @@ public class PlayerWarpsGUI implements IGUI {
     @NotNull
     @Override
     public Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, 54, "Player Warps");
+        Inventory inventory = Bukkit.createInventory(this, 54, "Player Warps - " + (selectedCategory != null ? selectedCategory.getDisplayName() : "All"));
+        DigitalGUI.fillInventory(inventory, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        List<String> warps = PlayerWarpsManager.getPlayerWarps(player).stream()
-                .filter(warp -> selectedCategory == null || PlayerWarpsManager.getPlayerWarpCategory(warp) == selectedCategory)
-                .toList();
+        List<String> warpNames = getFilteredWarpNames();
 
         int start = page * PAGE_SIZE;
-        int end = Math.min(start + PAGE_SIZE, warps.size());
+        int end = Math.min(start + PAGE_SIZE, warpNames.size());
 
         for (int i = start; i < end; i++) {
-            String warpName = warps.get(i);
-            ItemStack item = new ItemStack(Objects.requireNonNull(XMaterial.ENDER_PEARL.parseItem()));
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "<red>" + warpName));
-                item.setItemMeta(meta);
-            }
-            inventory.setItem(i - start, item);
+            String warpName = warpNames.get(i);
+            inventory.setItem(i - start, createWarpItem(warpName));
         }
 
-        if (page > 0) {
-            inventory.setItem(45, createButton("<green>Previous Page", XMaterial.ARROW));
-        }
-        if (end < warps.size()) {
-            inventory.setItem(53, createButton("<green>Next Page", XMaterial.ARROW));
-        }
+        setupNavigationButtons(inventory, warpNames.size(), end);
 
-        for (Category category : Category.values()) {
-            XMaterial material = XMaterial.matchXMaterial(category.getMaterial());
-            inventory.setItem(category.getSlot(), createButton(category.getDisplayName(), material));
-        }
-
+        inventory.setItem(49, createButton("<green>All Player Warps", XMaterial.NETHER_STAR));
         return inventory;
+    }
+
+    private List<String> getFilteredWarpNames() {
+        return PlayerWarpsManager.getPlayerWarps(player).stream()
+                .filter(warpName -> selectedCategory == null || PlayerWarpsManager.getPlayerWarpCategory(warpName) == selectedCategory)
+                .sorted(Comparator.comparingInt(warpName -> -PlayerWarpsManager.getPlayerWarpRating(warpName)))
+                .toList();
+    }
+
+    private ItemStack createWarpItem(String warpName) {
+        List<Integer> ratings = Collections.singletonList(PlayerWarpsManager.getPlayerWarpRating(warpName));
+        int rating = getAverageRating(ratings);
+        String warpStars = getStarRating(rating);
+        ItemStack item = new ItemStack(Objects.requireNonNull(XMaterial.NETHER_STAR.parseItem()));
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c" + warpName));
+
+            String owner = PlayerWarpsManager.getPlayerWarpOwner(warpName);
+            int visits = PlayerWarpsManager.getPlayerWarpVisitCount(warpName);
+
+            List<String> lore = Arrays.asList(
+                    " ",
+                    "<gray>Owner: <red>" + (owner != null ? owner : "Unknown"),
+                    "<gray>Visits: <red>" + visits,
+                    " ",
+                    "<gray>Rating: <gold>" + warpStars,
+                    " ",
+                    "<red>➥ " + "<gray>Left click to teleport",
+                    "<red>➥ " + "<gray>Right click to rate",
+                    " "
+            );
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    private void setupNavigationButtons(Inventory inventory, int totalWarps, int end) {
+        if (page > 0) {
+            inventory.setItem(45, createButton("<aqua>Previous Page", XMaterial.ARROW));
+        }
+        if (end < totalWarps) {
+            inventory.setItem(53, createButton("<aqua>Next Page", XMaterial.ARROW));
+        }
     }
 
     public void handleClick(InventoryClickEvent event) {
@@ -73,27 +105,20 @@ public class PlayerWarpsGUI implements IGUI {
 
         String displayName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
 
-        if (displayName.equalsIgnoreCase("Previous Page")) {
-            if (page > 0) {
-                page--;
-                player.openInventory(getInventory());
-            }
-        } else if (displayName.equalsIgnoreCase("Next Page")) {
-            if ((page + 1) * PAGE_SIZE < PlayerWarpsManager.getPlayerWarps(player).size()) {
-                page++;
-                player.openInventory(getInventory());
-            }
+        if (displayName.equalsIgnoreCase("Previous Page") && page > 0) {
+            page--;
+            player.openInventory(getInventory());
+        } else if (displayName.equalsIgnoreCase("Next Page") && (page + 1) * PAGE_SIZE < PlayerWarpsManager.getPlayerWarps(player).size()) {
+            page++;
+            player.openInventory(getInventory());
         } else {
-            for (Category category : Category.values()) {
-                if (displayName.equalsIgnoreCase(ChatColor.stripColor(category.getDisplayName()))) {
-                    selectedCategory = category;
-                    page = 0;
-                    player.openInventory(getInventory());
-                    return;
+            if (event.isLeftClick()) {
+                if (PlayerWarpsManager.teleportToPlayerWarp(player, displayName)) {
+                    PlayerWarpsManager.incrementVisitCount(displayName);
                 }
+            } else if (event.isRightClick()) {
+                player.openInventory(new RateGUI(displayName).getInventory());
             }
-
-            PlayerWarpsManager.teleportToPlayerWarp(player, displayName);
         }
     }
 
@@ -105,5 +130,14 @@ public class PlayerWarpsGUI implements IGUI {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private int getAverageRating(List<Integer> ratings) {
+        return ratings.isEmpty() ? 0 : ratings.stream().mapToInt(Integer::intValue).sum() / ratings.size();
+    }
+
+    private String getStarRating(int rating) {
+        int clampedRating = Math.max(1, Math.min(rating, 5));
+        return "⭐".repeat(clampedRating) + "☆".repeat(5 - clampedRating);
     }
 }

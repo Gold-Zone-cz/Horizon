@@ -2,19 +2,17 @@ package cz.goldzone.horizon.managers;
 
 import cz.goldzone.neuron.shared.Core;
 import lombok.Cleanup;
-import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class EconomyManager {
-    @Getter
     private static Economy economy;
 
     public static boolean setupEconomy() {
@@ -25,15 +23,16 @@ public class EconomyManager {
     }
 
     public static boolean hasEconomy() {
-        return economy == null;
+        return economy != null;
     }
 
     public static void createBalanceTable() {
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS `survival_users_bank` (" +
-                            "`user_id` VARCHAR(36) NOT NULL, " +
+                            "`id` BIGINT NOT NULL AUTO_INCREMENT UNIQUE," +
+                            "`user_id` BIGINT NOT NULL, " +
                             "`balance` DOUBLE DEFAULT 0, " +
                             "PRIMARY KEY (`user_id`))");
             ps.executeUpdate();
@@ -48,43 +47,45 @@ public class EconomyManager {
     }
 
     public static void setBalance(OfflinePlayer player, double balance) {
-        if (hasEconomy()) return;
-        double currentBalance = getBalance(player);
-        if (balance > currentBalance) {
-            economy.depositPlayer(player, balance - currentBalance);
-        } else {
-            economy.withdrawPlayer(player, currentBalance - balance);
-        }
-        updateDatabaseBalance(player.getUniqueId(), balance);
+//        if (hasEconomy()) return;
+//        double currentBalance = getBalance(player);
+//        if (balance > currentBalance) {
+//            economy.depositPlayer(player, balance - currentBalance);
+//        } else {
+//            economy.withdrawPlayer(player, currentBalance - balance);
+//        }
+//        updateDatabaseBalance(player.getUniqueId(), balance);
     }
 
     public static boolean deposit(OfflinePlayer player, double amount) {
-        if (hasEconomy()) return false;
-        boolean success = economy.depositPlayer(player, amount).transactionSuccess();
-        if (success) updateDatabaseBalance(player.getUniqueId(), getBalance(player));
-        return success;
+//        if (hasEconomy()) return false;
+//        boolean success = economy.depositPlayer(player, amount).transactionSuccess();
+//        if (success) updateDatabaseBalance(player.getUniqueId(), getBalance(player));
+//        return success;
+        return true;
     }
 
-    public static boolean withdraw(OfflinePlayer player, double amount) {
-        if (hasEconomy()) return false;
-        boolean success = economy.withdrawPlayer(player, amount).transactionSuccess();
-        if (success) updateDatabaseBalance(player.getUniqueId(), getBalance(player));
-        return success;
+    public static boolean withdraw(Player gamePlayer, double amount) {
+//        if (hasEconomy()) return false;
+//        boolean success = economy.withdrawPlayer(player, amount).transactionSuccess();
+//        if (success) updateDatabaseBalance(player.getUniqueId(), getBalance(player));
+//        return success;
+        return true;
     }
 
-    private static void updateDatabaseBalance(UUID playerUUID, double balance) {
-        try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
-            @Cleanup PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO `survival_users_bank` (`user_id`, `balance`) VALUES (?, ?) " +
-                            "ON DUPLICATE KEY UPDATE `balance` = ?");
-            ps.setString(1, playerUUID.toString());
-            ps.setDouble(2, balance);
-            ps.setDouble(3, balance);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    private static void updateDatabaseBalance(Player gamePlayer, double balance) {
+//        try {
+//            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
+//            @Cleanup PreparedStatement ps = connection.prepareStatement(
+//                    "INSERT INTO `survival_users_bank` (`user_id`, `balance`) VALUES (?, ?) " +
+//                            "ON DUPLICATE KEY UPDATE `balance` = ?");
+//            ps.setLong(1, gamePlayer.getId());
+//            ps.setDouble(2, balance);
+//            ps.setDouble(3, balance);
+//            ps.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static boolean hasEnough(OfflinePlayer player, double amount) {

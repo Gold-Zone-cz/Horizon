@@ -22,9 +22,8 @@ public class TpaDenyCommand implements CommandExecutor {
             return true;
         }
 
-        if (teleportManager.hasTeleportRequest(requestTarget)) {
-            TeleportManager.TeleportRequest request = teleportManager.getTeleportRequest(requestTarget);
-
+        TeleportManager.TeleportRequest request = teleportManager.getTeleportRequest(requestTarget);
+        if (request != null) {
             Player requestSender = request.getSender();
 
             requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<gray>Teleportation request <red>denied");
@@ -33,7 +32,7 @@ public class TpaDenyCommand implements CommandExecutor {
             teleportManager.removeTeleportRequest(requestSender);
             teleportManager.removeTeleportRequest(requestTarget);
         } else {
-            requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<red>You don't have any pending teleport request.");
+            requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<red>You don't have any pending teleport requests.");
         }
         return true;
     }

@@ -10,46 +10,44 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HomeCommand implements CommandExecutor {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Lang.get("core.only_pl", sender));
             return true;
         }
 
         List<String> homes = HomesManager.getHomes(player);
-
         if (homes.isEmpty()) {
             player.sendMessage(Lang.getPrefix("Homes") + "<red>You don't have any homes set!");
             return true;
         }
 
-        if (homes.size() == 1) {
-            String homeName = homes.getFirst();
-            teleportToHome(player, homeName);
-            return true;
-        }
+        switch (args.length) {
+            case 0:
+                player.openInventory(new HomesGUI(homes, player).getInventory());
+                return true;
 
-        if (args.length == 0) {
-            player.openInventory(new HomesGUI(homes, player).getInventory());
-            return true;
-        }
+            case 1:
+                String homeName = args[0].toLowerCase();
+                Set<String> homeSet = new HashSet<>(homes);
+                if (homeSet.contains(homeName)) {
+                    teleportToHome(player, homeName);
+                } else {
+                    player.sendMessage(Lang.getPrefix("Homes") + "<red>Invalid home name! Use <white>/homes <red>to list your homes.");
+                }
+                return true;
 
-        if (args.length == 1) {
-            String homeName = args[0].toLowerCase();
-            if (homes.contains(homeName)) {
-                teleportToHome(player, homeName);
-            } else {
-                player.sendMessage(Lang.getPrefix("Homes") + "<red>Invalid home name! Use <white>/homes <red>to list your homes.");
-            }
-            return true;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     private void teleportToHome(Player player, String homeName) {

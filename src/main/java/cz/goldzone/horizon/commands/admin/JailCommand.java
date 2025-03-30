@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public class JailCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Lang.get("core.only_pl", sender));
             return true;
@@ -40,8 +40,6 @@ public class JailCommand implements CommandExecutor {
             return false;
         }
 
-        Player target = Bukkit.getPlayer(args[0]);
-
         int duration;
         try {
             duration = Integer.parseInt(args[1]);
@@ -52,10 +50,9 @@ public class JailCommand implements CommandExecutor {
 
         String reason = args.length > 2 ? String.join(" ", Arrays.copyOfRange(args, 2, args.length)) : "No reason provided";
 
-        if (target != null) {
-            JailManager.jail(target, duration, reason, player.getName());
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>You have jailed <red>" + target.getName() + " <gray>for <red>" + duration + " <gray>minutes.");
-        }
+        JailManager.jail(targetPlayer, duration, reason, player.getName());
+        player.sendMessage(Lang.getPrefix("Horizon") + "<gray>You have jailed <red>" + targetPlayer.getName() + " <gray>for <red>" + duration + " <gray>minutes.");
+
         return true;
     }
 }

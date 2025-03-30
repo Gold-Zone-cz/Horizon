@@ -8,10 +8,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class PayToggleCommand implements CommandExecutor {
-    private static final HashMap<UUID, Boolean> payToggleMap = new HashMap<>();
+    private static final Map<UUID, Boolean> payToggleMap = new HashMap<>();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -35,7 +36,7 @@ public class PayToggleCommand implements CommandExecutor {
         return true;
     }
 
-    public static boolean isPayEnabled(Player player) {
+    public static boolean isPayEnabled(@NotNull Player player) {
         return payToggleMap.getOrDefault(player.getUniqueId(), true);
     }
 }

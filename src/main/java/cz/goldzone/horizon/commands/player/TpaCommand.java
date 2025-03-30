@@ -46,21 +46,26 @@ public class TpaCommand implements CommandExecutor {
             return false;
         }
 
-        requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<gray>Player <red>" + player.getName() + "<gray> wants to teleport to you.");
-
-        TextComponent acceptMessage = new TextComponent("<green>[✔ ACCEPT]");
-        acceptMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("<gray>Click here to accept!").create()));
-        acceptMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept"));
-
-        TextComponent denyMessage = new TextComponent("<dark_gray>| <red>[✖ DECLINE]");
-        denyMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("<gray>Click here to deny!").create()));
-        denyMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpdeny"));
-
-        requestTarget.spigot().sendMessage(acceptMessage, denyMessage);
-
+        sendTeleportRequestMessage(player, requestTarget);
         teleportManager.addTpaRequest(player, requestTarget);
         player.sendMessage(Lang.getPrefix("Teleport") + "<gray>Teleportation request sent to <red>" + requestTarget.getName());
 
         return true;
+    }
+
+    private void sendTeleportRequestMessage(Player sender, Player target) {
+        target.sendMessage(Lang.getPrefix("Teleport") + "<gray>Player <red>" + sender.getName() + "<gray> wants to teleport to you.");
+
+        TextComponent acceptMessage = createTextComponent("<green>[✔ ACCEPT]", "/tpaccept", "<gray>Click here to accept!");
+        TextComponent denyMessage = createTextComponent(" <dark_gray>| <red>[✖ DECLINE]", "/tpdeny", "<gray>Click here to deny!");
+
+        target.spigot().sendMessage(acceptMessage, denyMessage);
+    }
+
+    private TextComponent createTextComponent(String text, String command, String hoverText) {
+        TextComponent component = new TextComponent(text);
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverText).create()));
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+        return component;
     }
 }

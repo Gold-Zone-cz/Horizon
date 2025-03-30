@@ -2,6 +2,7 @@ package cz.goldzone.horizon.enums;
 
 
 import com.cryptomorin.xseries.XMaterial;
+import cz.goldzone.horizon.managers.PlayerWarpsManager;
 import lombok.Getter;
 import org.bukkit.Material;
 
@@ -9,9 +10,9 @@ import java.util.Objects;
 
 @Getter
 public enum Category {
-    FARM("§FARM", 21, XMaterial.BLAZE_ROD),
-    SHOP("§SHOPS", 23, XMaterial.EMERALD),
-    MISC("§bMISC", 25, XMaterial.BOOK);
+    FARMS("<yellow>FARMS", 21, XMaterial.BLAZE_ROD),
+    SHOPS("<green>SHOPS", 23, XMaterial.EMERALD),
+    MISC("<aqua>MISC", 25, XMaterial.BOOK);
 
     private final String displayName;
     private final int slot;
@@ -20,7 +21,10 @@ public enum Category {
     Category(String displayName, int slot, XMaterial xMaterial) {
         this.displayName = displayName;
         this.slot = slot;
-        this.material = Objects.requireNonNull(xMaterial.get(), "Invalid material for " + name());
+        this.material = Objects.requireNonNull(xMaterial.parseMaterial(), "Material not found: " + xMaterial.name());
     }
 
+    public String getPopularPlayerWarp() {
+        return PlayerWarpsManager.getMostVisitedWarp();
+    }
 }

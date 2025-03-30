@@ -41,7 +41,7 @@ public class WaitBypassListener implements Listener {
     private boolean checkMute(Player player) {
         String query = "SELECT * FROM litebans_mutes WHERE uuid = ? AND active = 1";
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, player.getUniqueId().toString());
 

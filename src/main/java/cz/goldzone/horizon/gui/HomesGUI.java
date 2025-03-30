@@ -35,7 +35,7 @@ public class HomesGUI implements IGUI {
         for (String homeName : homes) {
             if (slot >= inv.getSize()) break;
 
-            String creationDate = HomesManager.getHomeCreationDate(homeName, player);
+            String creationDate = HomesManager.getHomeCreationDate(player, homeName);
             Location homeLocation = HomesManager.getHomeLocation(player, homeName);
 
             if (homeLocation == null) {

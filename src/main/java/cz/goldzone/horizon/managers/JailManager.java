@@ -2,8 +2,9 @@ package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.admin.StaffNotify;
-import cz.goldzone.horizon.commands.admin.SetJailCommand;
+import cz.goldzone.horizon.commands.admin.SetJailPlaceCommand;
 import cz.goldzone.neuron.shared.Lang;
+import cz.goldzone.neuron.spigot.managers.GodManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -151,13 +152,14 @@ public class JailManager implements Listener {
 
         checkInventory(target);
 
-        Location jailLocation = SetJailCommand.getJailLocation();
+        Location jailLocation = SetJailPlaceCommand.getJailLocation();
         if (jailLocation == null) {
             Main.getInstance().getLogger().warning("Jail location is not set! Please set it using /setjail command.");
             return;
         }
 
         target.teleport(jailLocation);
+        GodManager.getGodList().remove(target);
         target.setHealth(20);
         target.setFoodLevel(20);
         target.setGameMode(GameMode.ADVENTURE);

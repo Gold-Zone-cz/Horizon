@@ -14,7 +14,7 @@ import java.util.List;
 public class SetHomeCommand implements CommandExecutor {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Lang.get("core.only_pl", sender));
             return true;
@@ -48,8 +48,7 @@ public class SetHomeCommand implements CommandExecutor {
             return 5;
         } else if (player.hasPermission("horizon.homes.3")) {
             return 3;
-        } else {
-            return 2;
         }
+        return 2;
     }
 }

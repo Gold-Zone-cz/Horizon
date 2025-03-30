@@ -10,27 +10,31 @@ import org.jetbrains.annotations.NotNull;
 
 public class HorizonCommand implements CommandExecutor {
 
-
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if (sender.hasPermission("horizon.admin.reload")) {
-            if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (!sender.hasPermission("horizon.admin.reload")) {
+            sender.sendMessage("Unknown command. Type \"/help\" for help.");
+            return true;
+        }
+
+        if (args.length > 0) {
+            if (args[0].equalsIgnoreCase("reload")) {
                 ConfigManager configManager = Main.getConfigManager();
                 configManager.reloadAllConfigs();
                 sender.sendMessage(Lang.getPrefix("Horizon") + "§aAll configurations have been reloaded.");
+                return true;
             }
-            if (args.length == 0) {
-                sender.sendMessage("<white>");
-                sender.sendMessage(Lang.getPrefix("Horizon") + "<gray>Available commands:");
-                sender.sendMessage("<white>");
-                sender.sendMessage("<#333333>【 <red>/horizon reload <#333333>】 <gray>Reload all configurations");
-                sender.sendMessage("<white>");
-            }
-        } else {
-            sender.sendMessage("Unknown command. Type \"/help\" for help.");
         }
 
+        displayHelp(sender);
+        return true;
+    }
 
-        return false;
+    private void displayHelp(CommandSender sender) {
+        sender.sendMessage("<white>");
+        sender.sendMessage(Lang.getPrefix("Horizon") + "<gray>Available commands:");
+        sender.sendMessage("<white>");
+        sender.sendMessage("<#333333>【 <red>/horizon reload <#333333>】 <gray>Reload all configurations");
+        sender.sendMessage("<white>");
     }
 }

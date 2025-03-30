@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public class SetJailCommand implements CommandExecutor {
+public class SetJailPlaceCommand implements CommandExecutor {
     private static final Set<UUID> confirmationSet = new HashSet<>();
 
     @Getter

@@ -4,17 +4,17 @@ import com.cryptomorin.xseries.XMaterial;
 import dev.digitality.digitalgui.api.IGUI;
 import dev.digitality.digitalgui.api.InteractiveItem;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class ConfirmGUI implements IGUI {
     private final Runnable onConfirm;
 
     public ConfirmGUI(Runnable onConfirm) {
-        this.onConfirm = onConfirm;
+        this.onConfirm = Objects.requireNonNull(onConfirm, "onConfirm cannot be null");
     }
 
     @NotNull
@@ -26,29 +26,31 @@ public class ConfirmGUI implements IGUI {
         int[] emptySlots = {3, 12, 21, 4, 13, 22, 5, 14, 23};
         int[] cancelSlots = {6, 15, 24, 7, 16, 25, 8, 17, 26};
 
-        for (int confirmSlot : confirmSlots) {
-            InteractiveItem confirm = new InteractiveItem(Objects.requireNonNull(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()));
-            confirm.setDisplayName("<green>Confirm");
-            confirm.onClick((player, clickType) -> {
-                player.closeInventory();
-                onConfirm.run();
-            });
-            inv.setItem(confirmSlot, confirm);
-        }
-
-        for (int emptySlot : emptySlots) {
-            InteractiveItem empty = new InteractiveItem(Objects.requireNonNull(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem()));
-            empty.setDisplayName(" ");
-            inv.setItem(emptySlot, empty);
-        }
-
-        Arrays.stream(cancelSlots).forEach(cancelSlot -> {
-            InteractiveItem cancel = new InteractiveItem(Objects.requireNonNull(XMaterial.RED_STAINED_GLASS_PANE.parseItem()));
-            cancel.setDisplayName("<red>Cancel");
-            cancel.onClick((player, clickType) -> player.closeInventory());
-            inv.setItem(cancelSlot, cancel);
+        createInteractiveItems(inv, confirmSlots, XMaterial.LIME_STAINED_GLASS_PANE, "<green>Confirm", player -> {
+            player.closeInventory();
+            onConfirm.run();
         });
 
+        createInteractiveItems(inv, emptySlots, XMaterial.GRAY_STAINED_GLASS_PANE, " ", null);
+
+        createInteractiveItems(inv, cancelSlots, XMaterial.RED_STAINED_GLASS_PANE, "<red>Cancel", HumanEntity::closeInventory);
+
         return inv;
+    }
+
+    private void createInteractiveItems(Inventory inv, int[] slots, XMaterial material, String displayName, InteractiveItemClickHandler clickHandler) {
+        InteractiveItem item = new InteractiveItem(Objects.requireNonNull(material.parseItem()));
+        item.setDisplayName(displayName);
+        if (clickHandler != null) {
+            item.onClick((player, clickType) -> clickHandler.handleClick(player));
+        }
+        for (int slot : slots) {
+            inv.setItem(slot, item);
+        }
+    }
+
+    @FunctionalInterface
+    private interface InteractiveItemClickHandler {
+        void handleClick(org.bukkit.entity.Player player);
     }
 }

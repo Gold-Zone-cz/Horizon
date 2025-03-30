@@ -28,6 +28,7 @@ import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
 import cz.goldzone.horizon.timevote.TimeVoteCommand;
 import cz.goldzone.neuron.shared.api.discord.webhook.WebhookClient;
+import dev.digitality.digitalgui.DigitalGUI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -51,27 +52,26 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         configManager = new ConfigManager(this);
+        DigitalGUI.register(this);
 
         registerCommands();
         registerListeners();
         registerPlaceholders();
         registerVault();
 
+        initializeManagers();
+        loadWebhook();
+
+        getLogger().info("Horizon successfully loaded.");
+    }
+
+    private void initializeManagers() {
         HomesManager.createHomesTable();
         EconomyManager.createBalanceTable();
         PlayerWarpsManager.createPlayerWarpTable();
         FreezeManager.startTask();
         JailManager.startTask();
         VoteManager.loadVotes();
-
-        loadWebhook();
-
-        getLogger().info("Horizon successfully loaded.");
-    }
-
-    @Override
-    public void onDisable() {
-        getLogger().info("Horizon successfully unloaded.");
     }
 
     private void registerListeners() {
@@ -92,52 +92,59 @@ public final class Main extends JavaPlugin {
 
     private void registerCommands() {
         TeleportManager teleportManager = new TeleportManager();
-
         Map<String, CommandExecutor> commands = new HashMap<>();
-        commands.put("horizon", new HorizonCommand());
-        commands.put("netherlist", new NetherListCommand());
-        commands.put("warp", new WarpCommand());
-        commands.put("warps", new WarpsListCommand());
-        commands.put("setwarp", new SetWarpCommand());
-        commands.put("delwarp", new DelWarpCommand());
-        commands.put("playerwarps", new PlayerWarpsCommand());
-        commands.put("sethome", new SetHomeCommand());
-        commands.put("delhome", new DelHomeCommand());
-        commands.put("home", new HomeCommand());
-        commands.put("homes", new HomeListCommand());
-        commands.put("wb", new CraftCommand());
-        commands.put("enderchest", new EnderChestCommand());
-        commands.put("tpa", new TpaCommand(teleportManager));
-        commands.put("tpaccept", new TpaAcceptCommand(teleportManager));
-        commands.put("tpdeny", new TpaDenyCommand(teleportManager));
-        commands.put("i", new ItemCommand());
-        commands.put("balance", new BalanceCommand());
-        commands.put("anvil", new AnvilCommand());
-        commands.put("pay", new PayCommand());
-        commands.put("paytoggle", new TpToggleCommand());
-        commands.put("tptoggle", new TpToggleCommand());
-        commands.put("repair", new RepairCommand());
-        commands.put("hat", new HatCommand());
-        commands.put("tv", new TimeVoteCommand());
-        commands.put("freeze", new FreezeCommand());
-        commands.put("unfreeze", new UnFreezeCommand());
-        commands.put("rtp", new RandomTeleportCommand());
-        commands.put("setjail", new SetJailCommand());
-        commands.put("jail", new JailCommand());
-        commands.put("unjail", new UnJailCommand());
-        commands.put("baltop", new BalTopCommand());
+
+        registerCommand(commands, "horizon", new HorizonCommand());
+        registerCommand(commands, "netherlist", new NetherListCommand());
+        registerCommand(commands, "warp", new WarpCommand());
+        registerCommand(commands, "warps", new WarpsListCommand());
+        registerCommand(commands, "setwarp", new SetWarpCommand());
+        registerCommand(commands, "delwarp", new DelWarpCommand());
+        registerCommand(commands, "playerwarps", new PlayerWarpsCommand());
+        registerCommand(commands, "sethome", new SetHomeCommand());
+        registerCommand(commands, "delhome", new DelHomeCommand());
+        registerCommand(commands, "home", new HomeCommand());
+        registerCommand(commands, "homes", new HomeListCommand());
+        registerCommand(commands, "wb", new CraftCommand());
+        registerCommand(commands, "enderchest", new EnderChestCommand());
+        registerCommand(commands, "tpa", new TpaCommand(teleportManager));
+        registerCommand(commands, "tpaccept", new TpaAcceptCommand(teleportManager));
+        registerCommand(commands, "tpdeny", new TpaDenyCommand(teleportManager));
+        registerCommand(commands, "i", new ItemCommand());
+        registerCommand(commands, "balance", new BalanceCommand());
+        registerCommand(commands, "anvil", new AnvilCommand());
+        registerCommand(commands, "pay", new PayCommand());
+        registerCommand(commands, "paytoggle", new TpToggleCommand());
+        registerCommand(commands, "tptoggle", new TpToggleCommand());
+        registerCommand(commands, "repair", new RepairCommand());
+        registerCommand(commands, "hat", new HatCommand());
+        registerCommand(commands, "tv", new TimeVoteCommand());
+        registerCommand(commands, "freeze", new FreezeCommand());
+        registerCommand(commands, "unfreeze", new UnFreezeCommand());
+        registerCommand(commands, "rtp", new RandomTeleportCommand());
+        registerCommand(commands, "setjail", new SetJailPlaceCommand());
+        registerCommand(commands, "jail", new JailCommand());
+        registerCommand(commands, "unjail", new UnJailCommand());
+        registerCommand(commands, "baltop", new BalTopCommand());
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
                 Objects.requireNonNull(getCommand(cmd)).setExecutor(executor);
-
-                if (cmd.equals("i")) {
-                    Objects.requireNonNull(getCommand(cmd)).setTabCompleter(new FillTabItemManager());
-                } else {
-                    Objects.requireNonNull(getCommand(cmd)).setTabCompleter(new FillTabManager());
-                }
+                setTabCompleter(cmd);
             }
         });
+    }
+
+    private void setTabCompleter(String command) {
+        if (command.equals("i")) {
+            Objects.requireNonNull(getCommand(command)).setTabCompleter(new FillTabItemManager());
+        } else {
+            Objects.requireNonNull(getCommand(command)).setTabCompleter(new FillTabManager());
+        }
+    }
+
+    private void registerCommand(Map<String, CommandExecutor> commands, String commandName, CommandExecutor executor) {
+        commands.put(commandName, executor);
     }
 
     private void registerVault() {
@@ -153,7 +160,12 @@ public final class Main extends JavaPlugin {
     }
 
     private static void loadWebhook() {
-        webhookClient = WebhookClient.withUrl(Objects.requireNonNull(configManager.getConfig("config.yml").getString("webhook_url")));
-        getInstance().getLogger().info("Webhook client initialized successfully.");
+        String webhookUrl = configManager.getConfig("config.yml").getString("webhook_url");
+        if (webhookUrl != null) {
+            webhookClient = WebhookClient.withUrl(webhookUrl);
+            getInstance().getLogger().info("Webhook client initialized successfully.");
+        } else {
+            getInstance().getLogger().warning("Webhook URL is not configured!");
+        }
     }
 }

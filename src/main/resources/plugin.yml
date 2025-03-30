@@ -86,6 +86,8 @@ commands:
     aliases:
       - pw
       - playerwarp
+      - pwarps
+      - pwarp
   baltop:
     description: Show the top players with the highest balance
 

@@ -25,18 +25,28 @@ public class HatCommand implements CommandExecutor {
                 player.getInventory().addItem(currentHat);
             } else {
                 player.getWorld().dropItemNaturally(player.getLocation(), currentHat);
-                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Inventory full!\n Your previous hat was dropped on the ground!");
+                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Inventory full!\nYour previous hat was dropped on the ground!");
             }
         }
 
-        String itemName = itemInHand.getType().toString().toLowerCase().replace("_", " ");
-        itemName = itemName.substring(0, 1).toUpperCase() + itemName.substring(1);
-
+        String itemName = formatItemName(itemInHand.getType());
         player.getInventory().setHelmet(itemInHand.clone());
         player.sendMessage(Lang.getPrefix("Horizon") + "<red>" + itemName + " <gray>has been set as your hat!");
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 
         return true;
+    }
+
+    private String formatItemName(Material material) {
+        String itemName = material.toString().toLowerCase().replace("_", " ");
+        return capitalizeFirstLetter(itemName);
+    }
+
+    private String capitalizeFirstLetter(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 
     @Override
@@ -50,8 +60,7 @@ public class HatCommand implements CommandExecutor {
             return setHat(player);
         } else {
             player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\nUse /vip for more information.");
+            return true;
         }
-
-        return true;
     }
 }

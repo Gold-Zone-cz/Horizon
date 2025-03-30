@@ -2,6 +2,7 @@ package cz.goldzone.horizon.managers;
 
 import cz.goldzone.neuron.shared.Core;
 import cz.goldzone.neuron.shared.Lang;
+import cz.goldzone.neuron.shared.player.GamePlayer;
 import lombok.Cleanup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,23 +13,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class HomesManager {
 
     public static void createHomesTable() {
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS survival_player_homes (" +
-                            "uuid VARCHAR(36)," +
+                            "`id` BIGINT NOT NULL AUTO_INCREMENT UNIQUE," +
+                            "user_id BIGINT NOT NULL," +
                             "home_name VARCHAR(64)," +
                             "creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                             "x DOUBLE," +
                             "y DOUBLE," +
                             "z DOUBLE," +
                             "world VARCHAR(64)," +
-                            "PRIMARY KEY (uuid, home_name))"
+                            "PRIMARY KEY (id, user_id, home_name))"
             );
             preparedStatement.executeUpdate();
         } catch (Exception e) {
@@ -37,13 +38,13 @@ public class HomesManager {
     }
 
     public static void setHome(Player player, String homeName, Location location) {
-        UUID playerId = player.getUniqueId();
+        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
 
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(
-                    "REPLACE INTO survival_player_homes (uuid, home_name, x, y, z, world) VALUES (?, ?, ?, ?, ?, ?)");
-            ps.setString(1, playerId.toString());
+                    "REPLACE INTO survival_player_homes (user_id, home_name, x, y, z, world) VALUES (?, ?, ?, ?, ?, ?)");
+            ps.setLong(1, gamePlayer.getId());
             ps.setString(2, homeName.toLowerCase());
             ps.setDouble(3, location.getX());
             ps.setDouble(4, location.getY());
@@ -56,13 +57,13 @@ public class HomesManager {
     }
 
     public static void deleteHome(Player player, String homeName) {
-        UUID playerId = player.getUniqueId();
+        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
 
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(
-                    "DELETE FROM survival_player_homes WHERE uuid = ? AND home_name = ?");
-            ps.setString(1, playerId.toString());
+                    "DELETE FROM survival_player_homes WHERE user_id = ? AND home_name = ?");
+            ps.setLong(1, gamePlayer.getId());
             ps.setString(2, homeName.toLowerCase());
             ps.executeUpdate();
         } catch (Exception e) {
@@ -71,13 +72,13 @@ public class HomesManager {
     }
 
     public static Location getHome(Player player, String homeName) {
-        UUID playerId = player.getUniqueId();
+        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
 
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM survival_player_homes WHERE uuid = ? AND home_name = ?");
-            ps.setString(1, playerId.toString());
+                    "SELECT * FROM survival_player_homes WHERE user_id = ? AND home_name = ?");
+            ps.setLong(1, gamePlayer.getId());
             ps.setString(2, homeName.toLowerCase());
 
             @Cleanup ResultSet rs = ps.executeQuery();
@@ -104,13 +105,13 @@ public class HomesManager {
 
     public static List<String> getHomes(Player player) {
         List<String> homes = new ArrayList<>();
-        UUID playerId = player.getUniqueId();
+        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
 
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(
-                    "SELECT home_name FROM survival_player_homes WHERE uuid = ?");
-            ps.setString(1, playerId.toString());
+                    "SELECT home_name FROM survival_player_homes WHERE user_id = ?");
+            ps.setLong(1, gamePlayer.getId());
 
             @Cleanup ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -123,14 +124,14 @@ public class HomesManager {
     }
 
     public static Location getHomeLocation(Player player, String homeName) {
-        UUID playerId = player.getUniqueId();
+        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
         Location location = null;
 
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(
-                    "SELECT x, y, z, world FROM survival_player_homes WHERE uuid = ? AND home_name = ?");
-            ps.setString(1, playerId.toString());
+                    "SELECT x, y, z, world FROM survival_player_homes WHERE user_id = ? AND home_name = ?");
+            ps.setLong(1, gamePlayer.getId());
             ps.setString(2, homeName.toLowerCase());
 
             @Cleanup ResultSet rs = ps.executeQuery();
@@ -148,14 +149,14 @@ public class HomesManager {
         return location;
     }
 
-    public static String getHomeCreationDate(String homeName, Player player) {
-        UUID playerId = player.getUniqueId();
+    public static String getHomeCreationDate(Player player, String homeName) {
+        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
 
         try {
-            @Cleanup Connection connection = Core.getMySQL().getConnection();
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(
-                    "SELECT creation_date FROM survival_player_homes WHERE uuid = ? AND home_name = ?");
-            ps.setString(1, playerId.toString());
+                    "SELECT creation_date FROM survival_player_homes WHERE user_id = ? AND home_name = ?");
+            ps.setLong(1, gamePlayer.getId());
             ps.setString(2, homeName.toLowerCase());
 
             @Cleanup ResultSet rs = ps.executeQuery();
