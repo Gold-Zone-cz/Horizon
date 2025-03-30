@@ -1,6 +1,6 @@
 package cz.goldzone.horizon.commands.economy;
 
-import cz.goldzone.horizon.managers.MoneyManager;
+import cz.goldzone.horizon.managers.EconomyManager;
 import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -10,6 +10,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SetBalanceCommand implements CommandExecutor {
+
+    public SetBalanceCommand() {
+        if (EconomyManager.hasEconomy()) {
+            Bukkit.getLogger().warning("Vault or Economy plugin not found!");
+        }
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -23,7 +29,7 @@ public class SetBalanceCommand implements CommandExecutor {
             return false;
         }
 
-        Player target = Bukkit.getPlayer(args[1]);
+        Player target = Bukkit.getPlayerExact(args[1]);
         if (target == null) {
             sender.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found!");
             return false;
@@ -41,10 +47,11 @@ public class SetBalanceCommand implements CommandExecutor {
             return false;
         }
 
-        MoneyManager moneyManager = new MoneyManager(target);
-        moneyManager.setAmount((long) amount);
+        EconomyManager.setBalance(target, amount);
 
-        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You have set <red>" + target.getName() + " <gray>balance to <red>$" + amount);
+        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You have set <red>" + target.getName() + " <gray>'s balance to <red>$" + amount);
+        target.sendMessage(Lang.getPrefix("Economy") + "<gray>Your balance has been set to <red>$" + amount + " <gray>by an admin.");
+
         return true;
     }
 }
