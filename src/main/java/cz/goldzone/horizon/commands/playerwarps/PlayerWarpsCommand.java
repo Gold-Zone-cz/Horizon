@@ -35,7 +35,7 @@ public class PlayerWarpsCommand implements CommandExecutor {
     }
 
     private void displayHelp(Player player) {
-        player.sendMessage(Lang.getPrefix("PlayerWarps") + "Available Commands:");
+        player.sendMessage(Lang.getPrefix("PlayerWarps") + "<gray>Available Commands:");
         player.sendMessage("<white>");
         player.sendMessage("<dark_gray>【 <red>/pw create <name> <dark_gray>】 <gray>Create a player warp");
         player.sendMessage("<dark_gray>【 <red>/pw delete <name> <dark_gray>】 <gray>Delete a player warp");

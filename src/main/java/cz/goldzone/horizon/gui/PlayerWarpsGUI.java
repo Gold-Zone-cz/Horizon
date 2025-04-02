@@ -79,8 +79,8 @@ public class PlayerWarpsGUI implements IGUI {
                     " ",
                     "<gray>Rating: <gold>" + warpStars,
                     " ",
-                    "<red>➥ " + "<gray>Left click to teleport",
-                    "<red>➥ " + "<gray>Right click to rate",
+                    "<red>➥ " + "<gray>Left click to <red>teleport",
+                    "<red>➥ " + "<gray>Right click to <gold>rate",
                     " "
             );
             meta.setLore(lore);

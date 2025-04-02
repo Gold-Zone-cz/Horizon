@@ -2,6 +2,7 @@ package cz.goldzone.horizon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import cz.goldzone.horizon.managers.PlayerWarpsManager;
+import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalgui.DigitalGUI;
 import dev.digitality.digitalgui.api.IGUI;
 import dev.digitality.digitalgui.api.InteractiveItem;
@@ -23,7 +24,7 @@ public class RateGUI implements IGUI {
     @NotNull
     @Override
     public Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, INVENTORY_SIZE, "Rate " + warpName);
+        Inventory inventory = Bukkit.createInventory(this, INVENTORY_SIZE, "Rate " + warpName + " warp");
 
         DigitalGUI.fillInventory(inventory, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
@@ -55,7 +56,7 @@ public class RateGUI implements IGUI {
             int clampedRating = Math.min(rating, MAX_RATING);
             PlayerWarpsManager.setPlayerWarpRating(warpName, clampedRating);
             player.closeInventory();
-            player.sendMessage(String.format("<green>You rated the warp %s with %d star%s", warpName, clampedRating, (clampedRating > 1 ? "s" : "")));
+            player.sendMessage(Lang.getPrefix("PlayerWarps") + String.format("<green>You rated the warp %s with %d star%s", warpName, clampedRating, (clampedRating > 1 ? "s" : "")));
         });
 
         return item;
