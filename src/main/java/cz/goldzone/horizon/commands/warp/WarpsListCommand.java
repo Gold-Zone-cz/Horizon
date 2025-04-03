@@ -2,6 +2,7 @@ package cz.goldzone.horizon.commands.warp;
 
 import cz.goldzone.horizon.Main;
 import cz.goldzone.neuron.shared.Lang;
+import dev.digitality.digitalconfig.config.Configuration;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -9,11 +10,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.List;
 
 public class WarpsListCommand implements CommandExecutor {
 
@@ -24,13 +24,13 @@ public class WarpsListCommand implements CommandExecutor {
             return true;
         }
 
-        FileConfiguration warpsConfig = Main.getConfigManager().getConfig("warps.yml");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
 
         player.sendMessage("<white>");
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>Available warps:");
         player.sendMessage("<white>");
 
-        Set<String> warpKeys = warpsConfig.getKeys(false);
+        List<String> warpKeys = config.getKeys();
         if (warpKeys.isEmpty()) {
             player.sendMessage("<dark_gray>【 <red>No warps available. <dark_gray>】");
         } else {

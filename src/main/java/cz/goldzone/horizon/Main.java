@@ -52,7 +52,10 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         configManager = new ConfigManager(this);
+
+
         DigitalGUI.register(this);
+
         registerCommands();
         registerListeners();
         registerPlaceholders();
@@ -159,7 +162,7 @@ public final class Main extends JavaPlugin {
     }
 
     private static void loadWebhook() {
-        String webhookUrl = configManager.getConfig("config.yml").getString("webhook_url");
+        String webhookUrl = getInstance().getConfig().getString("webhook-url");
         if (webhookUrl != null) {
             webhookClient = WebhookClient.withUrl(webhookUrl);
             getInstance().getLogger().info("Webhook client initialized successfully.");

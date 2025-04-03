@@ -2,6 +2,7 @@ package cz.goldzone.horizon.commands.admin;
 
 import cz.goldzone.horizon.Main;
 import cz.goldzone.neuron.shared.Lang;
+import dev.digitality.digitalconfig.config.Configuration;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,7 +10,6 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,8 +37,8 @@ public class SetJailPlaceCommand implements CommandExecutor {
     }
 
     public static void load() {
-        FileConfiguration config = Main.getConfigManager().getConfig("jail.yml");
-        if (config.contains("JailPlace.World")) {
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
+        if (config.getSection("JailPlace.World") != null) {
             World world = Bukkit.getWorld(Objects.requireNonNull(config.getString("JailPlace.World")));
             if (world == null) return;
 
@@ -69,9 +69,9 @@ public class SetJailPlaceCommand implements CommandExecutor {
             return false;
         }
 
-        FileConfiguration config = Main.getConfigManager().getConfig("jail.yml");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
 
-        if (config.get("JailPlace") != null && !confirmationSet.contains(player.getUniqueId())) {
+        if (config.getSection("JailPlace.World") != null && !confirmationSet.contains(player.getUniqueId())) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<red>Jail location already exists!\n <gray>Retype the command to overwrite it.");
             confirmationSet.add(player.getUniqueId());
             Main.getInstance().getServer().getScheduler().runTaskLater(Main.getInstance(), () -> confirmationSet.remove(player.getUniqueId()), 600L);
@@ -87,7 +87,7 @@ public class SetJailPlaceCommand implements CommandExecutor {
         config.set("JailPlace.Z", loc.getZ());
         config.set("JailPlace.Yaw", loc.getYaw());
         config.set("JailPlace.Pitch", loc.getPitch());
-        Main.getInstance().saveConfig();
+        config.save();
 
         set(loc);
         load();

@@ -1,20 +1,17 @@
 package cz.goldzone.horizon.commands.warp;
 
 import cz.goldzone.horizon.Main;
-import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
+import dev.digitality.digitalconfig.config.Configuration;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 
 public class WarpCommand implements CommandExecutor {
-    private final ConfigManager configManager = Main.getConfigManager();
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -22,7 +19,7 @@ public class WarpCommand implements CommandExecutor {
             return true;
         }
 
-        FileConfiguration warpsConfig = configManager.getConfig("warps.yml");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
 
         if (args.length == 0) {
             sendHelpMessage(player);
@@ -30,7 +27,7 @@ public class WarpCommand implements CommandExecutor {
         }
 
 
-        teleportToWarp(player, warpsConfig, args[0]);
+        teleportToWarp(player, config, args[0]);
         return true;
     }
 
@@ -55,14 +52,15 @@ public class WarpCommand implements CommandExecutor {
         }
     }
 
-    private void teleportToWarp(Player player, FileConfiguration warpsConfig, String warpName) {
+    private void teleportToWarp(Player player, Configuration warpsConfig, String warpName) {
 
-        if (!warpsConfig.contains(warpName)) {
+        if (warpsConfig.get(warpName, null) == null) {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>No warp found with this name!");
             return;
         }
 
-        Location warpLocation = (Location) warpsConfig.get(warpName + ".location");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
+        Location warpLocation = config.get(warpName + ".location", Location.class);
         if (warpLocation == null) {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp location is invalid!");
             return;

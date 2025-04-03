@@ -1,8 +1,8 @@
 package cz.goldzone.horizon.commands.warp;
 
 import cz.goldzone.horizon.Main;
-import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
+import dev.digitality.digitalconfig.config.Configuration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SetWarpCommand implements CommandExecutor {
-    private final ConfigManager configManager = Main.getConfigManager();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -29,14 +28,16 @@ public class SetWarpCommand implements CommandExecutor {
             return false;
         }
 
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
+
         String name = args[0].toLowerCase();
-        if (configManager.getConfig("warps.yml").get(name) != null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp with this name already exists!");
+        if (config.getSection(name) != null) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + " <red>already exists!");
             return false;
         }
 
-        configManager.getConfig("warps.yml").set(name + ".location", player.getLocation());
-        configManager.saveConfig("warps.yml");
+        config.set(name, player.getLocation());
+        config.save();
 
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been created!");
         return true;

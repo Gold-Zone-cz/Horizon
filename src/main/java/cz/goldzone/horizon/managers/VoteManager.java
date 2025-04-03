@@ -1,9 +1,9 @@
 package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
-import org.bukkit.configuration.file.FileConfiguration;
+import dev.digitality.digitalconfig.config.Configuration;
+import dev.digitality.digitalconfig.config.ConfigurationSection;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,19 +14,14 @@ public class VoteManager {
     public static void loadVotes() {
         votes.clear();
 
-        FileConfiguration config = Main.getConfigManager().getConfig("votes.yml");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "votes.yml");
 
-        if (config == null) {
-            System.out.println("[Horizon] Error: votes.yml could not be loaded!");
-            return;
-        }
-
-        if (!config.contains("votes")) {
-            config.createSection("votes");
+        if (config.getSection("votes") == null) {
+            config.set("votes", new ConfigurationSection());
             Main.getConfigManager().saveConfig("votes.yml");
         }
 
-        for (String key : Objects.requireNonNull(config.getConfigurationSection("votes")).getKeys(false)) {
+        for (String key : Objects.requireNonNull(config.getSection("votes")).getKeys()) {
             votes.put(key, config.getInt("votes." + key));
         }
     }
@@ -37,14 +32,12 @@ public class VoteManager {
 
 
     public static void addVote(String player) {
-        FileConfiguration config = Main.getConfigManager().getConfig("votes.yml");
         int currentVotes = getVotes(player);
+
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "votes.yml");
+
         config.set("votes." + player, currentVotes + 1);
-        try {
-            config.save(Main.getConfigManager().getConfig("votes.yml").saveToString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        config.save();
 
         votes.put(player, currentVotes + 1);
     }

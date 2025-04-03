@@ -1,6 +1,6 @@
 name: Horizon
 author: MrJogger_
-version: '1.0.0'
+version: '1.0.1'
 main: cz.goldzone.horizon.Main
 api-version: '1.21'
 

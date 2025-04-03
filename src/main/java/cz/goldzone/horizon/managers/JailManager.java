@@ -5,10 +5,10 @@ import cz.goldzone.horizon.admin.StaffNotify;
 import cz.goldzone.horizon.commands.admin.SetJailPlaceCommand;
 import cz.goldzone.neuron.shared.Lang;
 import cz.goldzone.neuron.spigot.managers.GodManager;
+import dev.digitality.digitalconfig.config.Configuration;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -70,17 +70,15 @@ public class JailManager implements Listener {
 
     public static void unjail(Player player) {
         remove(player, false);
-
-        FileConfiguration config = Main.getConfigManager().getConfig("jail.yml");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
         String playerName = player.getName().toLowerCase();
 
         config.set("Jail.Time." + playerName, null);
         config.set("Jail.Staff." + playerName, null);
         config.set("Jail.Reason." + playerName, null);
-        Main.getInstance().saveConfig();
+        config.save();
 
-        Location lastLocation = (Location) config.get("Jail.LastLocation." + playerName);
-
+        Location lastLocation = config.get("Jail.LastLocation." + playerName, Location.class);
         if (lastLocation != null) {
             player.teleport(lastLocation);
         } else {
@@ -94,13 +92,13 @@ public class JailManager implements Listener {
 
     public static void remove(Player player, boolean save) {
         if (save && isJailed(player)) {
-            FileConfiguration config = Main.getConfigManager().getConfig("jail.yml");
+            Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
             String playerName = player.getName().toLowerCase();
 
             config.set("Jail.Time." + playerName, jailTime.get(player));
             config.set("Jail.Staff." + playerName, jailedBy.get(player));
             config.set("Jail.Reason." + playerName, jailReason.get(player));
-            Main.getInstance().saveConfig();
+            config.save();
         }
         jailTime.remove(player);
         jailReason.remove(player);
@@ -108,17 +106,17 @@ public class JailManager implements Listener {
     }
 
     public static void check(Player player) {
-        FileConfiguration config = Main.getConfigManager().getConfig("jail.yml");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
         String playerName = player.getName().toLowerCase();
 
-        if (!config.contains("Jail.Time." + playerName)) return;
+        if (config.get("Jail.Time." + playerName, null) == null) return;
 
         int storedTime = config.getInt("Jail.Time." + playerName);
         if (storedTime > 0) {
             new BukkitRunnable() {
                 public void run() {
                     if (player.isOnline()) {
-                        jail(player, config.getInt("Jail.Time." + playerName),
+                        jail(player, storedTime,
                                 config.getString("Jail.Reason." + playerName),
                                 config.getString("Jail.Staff." + playerName));
                     }
@@ -133,12 +131,11 @@ public class JailManager implements Listener {
             return;
         }
 
-        FileConfiguration config = Main.getConfigManager().getConfig("jail.yml");
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
         Location lastLocation = target.getLocation();
         String targetName = target.getName().toLowerCase();
 
         remove(target, false);
-
 
         jailTime.put(target, duration);
         jailReason.put(target, reason);
@@ -148,7 +145,7 @@ public class JailManager implements Listener {
         config.set("Jail.Time." + targetName, duration);
         config.set("Jail.Reason." + targetName, reason);
         config.set("Jail.Staff." + targetName, staff);
-        Main.getInstance().saveConfig();
+        config.save();
 
         checkInventory(target);
 
@@ -173,5 +170,6 @@ public class JailManager implements Listener {
         StaffNotify.setStaffNotify(Objects.requireNonNull(Bukkit.getPlayer(staff)), eventText);
     }
 }
+
 
 

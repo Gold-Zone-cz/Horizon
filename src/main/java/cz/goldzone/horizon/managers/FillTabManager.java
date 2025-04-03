@@ -1,16 +1,15 @@
 package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
+import dev.digitality.digitalconfig.config.Configuration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class FillTabManager implements TabCompleter {
 
@@ -79,9 +78,10 @@ public class FillTabManager implements TabCompleter {
     }
 
     private void addWarpSuggestions(List<String> suggestions) {
-        FileConfiguration warpsConfig = Main.getConfigManager().getConfig("warps.yml");
-        if (warpsConfig != null) {
-            Set<String> warpKeys = warpsConfig.getKeys(false);
+        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "warps.yml");
+
+        List<String> warpKeys = config.getKeys();
+        if (warpKeys != null) {
             suggestions.addAll(warpKeys);
         }
     }

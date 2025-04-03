@@ -14,17 +14,4 @@ public enum TimeVoteType {
         this.name = name;
         this.time = time;
     }
-
-    public static boolean contains(String s) {
-        if (s == null || s.isEmpty()) {
-            return false;
-        }
-
-        try {
-            TimeVoteType.valueOf(s.toUpperCase());
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
 }
