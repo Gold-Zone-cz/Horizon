@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import cz.goldzone.horizon.admin.NetherListCommand;
 import cz.goldzone.horizon.commands.HorizonCommand;
 import cz.goldzone.horizon.commands.economy.BalTopCommand;
+import cz.goldzone.horizon.commands.player.*;
 import cz.goldzone.horizon.commands.playerwarps.PlayerWarpsCommand;
 import cz.goldzone.horizon.commands.admin.*;
 import cz.goldzone.horizon.commands.economy.BalanceCommand;
@@ -13,20 +14,17 @@ import cz.goldzone.horizon.commands.home.DelHomeCommand;
 import cz.goldzone.horizon.commands.home.HomeCommand;
 import cz.goldzone.horizon.commands.home.HomeListCommand;
 import cz.goldzone.horizon.commands.home.SetHomeCommand;
-import cz.goldzone.horizon.commands.player.TpToggleCommand;
-import cz.goldzone.horizon.commands.player.TpaAcceptCommand;
-import cz.goldzone.horizon.commands.player.TpaCommand;
-import cz.goldzone.horizon.commands.player.TpaDenyCommand;
 import cz.goldzone.horizon.commands.warp.WarpsListCommand;
 import cz.goldzone.horizon.commands.warp.DelWarpCommand;
 import cz.goldzone.horizon.commands.warp.SetWarpCommand;
 import cz.goldzone.horizon.commands.warp.WarpCommand;
 import cz.goldzone.horizon.listeners.ClickListener;
 import cz.goldzone.horizon.listeners.JoinListener;
+import cz.goldzone.horizon.listeners.TimeVoteListener;
 import cz.goldzone.horizon.managers.*;
 import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
-import cz.goldzone.horizon.timevote.TimeVoteCommand;
+import cz.goldzone.horizon.commands.global.TimeVoteCommand;
 import cz.goldzone.neuron.shared.api.discord.webhook.WebhookClient;
 import dev.digitality.digitalgui.DigitalGUI;
 import lombok.Getter;
@@ -45,14 +43,11 @@ public final class Main extends JavaPlugin {
     private static final Gson gson = new Gson();
     @Getter
     private static Main instance;
-    @Getter
-    private static ConfigManager configManager;
 
     @Override
     public void onEnable() {
         instance = this;
-        configManager = new ConfigManager(this);
-
+        ConfigManager.initialize(this);
 
         DigitalGUI.register(this);
 
@@ -80,13 +75,14 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FreezeManager(), this);
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
         getServer().getPluginManager().registerEvents(new ClickListener(), this);
+        getServer().getPluginManager().registerEvents(new TimeVoteListener(), this);
     }
 
     private void registerPlaceholders() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new VotePlaceholders().register();
             new MoneyPlaceholders().register();
-            getLogger().info("PlaceholderAPI support enabled.");
+            getLogger().info("PlaceholderAPI registered successfully, support enabled.");
         } else {
             getLogger().warning("PlaceholderAPI not found. Placeholders will not work.");
         }
@@ -128,6 +124,7 @@ public final class Main extends JavaPlugin {
         registerCommand(commands, "jail", new JailCommand());
         registerCommand(commands, "unjail", new UnJailCommand());
         registerCommand(commands, "baltop", new BalTopCommand());
+        registerCommand(commands, "ratemessage", new RateMessageCommand());
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
@@ -152,7 +149,7 @@ public final class Main extends JavaPlugin {
     private void registerVault() {
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
             if (EconomyManager.setupEconomy()) {
-                getLogger().info("Vault economy support enabled.");
+                getLogger().info("Economy provider found and registered successfully.");
             } else {
                 getLogger().warning("Vault found, but no economy provider is available.");
             }
@@ -162,7 +159,7 @@ public final class Main extends JavaPlugin {
     }
 
     private static void loadWebhook() {
-        String webhookUrl = getInstance().getConfig().getString("webhook-url");
+        String webhookUrl = ConfigManager.getConfig("config").getString("WebhookURL");
         if (webhookUrl != null) {
             webhookClient = WebhookClient.withUrl(webhookUrl);
             getInstance().getLogger().info("Webhook client initialized successfully.");

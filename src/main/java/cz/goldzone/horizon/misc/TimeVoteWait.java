@@ -1,4 +1,4 @@
-package cz.goldzone.horizon.timevote;
+package cz.goldzone.horizon.misc;
 
 import org.bukkit.entity.Player;
 

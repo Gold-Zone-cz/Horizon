@@ -1,29 +1,27 @@
 package cz.goldzone.horizon.commands.player;
 
+import cz.goldzone.horizon.managers.PlayerWarpsManager;
 import cz.goldzone.neuron.shared.Lang;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import cz.goldzone.horizon.managers.PlayerWarpsManager;
 
-import java.util.List;
-
+import java.util.Arrays;
 
 public class RateMessageCommand implements CommandExecutor {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Lang.get("core.only_pl", sender));
             return true;
         }
 
-        if (args.length < 2) {
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/ratemessage <player_warp_name> <message>");
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Example: <red>/ratemessage mypwarp Thanks {player} for rating my warp {warp}! ");
+        if (args.length < 3) {
+            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/ratemessage <player_warp_name> <stars> <message>");
+            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Example: <red>/ratemessage mypwarp 4 Thanks {player} for rating my warp {warp}!");
             return true;
         }
 
@@ -32,38 +30,30 @@ public class RateMessageCommand implements CommandExecutor {
 
         try {
             ratingThreshold = Integer.parseInt(args[1]);
+            if (ratingThreshold < 1 || ratingThreshold > 5) {
+                throw new NumberFormatException();
+            }
         } catch (NumberFormatException e) {
-            player.sendMessage(Lang.getPrefix("Horizon") + "<red>The rating threshold must be a valid number.");
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>The rating threshold must be a number between 1 and 5.");
             return true;
         }
 
-        // String message = String.join(" ", args, 2, args.length);
-        // if (message.isEmpty()) {
-        //    player.sendMessage(Lang.getPrefix("Horizon") + "<red>You must provide a message.");
-        //    return true;
-        //}
+        String message = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+
+        if (message.isEmpty()) {
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>You must provide a message.");
+            return true;
+        }
 
         String ownerName = PlayerWarpsManager.getPlayerWarpOwner(warpName);
-        if (ownerName == null || !ownerName.equals(player.getName())) {
+        if (ownerName == null || !ownerName.equalsIgnoreCase(player.getName())) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<red>You must be the owner of this warp to set a thank you message.");
             return false;
         }
 
-        for (Player ratingPlayer : Bukkit.getOnlinePlayers()) {
-            int rating = PlayerWarpsManager.getPlayerWarpRating(warpName);
-            if (rating > 3) {
-                String message = PlayerWarpsManager.getRateMessage(warpName);
-                if (message != null && !message.isEmpty()) {
-                    String thankYouMessage = message.replace("{player}", ratingPlayer.getName()).replace("{warp}", warpName);
-                    ratingPlayer.sendMessage(Lang.getPrefix("Horizon") + "<gray>" + thankYouMessage);
-                } else {
-                    ratingPlayer.sendMessage(Lang.getPrefix("Horizon") + "<gray>Thank you for your feedback!");
-                }
-            }
-        }
+        PlayerWarpsManager.setRateMessage(warpName, message, ratingThreshold);
 
-        player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Your thank you message has been set." +
-                (ratingThreshold == 1 ? "1+" : ratingThreshold + "+") + " stars.");
+        player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Your thank you message has been set for ratings " + ratingThreshold + "+ stars.");
         return true;
     }
 }

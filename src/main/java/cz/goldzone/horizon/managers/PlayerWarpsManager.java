@@ -26,16 +26,57 @@ public class PlayerWarpsManager {
                 + "x DOUBLE, y DOUBLE, z DOUBLE,"
                 + "world VARCHAR(64),"
                 + "visit_count INT DEFAULT 0,"
-                + "rating INT DEFAULT 0)";
+                + "rating INT DEFAULT 0,"
+                + "rate_message TEXT DEFAULT NULL,"
+                + "rate_threshold INT DEFAULT 3)";
         executeUpdate(sql);
     }
 
-    public static void setRateMessage(String warpName, String message) {
+    public static void setRateMessage(String warpName, String message, int threshold) {
         rateMessages.put(warpName, message);
+
+        String sql = "UPDATE " + TABLE_NAME + " SET rate_message = ?, rate_threshold = ? WHERE name = ?";
+        try (Connection connection = Core.getPluginMySQL().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, message);
+            ps.setInt(2, threshold);
+            ps.setString(3, warpName.toLowerCase());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logError("Error setting rate message and threshold: ", e);
+        }
+    }
+
+    public static int getRateThreshold(String warpName) {
+        String sql = "SELECT rate_threshold FROM " + TABLE_NAME + " WHERE name = ?";
+        try (Connection connection = Core.getPluginMySQL().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, warpName.toLowerCase());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("rate_threshold");
+                }
+            }
+        } catch (SQLException e) {
+            logError("Error getting warp rate threshold: ", e);
+        }
+        return 3;
     }
 
     public static String getRateMessage(String warpName) {
-        return rateMessages.getOrDefault(warpName, "No rate message has been set.");
+        String sql = "SELECT rate_message FROM " + TABLE_NAME + " WHERE name = ?";
+        try (Connection connection = Core.getPluginMySQL().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, warpName.toLowerCase());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("rate_message");
+                }
+            }
+        } catch (SQLException e) {
+            logError("Error getting rate message: ", e);
+        }
+        return "No rate message has been set.";
     }
 
     public static void createPlayerWarp(Player player, String warpName, Category category) {

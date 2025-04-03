@@ -1,6 +1,6 @@
 package cz.goldzone.horizon.admin;
 
-import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.managers.ConfigManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -32,7 +32,7 @@ public class XrayNotify implements Listener {
             return;
         }
 
-        List<String> xrayWorlds = Main.getConfigManager().getConfig("config.yml").getStringList("xrayWorlds");
+        List<String> xrayWorlds = ConfigManager.getConfig("config").getStringList("xrayWorlds");
 
         if (isXRayMaterial(e.getBlock().getType()) && isInTrackedWorld(e.getBlock().getWorld().getName(), xrayWorlds)) {
             TextComponent text = new TextComponent(player.getName());

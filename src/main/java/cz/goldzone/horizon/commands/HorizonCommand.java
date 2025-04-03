@@ -1,7 +1,6 @@
 package cz.goldzone.horizon.commands;
 
 import cz.goldzone.horizon.managers.ConfigManager;
-import cz.goldzone.horizon.Main;
 import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,8 +18,7 @@ public class HorizonCommand implements CommandExecutor {
 
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("reload")) {
-                ConfigManager configManager = Main.getConfigManager();
-                configManager.reloadAllConfigs();
+                ConfigManager.reloadAllConfigs();
                 sender.sendMessage(Lang.getPrefix("Horizon") + "§aAll configurations have been reloaded.");
                 return true;
             }

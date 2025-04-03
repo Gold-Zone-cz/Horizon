@@ -70,7 +70,7 @@ public class JailManager implements Listener {
 
     public static void unjail(Player player) {
         remove(player, false);
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
+        Configuration config = ConfigManager.getConfig("jail.yml");
         String playerName = player.getName().toLowerCase();
 
         config.set("Jail.Time." + playerName, null);
@@ -92,7 +92,7 @@ public class JailManager implements Listener {
 
     public static void remove(Player player, boolean save) {
         if (save && isJailed(player)) {
-            Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
+            Configuration config = ConfigManager.getConfig("jail");
             String playerName = player.getName().toLowerCase();
 
             config.set("Jail.Time." + playerName, jailTime.get(player));
@@ -106,10 +106,10 @@ public class JailManager implements Listener {
     }
 
     public static void check(Player player) {
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
+        Configuration config = ConfigManager.getConfig("jail");
         String playerName = player.getName().toLowerCase();
 
-        if (config.get("Jail.Time." + playerName, null) == null) return;
+        if (!config.getBoolean("Jail.Time." + playerName)) return;
 
         int storedTime = config.getInt("Jail.Time." + playerName);
         if (storedTime > 0) {
@@ -131,7 +131,7 @@ public class JailManager implements Listener {
             return;
         }
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
+        Configuration config = ConfigManager.getConfig("jail");
         Location lastLocation = target.getLocation();
         String targetName = target.getName().toLowerCase();
 

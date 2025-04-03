@@ -1,6 +1,6 @@
 package cz.goldzone.horizon.commands.warp;
 
-import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -24,7 +24,7 @@ public class WarpsListCommand implements CommandExecutor {
             return true;
         }
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
+        Configuration config = ConfigManager.getConfig("warps");
 
         player.sendMessage("<white>");
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>Available warps:");

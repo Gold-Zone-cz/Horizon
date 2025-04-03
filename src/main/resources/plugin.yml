@@ -90,6 +90,10 @@ commands:
       - pwarp
   baltop:
     description: Show the top players with the highest balance
+  ratemessage:
+    description: Make a thank you message if someone rates the player warp
+    aliases:
+        - ratemsg
 
 
 

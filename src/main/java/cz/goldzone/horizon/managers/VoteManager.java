@@ -1,6 +1,5 @@
 package cz.goldzone.horizon.managers;
 
-import cz.goldzone.horizon.Main;
 import dev.digitality.digitalconfig.config.Configuration;
 import dev.digitality.digitalconfig.config.ConfigurationSection;
 
@@ -14,11 +13,11 @@ public class VoteManager {
     public static void loadVotes() {
         votes.clear();
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "votes.yml");
+        Configuration config = ConfigManager.getConfig("votes");
 
         if (config.getSection("votes") == null) {
             config.set("votes", new ConfigurationSection());
-            Main.getConfigManager().saveConfig("votes.yml");
+            config.save();
         }
 
         for (String key : Objects.requireNonNull(config.getSection("votes")).getKeys()) {
@@ -34,7 +33,7 @@ public class VoteManager {
     public static void addVote(String player) {
         int currentVotes = getVotes(player);
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "votes.yml");
+        Configuration config = ConfigManager.getConfig("votes");
 
         config.set("votes." + player, currentVotes + 1);
         config.save();

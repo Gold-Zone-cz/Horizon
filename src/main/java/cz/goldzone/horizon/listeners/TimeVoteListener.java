@@ -1,5 +1,6 @@
-package cz.goldzone.horizon.timevote;
+package cz.goldzone.horizon.listeners;
 
+import cz.goldzone.horizon.managers.TimeVoteManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,10 +21,10 @@ public class TimeVoteListener implements Listener {
         }
 
         Player player = (Player) e.getWhoClicked();
-        if (e.getCurrentItem().equals(TimeVote.dayVoteItem)) {
+        if (e.getCurrentItem().equals(TimeVoteManager.dayVoteItem)) {
             player.performCommand("tv day");
             player.closeInventory();
-        } else if (e.getCurrentItem().equals(TimeVote.nightVoteItem)) {
+        } else if (e.getCurrentItem().equals(TimeVoteManager.nightVoteItem)) {
             player.performCommand("tv night");
             player.closeInventory();
         }

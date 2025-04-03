@@ -1,6 +1,6 @@
 package cz.goldzone.horizon.commands.warp;
 
-import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
 import org.bukkit.command.Command;
@@ -28,11 +28,11 @@ public class DelWarpCommand implements CommandExecutor {
             return false;
         }
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
+        Configuration config = ConfigManager.getConfig("warps");
 
         String name = args[0].toLowerCase();
-        if (config.getSection(name) != null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + " <red>already exists!");
+        if (config.getSection(name) == null) {
+            player.sendMessage(Lang.getPrefix("Warps") + ("<red>Warp " + name + "  does not exist!"));
             return false;
         }
 

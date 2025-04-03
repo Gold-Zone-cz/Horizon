@@ -1,4 +1,4 @@
-package cz.goldzone.horizon.timevote;
+package cz.goldzone.horizon.enums;
 
 import lombok.Getter;
 

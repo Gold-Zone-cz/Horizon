@@ -67,18 +67,22 @@ public class RateGUI implements IGUI {
             player.closeInventory();
             player.sendMessage(Lang.getPrefix("PlayerWarps") + String.format("<gray>You rated the player warp <red>%s <gray>with <yellow>%d star%s", warpName, clampedRating, (clampedRating > 1 ? "s" : "")));
 
-            if (clampedRating > 3) {
-                String ownerName = PlayerWarpsManager.getPlayerWarpOwner(warpName);
-                Player owner = Bukkit.getPlayer(ownerName);
-
-                if (owner != null) {
-                    String thankYouMessage = PlayerWarpsManager.getRateMessage(warpName);
-                    owner.sendMessage(Lang.getPrefix("PlayerWarps") + Objects.requireNonNullElse(thankYouMessage, "<gray>Thank you for your rating!"));
-                }
-            }
+            sendThankYouMessages(warpName, clampedRating, player);
         });
 
         return item;
+    }
+
+    public static void sendThankYouMessages(String warpName, int givenRating, Player ratingPlayer) {
+        String message = PlayerWarpsManager.getRateMessage(warpName);
+        int requiredThreshold = PlayerWarpsManager.getRateThreshold(warpName);
+
+        if (message == null || message.isEmpty() || givenRating < requiredThreshold) {
+            return;
+        }
+
+        String formattedMessage = message.replace("{player}", ratingPlayer.getName()).replace("{warp}", warpName);
+        ratingPlayer.sendMessage(Lang.getPrefix("Horizon") + "<gray>" + formattedMessage);
     }
 
     private boolean hasPlayerVisitedWarp(String warpName) {

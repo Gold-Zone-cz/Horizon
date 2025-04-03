@@ -1,6 +1,6 @@
 package cz.goldzone.horizon.commands.warp;
 
-import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
 import org.bukkit.Location;
@@ -19,7 +19,7 @@ public class WarpCommand implements CommandExecutor {
             return true;
         }
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
+        Configuration config = ConfigManager.getConfig("warps");
 
         if (args.length == 0) {
             sendHelpMessage(player);
@@ -59,7 +59,7 @@ public class WarpCommand implements CommandExecutor {
             return;
         }
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/warps.yml");
+        Configuration config = ConfigManager.getConfig("warps");
         Location warpLocation = config.get(warpName + ".location", Location.class);
         if (warpLocation == null) {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp location is invalid!");

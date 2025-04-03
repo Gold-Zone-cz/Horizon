@@ -1,6 +1,8 @@
-package cz.goldzone.horizon.timevote;
+package cz.goldzone.horizon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
+import cz.goldzone.horizon.enums.TimeVoteType;
+import cz.goldzone.horizon.managers.TimeVoteManager;
 import dev.digitality.digitalgui.api.IGUI;
 import dev.digitality.digitalgui.api.InteractiveItem;
 import org.bukkit.Bukkit;
@@ -27,8 +29,8 @@ public class TimeVoteGUI implements IGUI {
         dayVoteItem.setDisplayName("<yellow>Vote for Day");
         dayVoteItem.onClick((player, clickType) -> {
             player.sendMessage("<gray>You voted for Day!");
-            if (TimeVote.addYesVote(player.getName())) {
-                TimeVote.setCurrentVote(TimeVoteType.DAY);
+            if (TimeVoteManager.addYesVote(player.getName())) {
+                TimeVoteManager.setCurrentVote(TimeVoteType.DAY);
             } else {
                 player.sendMessage("<red>You can only vote once!");
             }
@@ -39,8 +41,8 @@ public class TimeVoteGUI implements IGUI {
         nightVoteItem.setDisplayName("<blue>Vote for Night");
         nightVoteItem.onClick((player, clickType) -> {
             player.sendMessage("<gray>You voted for Night!");
-            if (TimeVote.addYesVote(player.getName())) {
-                TimeVote.setCurrentVote(TimeVoteType.NIGHT);
+            if (TimeVoteManager.addYesVote(player.getName())) {
+                TimeVoteManager.setCurrentVote(TimeVoteType.NIGHT);
             } else {
                 player.sendMessage("<red>You can only vote once!");
             }

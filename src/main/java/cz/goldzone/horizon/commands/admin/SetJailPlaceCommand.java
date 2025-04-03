@@ -1,6 +1,7 @@
 package cz.goldzone.horizon.commands.admin;
 
 import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class SetJailPlaceCommand implements CommandExecutor {
     }
 
     public static void load() {
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
+        Configuration config = ConfigManager.getConfig("jail");
         if (config.getSection("JailPlace.World") != null) {
             World world = Bukkit.getWorld(Objects.requireNonNull(config.getString("JailPlace.World")));
             if (world == null) return;
@@ -69,7 +70,7 @@ public class SetJailPlaceCommand implements CommandExecutor {
             return false;
         }
 
-        Configuration config = new Configuration(Main.getInstance().getDataFolder() + "/jail.yml");
+        Configuration config = ConfigManager.getConfig("jail");
 
         if (config.getSection("JailPlace.World") != null && !confirmationSet.contains(player.getUniqueId())) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<red>Jail location already exists!\n <gray>Retype the command to overwrite it.");
