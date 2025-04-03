@@ -57,7 +57,7 @@ public class HomesGUI implements IGUI {
             item.onRightClick(player ->
                     player.openInventory(new ConfirmGUI(() -> {
                         HomesManager.deleteHome(player, homeName);
-                        player.sendMessage(Lang.getPrefix("Homes") + "<gray>Your home <red>" + homeName + " <gray>has been successfully deleted");
+                        player.sendMessage(Lang.getPrefix("Homes") + "<gray>Your home <red>" + homeName + " <gray>has been successfully deleted!");
                     }).getInventory())
             );
 

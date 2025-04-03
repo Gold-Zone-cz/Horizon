@@ -53,7 +53,6 @@ public final class Main extends JavaPlugin {
         instance = this;
         configManager = new ConfigManager(this);
         DigitalGUI.register(this);
-
         registerCommands();
         registerListeners();
         registerPlaceholders();

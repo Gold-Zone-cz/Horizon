@@ -16,6 +16,7 @@ import java.util.logging.Level;
 public class PlayerWarpsManager {
 
     private static final String TABLE_NAME = "survival_playerwarps";
+    public static Map<String, String> rateMessages = new HashMap<>();
 
     public static void createPlayerWarpTable() {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
@@ -27,6 +28,14 @@ public class PlayerWarpsManager {
                 + "visit_count INT DEFAULT 0,"
                 + "rating INT DEFAULT 0)";
         executeUpdate(sql);
+    }
+
+    public static void setRateMessage(String warpName, String message) {
+        rateMessages.put(warpName, message);
+    }
+
+    public static String getRateMessage(String warpName) {
+        return rateMessages.getOrDefault(warpName, "No rate message has been set.");
     }
 
     public static void createPlayerWarp(Player player, String warpName, Category category) {
@@ -62,18 +71,19 @@ public class PlayerWarpsManager {
     }
 
     public static String getMostVisitedWarp() {
-        String mostVisitedWarp = null;
         String sql = "SELECT name FROM " + TABLE_NAME + " ORDER BY visit_count DESC LIMIT 1";
+
         try (Connection connection = Core.getPluginMySQL().getConnection();
              PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             if (rs.next()) {
-                mostVisitedWarp = rs.getString("name");
+               return rs.getString("name");
             }
         } catch (SQLException e) {
-            logError("Error getting most visited warp: ", e);
+            logError("Error getting most visited warp. Query: " + sql, e);
         }
-        return mostVisitedWarp;
+        return "None";
     }
 
     public static int getPlayerWarpRating(String warpName) {
@@ -115,13 +125,22 @@ public class PlayerWarpsManager {
             ps.setString(1, warpName.toLowerCase());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return String.valueOf(rs.getLong("user_id"));
+                    long userId = rs.getLong("user_id");
+                    return getPlayerNameFromUserId(userId);
                 }
             }
         } catch (SQLException e) {
             logError("Error getting warp owner: ", e);
         }
-        return null;
+        return "Unknown";
+    }
+
+    public static String getPlayerNameFromUserId(long userId) {
+        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(userId);
+        if (gamePlayer != null) {
+            return gamePlayer.getName();
+        }
+        return "Unknown";
     }
 
     public static List<String> getPlayerWarps(Player player) {

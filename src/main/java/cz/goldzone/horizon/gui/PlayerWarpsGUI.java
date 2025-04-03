@@ -69,12 +69,13 @@ public class PlayerWarpsGUI implements IGUI {
         if (meta != null) {
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c" + warpName));
 
-            String owner = PlayerWarpsManager.getPlayerWarpOwner(warpName);
+            String ownerId = PlayerWarpsManager.getPlayerWarpOwner(warpName);
+            String ownerName = PlayerWarpsManager.getPlayerNameFromUserId(Long.parseLong(ownerId));
             int visits = PlayerWarpsManager.getPlayerWarpVisitCount(warpName);
 
             List<String> lore = Arrays.asList(
                     " ",
-                    "<gray>Owner: <red>" + (owner != null ? owner : "Unknown"),
+                    "<gray>Owner: <red>" + (ownerName != null ? ownerName : "Unknown"),
                     "<gray>Visits: <red>" + visits,
                     " ",
                     "<gray>Rating: <gold>" + warpStars,
