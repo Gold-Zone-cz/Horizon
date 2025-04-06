@@ -21,21 +21,31 @@ public class JailManager implements Listener {
     private static final Map<Player, String> jailReason = new HashMap<>();
     private static final Map<Player, String> jailedBy = new HashMap<>();
 
+    private static final String PREFIX = Lang.getPrefix("Horizon");
+    private static final List<Material> BANNED_ITEMS = Arrays.asList(Material.CHORUS_FRUIT, Material.ARROW, Material.FIREWORK_ROCKET);
+
     public static boolean isJailed(Player player) {
         return jailTime.containsKey(player);
     }
 
     private static void checkInventory(Player player) {
-        List<Material> bannedItems = Arrays.asList(Material.CHORUS_FRUIT, Material.ARROW, Material.FIREWORK_ROCKET);
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && bannedItems.contains(item.getType())) {
-                player.getInventory().remove(item);
-                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Removed jail-banned items from your inventory.");
-            }
+        List<ItemStack> bannedItems = Arrays.stream(player.getInventory().getContents())
+                .filter(Objects::nonNull)
+                .filter(item -> BANNED_ITEMS.contains(item.getType()))
+                .toList();
+
+        for (ItemStack item : bannedItems) {
+            player.getInventory().remove(item);
+            player.sendMessage(PREFIX + "<red>Removed jail-banned items from your inventory.");
         }
     }
 
     public static void startTask() {
+        scheduleJailTimeTask();
+        scheduleActionBarUpdate();
+    }
+
+    private static void scheduleJailTimeTask() {
         new BukkitRunnable() {
             public void run() {
                 Iterator<Map.Entry<Player, Integer>> iterator = jailTime.entrySet().iterator();
@@ -53,7 +63,9 @@ public class JailManager implements Listener {
                 }
             }
         }.runTaskTimer(Main.getInstance(), 1200L, 1200L);
+    }
 
+    private static void scheduleActionBarUpdate() {
         new BukkitRunnable() {
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -70,24 +82,17 @@ public class JailManager implements Listener {
 
     public static void unjail(Player player) {
         remove(player, false);
-        Configuration config = ConfigManager.getConfig("jail.yml");
+        Configuration config = ConfigManager.getConfig("jail");
         String playerName = player.getName().toLowerCase();
 
-        config.set("Jail.Time." + playerName, null);
-        config.set("Jail.Staff." + playerName, null);
-        config.set("Jail.Reason." + playerName, null);
+        config.set("Jail." + playerName, null);
         config.save();
 
-        Location lastLocation = config.get("Jail.LastLocation." + playerName, Location.class);
-        if (lastLocation != null) {
-            player.teleport(lastLocation);
-        } else {
-            player.performCommand("spawn");
-        }
+        Optional<Location> lastLocationOpt = Optional.ofNullable(config.get("Jail." + playerName + ".LastLocation", Location.class));
+        lastLocationOpt.ifPresentOrElse(player::teleport, () -> player.performCommand("spawn"));
 
-        player.sendMessage(Lang.getPrefix("Horizon") + "<green>You have been released from jail!");
-        player.setGameMode(GameMode.SURVIVAL);
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+        player.sendMessage(PREFIX + "<green>You have been released from jail!");
+        resetPlayerState(player);
     }
 
     public static void remove(Player player, boolean save) {
@@ -95,11 +100,12 @@ public class JailManager implements Listener {
             Configuration config = ConfigManager.getConfig("jail");
             String playerName = player.getName().toLowerCase();
 
-            config.set("Jail.Time." + playerName, jailTime.get(player));
-            config.set("Jail.Staff." + playerName, jailedBy.get(player));
-            config.set("Jail.Reason." + playerName, jailReason.get(player));
+            config.set("Jail." + playerName + ".Time", jailTime.get(player));
+            config.set("Jail." + playerName + ".Reason", jailReason.get(player));
+            config.set("Jail." + playerName + ".Staff", jailedBy.get(player));
             config.save();
         }
+
         jailTime.remove(player);
         jailReason.remove(player);
         jailedBy.remove(player);
@@ -109,20 +115,23 @@ public class JailManager implements Listener {
         Configuration config = ConfigManager.getConfig("jail");
         String playerName = player.getName().toLowerCase();
 
-        if (!config.getBoolean("Jail.Time." + playerName)) return;
+        if (!config.hasKey("Jail." + playerName)) return;
 
-        int storedTime = config.getInt("Jail.Time." + playerName);
-        if (storedTime > 0) {
-            new BukkitRunnable() {
-                public void run() {
-                    if (player.isOnline()) {
-                        jail(player, storedTime,
-                                config.getString("Jail.Reason." + playerName),
-                                config.getString("Jail.Staff." + playerName));
-                    }
+        Integer storedTime = config.get("Jail." + playerName + ".Time", Integer.class);
+        if (storedTime == null || storedTime <= 0) return;
+
+        new BukkitRunnable() {
+            public void run() {
+                if (player.isOnline()) {
+                    jail(
+                            player,
+                            storedTime,
+                            config.getString("Jail." + playerName + ".Reason"),
+                            config.getString("Jail." + playerName + ".Staff")
+                    );
                 }
-            }.runTaskLater(Main.getInstance(), 100L);
-        }
+            }
+        }.runTaskLater(Main.getInstance(), 100L);
     }
 
     public static void jail(Player target, int duration, String reason, String staff) {
@@ -132,44 +141,64 @@ public class JailManager implements Listener {
         }
 
         Configuration config = ConfigManager.getConfig("jail");
-        Location lastLocation = target.getLocation();
         String targetName = target.getName().toLowerCase();
 
+        Location lastLocation = adjustLastLocation(target);
         remove(target, false);
-
         jailTime.put(target, duration);
         jailReason.put(target, reason);
         jailedBy.put(target, staff);
 
-        config.set("Jail.LastLocation." + targetName, lastLocation);
-        config.set("Jail.Time." + targetName, duration);
-        config.set("Jail.Reason." + targetName, reason);
-        config.set("Jail.Staff." + targetName, staff);
+        config.set("Jail." + targetName + ".LastLocation", lastLocation);
+        config.set("Jail." + targetName + ".Time", duration);
+        config.set("Jail." + targetName + ".Reason", reason);
+        config.set("Jail." + targetName + ".Staff", staff);
         config.save();
 
         checkInventory(target);
+        teleportToJail(target, reason);
+        notifyStaff(staff, target, duration, reason);
+    }
 
+    private static Location adjustLastLocation(Player target) {
+        Location lastLocation = target.getLocation();
+        if (WorldManager.isValidSourceWorld(Objects.requireNonNull(lastLocation.getWorld()))) {
+            return Optional.ofNullable(Bukkit.getWorld("world"))
+                    .map(world -> Objects.requireNonNull(Bukkit.getWorld("Spawn")).getSpawnLocation())
+                    .orElse(lastLocation);
+        }
+        return lastLocation;
+    }
+
+    private static void teleportToJail(Player target, String reason) {
         Location jailLocation = SetJailPlaceCommand.getJailLocation();
         if (jailLocation == null) {
-            Main.getInstance().getLogger().warning("Jail location is not set! Please set it using /setjail command.");
+            Main.getInstance().getLogger().warning("Jail location is not set! Use /setjail to set it.");
             return;
         }
 
         target.teleport(jailLocation);
-        GodManager.getGodList().remove(target);
-        target.setHealth(20);
-        target.setFoodLevel(20);
-        target.setGameMode(GameMode.ADVENTURE);
-        target.sendMessage(Lang.getPrefix("Horizon") + "<gray>You have been placed in jail! Reason: <red>" + reason);
+        resetPlayerState(target);
+        target.sendMessage(PREFIX + "<gray>You have been placed in jail! Reason: <red>" + reason);
         target.sendTitle("<red><bold>JAIL", "<gray>You have been jailed!", 0, 100, 0);
-        target.setAllowFlight(false);
-        target.setFlying(false);
         target.playSound(target.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.0f, 1.0f);
+    }
 
-        String eventText = "JAIL: " + reason + " (" + duration + " minutes) -> " + target.getName();
-        StaffNotify.setStaffNotify(Objects.requireNonNull(Bukkit.getPlayer(staff)), eventText);
+    private static void notifyStaff(String staff, Player target, int duration, String reason) {
+        Player staffPlayer = Bukkit.getPlayer(staff);
+        if (staffPlayer != null) {
+            String eventText = "JAIL: " + reason + " (" + duration + " minutes) -> " + target.getName();
+            StaffNotify.setStaffNotify(staffPlayer, eventText);
+        }
+    }
+
+    private static void resetPlayerState(Player player) {
+        player.setGameMode(GameMode.SURVIVAL);
+        GodManager.getGodList().remove(player);
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setAllowFlight(false);
+        player.setFlying(false);
+        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
     }
 }
-
-
-

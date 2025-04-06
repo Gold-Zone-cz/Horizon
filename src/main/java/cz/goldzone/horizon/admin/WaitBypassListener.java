@@ -74,7 +74,7 @@ public class WaitBypassListener implements Listener {
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("horizon.staff.spectate")) {
-                p.spigot().sendMessage((BaseComponent) text);
+                p.spigot().sendMessage(text);
             }
         }
     }

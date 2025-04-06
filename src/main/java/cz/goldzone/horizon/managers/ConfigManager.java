@@ -11,7 +11,7 @@ import java.util.Map;
 public class ConfigManager {
 
     private static final Map<String, Configuration> configs = new HashMap<>();
-    private static final String[] configFiles = {"warps.yml", "player_warps.yml", "votes.yml", "config.yml", "jail.yml"};
+    private static final String[] configFiles = {"warps", "votes", "config", "jail"};
     private static JavaPlugin plugin;
 
     public static void initialize(JavaPlugin pluginInstance) {

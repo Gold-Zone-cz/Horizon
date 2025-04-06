@@ -1,5 +1,6 @@
-package cz.goldzone.horizon.timevote;
+package cz.goldzone.horizon.managers;
 
+import cz.goldzone.horizon.enums.TimeVoteType;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -8,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TimeVote {
+public class TimeVoteManager {
 
     public static TimeVoteType currentVote;
 

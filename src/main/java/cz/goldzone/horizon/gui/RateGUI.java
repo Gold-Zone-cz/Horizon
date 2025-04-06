@@ -16,9 +16,11 @@ import java.util.Objects;
 public class RateGUI implements IGUI {
     private static final int[] RATING_SLOTS = {11, 12, 13, 14, 15};
     private final String warpName;
+    private final Player player;
 
-    public RateGUI(String warpName) {
+    public RateGUI(String warpName, Player player) {
         this.warpName = warpName;
+        this.player = player;
     }
 
     @NotNull
@@ -28,7 +30,7 @@ public class RateGUI implements IGUI {
 
         DigitalGUI.fillInventory(inventory, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        if (hasPlayerVisitedWarp(warpName)) {
+        if (hasPlayerVisitedWarp(warpName, player)) {
             for (int i = 0; i < 5; i++) {
                 final int rating = i + 1;
                 InteractiveItem item = createRatingItem(rating);
@@ -49,12 +51,17 @@ public class RateGUI implements IGUI {
     }
 
     private InteractiveItem createRatingItem(int rating) {
-        String displayName = String.format("<yellow><bold>Rate</bold> " + warpName);
-        String lore = String.format("<gray>\n<gray>Click to rate with <yellow>%d star%s\n<gray>", rating, (rating > 1 ? "s" : ""));
+        String displayName = "<yellow><bold>Rate</bold> " + warpName;
+        String lore = Lang.format(
+                "<gray>\n<gray>Click to rate with <yellow>%{1} star%{2}\n<gray>",
+                String.valueOf(rating), (rating > 1 ? "s" : "")
+        );
         if (rating == 1) {
-            lore += "\n\n<red>Worst rating";
+            lore += "\n<red>Worst rating!";
         } else if (rating == 5) {
-            lore += "\n\n<green>Best rating";
+            lore += "\n<green>Great rating!";
+        } else if (rating == 3) {
+            lore += "\n<yellow>Average rating!";
         }
 
         InteractiveItem item = new InteractiveItem(Objects.requireNonNull(XMaterial.NETHER_STAR.parseItem()));
@@ -65,7 +72,7 @@ public class RateGUI implements IGUI {
             int clampedRating = Math.min(rating, 5);
             PlayerWarpsManager.setPlayerWarpRating(warpName, clampedRating);
             player.closeInventory();
-            player.sendMessage(Lang.getPrefix("PlayerWarps") + String.format("<gray>You rated the player warp <red>%s <gray>with <yellow>%d star%s", warpName, clampedRating, (clampedRating > 1 ? "s" : "")));
+            player.sendMessage(Lang.getPrefix("PlayerWarps") + Lang.format("<gray>You rated the player warp <red>%{1} <gray>with <yellow>%{2} star%{3}", warpName, String.valueOf(clampedRating), (clampedRating > 1 ? "s" : "")));
 
             sendThankYouMessages(warpName, clampedRating, player);
         });
@@ -82,10 +89,10 @@ public class RateGUI implements IGUI {
         }
 
         String formattedMessage = message.replace("{player}", ratingPlayer.getName()).replace("{warp}", warpName);
-        ratingPlayer.sendMessage(Lang.getPrefix("Horizon") + "<gray>" + formattedMessage);
+        ratingPlayer.sendMessage(Lang.getPrefix("Rate") + "<gray>" + formattedMessage);
     }
 
-    private boolean hasPlayerVisitedWarp(String warpName) {
-        return PlayerWarpsManager.getPlayerWarpVisitCount(warpName) > 0;
+    private boolean hasPlayerVisitedWarp(String warpName, Player player) {
+        return PlayerWarpsManager.hasVisitedPlayerWarp(player, warpName);
     }
 }

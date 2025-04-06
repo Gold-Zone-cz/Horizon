@@ -34,6 +34,7 @@ public class PlayerWarpsCommand implements CommandExecutor {
         };
     }
 
+
     private void displayHelp(Player player) {
         player.sendMessage(Lang.getPrefix("PlayerWarps") + "<gray>Available Commands:");
         player.sendMessage("<white>");
@@ -53,9 +54,16 @@ public class PlayerWarpsCommand implements CommandExecutor {
         }
 
         String warpName = args[1].toLowerCase();
+
+        if (PlayerWarpsManager.getPlayerWarpLocation(warpName).isPresent()) {
+            sendErrorMessage(player, "This name already exists!");
+            return false;
+        }
+
         player.openInventory(new CreateGUI(warpName).getInventory());
         return true;
     }
+
 
     private boolean handleDelete(Player player, String[] args) {
         if (args.length < 2) {
@@ -64,6 +72,16 @@ public class PlayerWarpsCommand implements CommandExecutor {
         }
 
         String warpName = args[1].toLowerCase();
+        PlayerWarpsManager.getPlayerWarpOwner(warpName);
+        player.getUniqueId();
+        boolean isOwner = false;
+        boolean canDeleteOther = player.hasPermission("horizon.admin.pwarps.delete");
+
+        if (!isOwner && !canDeleteOther) {
+            sendErrorMessage(player, "You do not have permission to delete another player's warp!");
+            return false;
+        }
+
         if (PlayerWarpsManager.getPlayerWarpLocation(warpName).isEmpty()) {
             sendErrorMessage(player, "Player warp with this name does not exist!");
             return false;

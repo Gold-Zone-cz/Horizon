@@ -1,6 +1,7 @@
 package cz.goldzone.horizon.admin;
 
 import cz.goldzone.horizon.Main;
+import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -103,7 +104,7 @@ public class PlayerScan implements Listener {
     private void notifyStaff(Player p, ItemStack i) {
         for (Player pp : Bukkit.getOnlinePlayers()) {
             if (pp.hasPermission("horizon.staff.notify")) {
-                pp.sendMessage(String.format("%s has an illegal item: %s", p.getName(), i.getType()));
+                pp.sendMessage(Lang.format("%{1} has an illegal item: %{2}", p.getName(), i.getType().toString()));
             }
         }
     }

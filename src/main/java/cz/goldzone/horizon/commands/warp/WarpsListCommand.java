@@ -3,17 +3,12 @@ package cz.goldzone.horizon.commands.warp;
 import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import dev.digitality.digitalconfig.config.ConfigurationSection;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class WarpsListCommand implements CommandExecutor {
 
@@ -30,16 +25,20 @@ public class WarpsListCommand implements CommandExecutor {
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>Available warps:");
         player.sendMessage("<white>");
 
-        List<String> warpKeys = config.getKeys();
-        if (warpKeys.isEmpty()) {
+        ConfigurationSection warpSection = config.getSection("Warps");
+
+        if (warpSection == null || warpSection.getKeys().isEmpty()) {
             player.sendMessage("<dark_gray>【 <red>No warps available. <dark_gray>】");
         } else {
-            for (String key : warpKeys) {
-                TextComponent warpText = new TextComponent("<dark_gray>【 <red>" + key + " <dark_gray>】");
-                warpText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("<gray>Click to insert into chat").create()));
-                warpText.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/warp " + key));
-                player.spigot().sendMessage(warpText);
+            StringBuilder warpMessage = new StringBuilder();
+
+            for (String warpName : warpSection.getKeys()) {
+                String warpDisplayName = warpSection.getString(warpName + ".displayName");
+                warpMessage.append("<dark_gray>【 <red>").append(warpDisplayName).append(" <dark_gray>】")
+                        .append("\n");
             }
+
+            player.sendMessage(warpMessage.toString());
         }
 
         player.sendMessage("<white>");

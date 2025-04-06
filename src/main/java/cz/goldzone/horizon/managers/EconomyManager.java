@@ -94,7 +94,7 @@ public class EconomyManager {
         return currentBalance >= amount;
     }
 
-    public static String format(double amount) {
-        return String.format("%.2f", amount);
-    }
+    // public static String format(double amount) {
+    //     return String.format("%.2f", amount);
+    // }
 }

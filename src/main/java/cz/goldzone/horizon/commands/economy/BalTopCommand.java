@@ -35,7 +35,7 @@ public class BalTopCommand implements CommandExecutor {
         sender.sendMessage("\n<red>----- <gray>Baltop <red>-----");
         int rank = 1;
         for (Map.Entry<String, Double> entry : topPlayers) {
-            sender.sendMessage("<red>" + rank + ". <gray>" + entry.getKey() + " <red>$" + EconomyManager.format(entry.getValue()));
+            // sender.sendMessage("<red>" + rank + ". <gray>" + entry.getKey() + " <red>$" + EconomyManager.format(entry.getValue()));
             rank++;
         }
         return true;

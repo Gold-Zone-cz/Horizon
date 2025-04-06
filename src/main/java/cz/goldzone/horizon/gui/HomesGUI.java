@@ -35,7 +35,6 @@ public class HomesGUI implements IGUI {
         for (String homeName : homes) {
             if (slot >= inv.getSize()) break;
 
-            String creationDate = HomesManager.getHomeCreationDate(player, homeName);
             Location homeLocation = HomesManager.getHomeLocation(player, homeName);
 
             if (homeLocation == null) {
@@ -43,7 +42,7 @@ public class HomesGUI implements IGUI {
             }
 
             InteractiveItem item = new InteractiveItem(Objects.requireNonNull(XMaterial.RED_BED.parseItem()));
-            item.setDisplayName("<red><smallcaps>" + homeName + "</smallcaps> <gray>(" + creationDate + "<gray>)");
+            item.setDisplayName("<red><smallcaps>" + homeName);
             item.setLore("<gray>\n" +
                     "<red>➥ <gray>Location: <red>" + Objects.requireNonNull(homeLocation.getWorld()).getName() + "\n" +
                     "<red>➥ <gray>XYZ: <red>" + homeLocation.getBlockX() + " " + homeLocation.getBlockY() + " " + homeLocation.getBlockZ() + "\n" +

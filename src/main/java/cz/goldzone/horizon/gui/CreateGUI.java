@@ -9,12 +9,16 @@ import dev.digitality.digitalgui.api.IGUI;
 import dev.digitality.digitalgui.api.InteractiveItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 
-public class CreateGUI implements IGUI {
+public class CreateGUI implements IGUI, Listener {
     private final String playerWarpName;
+    private boolean creationCancelled = false;
 
     public CreateGUI(String playerWarpName) {
         this.playerWarpName = playerWarpName;
@@ -48,8 +52,24 @@ public class CreateGUI implements IGUI {
     }
 
     private void selectCategory(Player player, Category category) {
+        if (creationCancelled) {
+            player.sendMessage(Lang.getPrefix("PlayerWarps") + "<red>Creation has been cancelled.");
+            return;
+        }
+
         PlayerWarpsManager.createPlayerWarp(player, playerWarpName, category);
         player.sendMessage(Lang.getPrefix("PlayerWarps") + "<gray>Player warp <red>" + playerWarpName + " <gray>has been created in category <red>" + category.getDisplayName());
         player.closeInventory();
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (!(event.getPlayer() instanceof Player player)) return;
+        if (!(event.getInventory().getHolder() instanceof CreateGUI)) return;
+
+        if (!creationCancelled) {
+            creationCancelled = true;
+            player.sendMessage(Lang.getPrefix("PlayerWarps") + "<red>Creation cancelled.");
+        }
     }
 }

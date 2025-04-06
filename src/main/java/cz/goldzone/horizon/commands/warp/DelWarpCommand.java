@@ -31,12 +31,14 @@ public class DelWarpCommand implements CommandExecutor {
         Configuration config = ConfigManager.getConfig("warps");
 
         String name = args[0].toLowerCase();
-        if (config.getSection(name) == null) {
-            player.sendMessage(Lang.getPrefix("Warps") + ("<red>Warp " + name + "  does not exist!"));
+        String path = "Warps." + name;
+
+        if (config.getSection(path) == null) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + "<red> does not exist!");
             return false;
         }
 
-        config.set(name, player.getLocation());
+        config.set(path, null);
         config.save();
 
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been deleted!");

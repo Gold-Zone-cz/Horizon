@@ -32,7 +32,7 @@ public class XrayNotify implements Listener {
             return;
         }
 
-        List<String> xrayWorlds = ConfigManager.getConfig("config").getStringList("xrayWorlds");
+        List<String> xrayWorlds = ConfigManager.getConfig("config").getStringList("XrayWorlds");
 
         if (isXRayMaterial(e.getBlock().getType()) && isInTrackedWorld(e.getBlock().getWorld().getName(), xrayWorlds)) {
             TextComponent text = new TextComponent(player.getName());

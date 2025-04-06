@@ -16,7 +16,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class FreezeManager implements Listener {
     private static final Map<Player, Integer> frozenPlayers = new HashMap<>();
@@ -69,36 +71,32 @@ public class FreezeManager implements Listener {
         player.sendTitle("<red><bold>FROZEN!", "<gray>You have been frozen for " + minutes + " minutes.", 0, 50, 0);
         player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.0f, 1.0f);
         if (log) {
-            String eventText = "FREEZE: " + player.getName() + " for " + minutes + " minutes";
-            Player staffPlayer = Bukkit.getPlayer(staff);
-            if (staffPlayer != null) {
-                StaffNotify.setStaffNotify(staffPlayer, eventText);
-            }
+            logFreezeEvent(player, staff, minutes);
+        }
+    }
+
+    private static void logFreezeEvent(Player player, String staff, int minutes) {
+        String eventText = "FREEZE: " + player.getName() + " for " + minutes + " minutes";
+        Player staffPlayer = Bukkit.getPlayer(staff);
+        if (staffPlayer != null) {
+            StaffNotify.setStaffNotify(staffPlayer, eventText);
         }
     }
 
     private void handleFrozenPlayerActions(Player player, PlayerMoveEvent event) {
-        if (isFrozen(player)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(isFrozen(player));
     }
 
     private void handleFrozenPlayerActions(Player player, PlayerInteractEvent event) {
-        if (isFrozen(player)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(isFrozen(player));
     }
 
     private void handleFrozenPlayerActions(Player player, BlockBreakEvent event) {
-        if (isFrozen(player)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(isFrozen(player));
     }
 
     private void handleFrozenPlayerActions(Player player, BlockPlaceEvent event) {
-        if (isFrozen(player)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(isFrozen(player));
     }
 
     private void handlePvPFreeze(EntityDamageByEntityEvent event) {

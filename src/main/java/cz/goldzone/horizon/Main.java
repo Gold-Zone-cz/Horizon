@@ -24,7 +24,6 @@ import cz.goldzone.horizon.listeners.TimeVoteListener;
 import cz.goldzone.horizon.managers.*;
 import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
-import cz.goldzone.horizon.commands.global.TimeVoteCommand;
 import cz.goldzone.neuron.shared.api.discord.webhook.WebhookClient;
 import dev.digitality.digitalgui.DigitalGUI;
 import lombok.Getter;
@@ -48,18 +47,16 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         ConfigManager.initialize(this);
-
         DigitalGUI.register(this);
 
+        initializeManagers();
         registerCommands();
         registerListeners();
         registerPlaceholders();
         registerVault();
+        initializeWebhookClient();
 
-        initializeManagers();
-        loadWebhook();
-
-        getLogger().info("Horizon successfully loaded.");
+        getLogger().info("Horizon (" + getDescription().getVersion() + ") successfully loaded.");
     }
 
     private void initializeManagers() {
@@ -72,10 +69,8 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new FreezeManager(), this);
-        getServer().getPluginManager().registerEvents(new JoinListener(), this);
-        getServer().getPluginManager().registerEvents(new ClickListener(), this);
-        getServer().getPluginManager().registerEvents(new TimeVoteListener(), this);
+        Arrays.asList(new FreezeManager(), new JoinListener(), new ClickListener(), new TimeVoteListener())
+                .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
 
     private void registerPlaceholders() {
@@ -89,8 +84,8 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        TeleportManager teleportManager = new TeleportManager();
         Map<String, CommandExecutor> commands = new HashMap<>();
+        TeleportManager teleportManager = new TeleportManager();
 
         registerCommand(commands, "horizon", new HorizonCommand());
         registerCommand(commands, "netherlist", new NetherListCommand());
@@ -151,20 +146,20 @@ public final class Main extends JavaPlugin {
             if (EconomyManager.setupEconomy()) {
                 getLogger().info("Economy provider found and registered successfully.");
             } else {
-                getLogger().warning("Vault found, but no economy provider is available.");
+                getLogger().warning("Economy provider not found. Economy features will not work.");
             }
         } else {
-            getLogger().warning("Vault not found. Economy features will not work.");
+            getLogger().warning("Economy provider not found. Economy features will not work.");
         }
     }
 
-    private static void loadWebhook() {
+    private void initializeWebhookClient() {
         String webhookUrl = ConfigManager.getConfig("config").getString("WebhookURL");
         if (webhookUrl != null) {
             webhookClient = WebhookClient.withUrl(webhookUrl);
-            getInstance().getLogger().info("Webhook client initialized successfully.");
+            getLogger().info("Webhook client initialized successfully.");
         } else {
-            getInstance().getLogger().warning("Webhook URL is not configured!");
+            getLogger().warning("Webhook URL is not configured!");
         }
     }
 }
