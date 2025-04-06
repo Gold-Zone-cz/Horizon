@@ -2,9 +2,9 @@ package cz.goldzone.horizon.admin;
 
 import cz.goldzone.horizon.managers.ConfigManager;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class XrayNotify implements Listener {
         if (isXRayMaterial(e.getBlock().getType()) && isInTrackedWorld(e.getBlock().getWorld().getName(), xrayWorlds)) {
             TextComponent text = new TextComponent(player.getName());
             text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/spectate " + player.getName()));
-            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to teleport!").create()));
+            text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to teleport!")));
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.hasPermission("horizon.staff.xray.notify")) {

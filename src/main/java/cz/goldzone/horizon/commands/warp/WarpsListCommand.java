@@ -4,6 +4,10 @@ import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
 import dev.digitality.digitalconfig.config.ConfigurationSection;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,15 +34,13 @@ public class WarpsListCommand implements CommandExecutor {
         if (warpSection == null || warpSection.getKeys().isEmpty()) {
             player.sendMessage("<dark_gray>【 <red>No warps available. <dark_gray>】");
         } else {
-            StringBuilder warpMessage = new StringBuilder();
 
             for (String warpName : warpSection.getKeys()) {
-                String warpDisplayName = warpSection.getString(warpName + ".displayName");
-                warpMessage.append("<dark_gray>【 <red>").append(warpDisplayName).append(" <dark_gray>】")
-                        .append("\n");
+                TextComponent warpComponent = new TextComponent("§8【 §c" + warpName + " §8】");
+                warpComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Click to fill chat")));
+                warpComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/warp " + warpName));
+                player.spigot().sendMessage(warpComponent);
             }
-
-            player.sendMessage(warpMessage.toString());
         }
 
         player.sendMessage("<white>");

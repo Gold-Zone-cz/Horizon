@@ -32,16 +32,16 @@
             url 'https://jitpack.io'
         }
         maven {
-            name "goldzoneRepoPrivate"
-            url "https://repo.gold-zone.cz/private"
+            name = "goldzoneRepoPrivate"
+            url = uri("https://repo.gold-zone.cz/private")
 
             credentials {
-                username project.findProperty("goldzoneRepo.username") ?: System.getenv("GOLDZONE_REPO_USERNAME")
-                password project.findProperty("goldzoneRepo.password") ?: System.getenv("GOLDZONE_REPO_PASSWORD")
+                username = project.findProperty("goldzoneRepo.username") ?: System.getenv("GOLDZONE_REPO_USERNAME")
+                password = project.findProperty("goldzoneRepo.password") ?: System.getenv("GOLDZONE_REPO_PASSWORD")
             }
 
             authentication {
-                basic(BasicAuthentication)
+                create("basic", BasicAuthentication)
             }
         }
     }

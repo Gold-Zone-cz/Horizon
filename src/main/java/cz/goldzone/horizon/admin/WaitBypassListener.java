@@ -1,8 +1,10 @@
 package cz.goldzone.horizon.admin;
 
+import cz.goldzone.horizon.Main;
 import cz.goldzone.neuron.shared.Core;
 import lombok.Cleanup;
 import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +15,6 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WaitBypassListener implements Listener {
@@ -45,9 +46,8 @@ public class WaitBypassListener implements Listener {
             @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, player.getUniqueId().toString());
 
-            @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Main.getInstance().getLogger().warning("Failed to check mute status for player " + player.getName() + ": " + e.getMessage());
         }
         return false;
     }
@@ -70,7 +70,7 @@ public class WaitBypassListener implements Listener {
         String playerName = player.getName();
         TextComponent text = new TextComponent(playerName);
         text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/spectate " + playerName));
-        text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to teleport!").create()));
+        text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to teleport!")));
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("horizon.staff.spectate")) {
