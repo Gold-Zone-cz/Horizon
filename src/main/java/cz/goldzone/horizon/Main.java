@@ -125,6 +125,8 @@ public final class Main extends JavaPlugin {
             if (getCommand(cmd) != null) {
                 Objects.requireNonNull(getCommand(cmd)).setExecutor(executor);
                 setTabCompleter(cmd);
+            } else {
+                getLogger().warning("Command " + cmd + " not found in plugin.yml.");
             }
         });
     }

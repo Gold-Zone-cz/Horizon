@@ -24,24 +24,36 @@ public class DelWarpCommand implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>You must provide a name!");
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>You must provide a warp name!");
+            return false;
+        }
+
+        String name = args[0].toLowerCase();
+
+        if (!name.matches("^[a-zA-Z0-9_]+$")) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp name can only contain letters, numbers and underscores.");
             return false;
         }
 
         Configuration config = ConfigManager.getConfig("warps");
-
-        String name = args[0].toLowerCase();
         String path = "Warps." + name;
 
         if (config.getSection(path) == null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + "<red> does not exist!");
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + " <red>does not exist!");
             return false;
+        }
+
+        boolean confirmed = args.length >= 2 && (args[1].equalsIgnoreCase("--confirm") || args[1].equalsIgnoreCase("-c"));
+
+        if (!confirmed) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<yellow>Warp <gray>" + name + " <yellow>exists. To delete it, use <gray>/delwarp " + name + " --confirm");
+            return true;
         }
 
         config.set(path, null);
         config.save();
 
-        player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been deleted!");
+        player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been permanently deleted.");
         return true;
     }
 }

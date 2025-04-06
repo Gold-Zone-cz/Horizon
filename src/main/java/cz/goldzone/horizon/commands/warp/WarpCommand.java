@@ -3,6 +3,7 @@ package cz.goldzone.horizon.commands.warp;
 import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
+import dev.digitality.digitalconfig.config.ConfigurationSection;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -47,23 +48,21 @@ public class WarpCommand implements CommandExecutor {
     private void teleportToWarp(Player player, String warpName) {
         Configuration config = ConfigManager.getConfig("warps");
 
-        if (config.getSection("Warps." + warpName) == null) {
+        ConfigurationSection warpConfig = config.getSection("Warps." + warpName);
+
+        if (warpConfig == null) {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>No warp found with the name: " + warpName + "!");
             return;
         }
 
-        String worldName = config.getSection("Warps").getString("location.world");
-        double x = config.getSection("Warps").getDouble("location.x");
-        double y = config.getSection("Warps").getDouble("location.y");
-        double z = config.getSection("Warps").getDouble("location.z");
-        float yaw = (float) config.getSection("Warps").getDouble("location.yaw");
-        float pitch = (float) config.getSection("Warps").getDouble("location.pitch");
+        String worldName = warpConfig.getString("location.world");
+        double x = warpConfig.getDouble("location.x");
+        double y = warpConfig.getDouble("location.y");
+        double z = warpConfig.getDouble("location.z");
+        float yaw = (float) warpConfig.getDouble("location.yaw");
+        float pitch = (float) warpConfig.getDouble("location.pitch");
 
         World world = player.getServer().getWorld(worldName);
-        if (world == null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>World for warp " + warpName + " not found! Contact an admin.");
-            return;
-        }
 
         Location warpLocation = new Location(world, x, y, z, yaw, pitch);
 

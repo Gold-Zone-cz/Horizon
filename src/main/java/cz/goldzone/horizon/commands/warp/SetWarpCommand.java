@@ -34,12 +34,25 @@ public class SetWarpCommand implements CommandExecutor {
         Configuration config = ConfigManager.getConfig("warps");
 
         String name = args[0].toLowerCase();
-        if (config.getSection("Warps." + name) != null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + " <red>already exists!");
+        Location location = player.getLocation();
+
+        if (location.getWorld() == null) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Failed to set warp: world is null.");
             return false;
         }
 
-        Location location = player.getLocation();
+        if (!name.matches("^[a-zA-Z0-9_]+$")) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp name can only contain letters, numbers and underscores.");
+            return false;
+        }
+
+        boolean force = args.length >= 2 && (args[1].equalsIgnoreCase("-f") || args[1].equalsIgnoreCase("--force"));
+
+        if (config.getSection("Warps." + name) != null && !force) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + " <red>already exists! Use <gray>-f <red>to overwrite.");
+            return false;
+        }
+
         config.set("Warps." + name + ".location.world", Objects.requireNonNull(location.getWorld()).getName());
         config.set("Warps." + name + ".location.x", location.getX());
         config.set("Warps." + name + ".location.y", location.getY());
@@ -50,7 +63,12 @@ public class SetWarpCommand implements CommandExecutor {
 
         config.save();
 
-        player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been created!");
+        if (force) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been <yellow>overwritten.");
+        } else {
+            player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been created!");
+        }
+
         return true;
     }
 }
