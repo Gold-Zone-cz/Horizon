@@ -1,5 +1,6 @@
 package cz.goldzone.horizon.commands.warp;
 
+import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
@@ -9,8 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class SetWarpCommand implements CommandExecutor {
 
@@ -46,6 +45,11 @@ public class SetWarpCommand implements CommandExecutor {
             return false;
         }
 
+        if (name.length() < 3 || name.length() > 16) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp name must be between 3 and 16 characters!");
+            return false;
+        }
+
         boolean force = args.length >= 2 && (args[1].equalsIgnoreCase("-f") || args[1].equalsIgnoreCase("--force"));
 
         if (config.getSection("Warps." + name) != null && !force) {
@@ -53,18 +57,18 @@ public class SetWarpCommand implements CommandExecutor {
             return false;
         }
 
-        config.set("Warps." + name + ".location.world", Objects.requireNonNull(location.getWorld()).getName());
-        config.set("Warps." + name + ".location.x", location.getX());
-        config.set("Warps." + name + ".location.y", location.getY());
-        config.set("Warps." + name + ".location.z", location.getZ());
-        config.set("Warps." + name + ".location.pitch", location.getPitch());
-        config.set("Warps." + name + ".location.yaw", location.getYaw());
+        config.set("Warps." + name + ".location", location);
         config.set("Warps." + name + ".staff", player.getName());
 
-        config.save();
+        try {
+            config.save();
+        } catch (Exception e) {
+            Main.getInstance().getLogger().warning("Failed to save warp configuration: " + e.getMessage());
+            return false;
+        }
 
         if (force) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been <yellow>overwritten.");
+            player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been <yellow>overwritten");
         } else {
             player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been created!");
         }
@@ -72,4 +76,3 @@ public class SetWarpCommand implements CommandExecutor {
         return true;
     }
 }
-

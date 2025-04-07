@@ -20,7 +20,7 @@ public class ConfirmGUI implements IGUI {
     @NotNull
     @Override
     public Inventory getInventory() {
-        Inventory inv = Bukkit.createInventory(this, 27, "Are you sure?");
+        Inventory inv = Bukkit.createInventory(this, 27, "<gray>Confirm your action");
 
         int[] confirmSlots = {0, 9, 18, 1, 10, 19, 2, 11, 20};
         int[] emptySlots = {3, 12, 21, 4, 13, 22, 5, 14, 23};
@@ -32,7 +32,6 @@ public class ConfirmGUI implements IGUI {
         });
 
         createInteractiveItems(inv, emptySlots, XMaterial.GRAY_STAINED_GLASS_PANE, " ", null);
-
         createInteractiveItems(inv, cancelSlots, XMaterial.RED_STAINED_GLASS_PANE, "<red>Cancel", HumanEntity::closeInventory);
 
         return inv;
@@ -52,5 +51,9 @@ public class ConfirmGUI implements IGUI {
     @FunctionalInterface
     private interface InteractiveItemClickHandler {
         void handleClick(org.bukkit.entity.Player player);
+    }
+
+    public void openForPlayer(org.bukkit.entity.Player player) {
+        player.openInventory(getInventory());
     }
 }

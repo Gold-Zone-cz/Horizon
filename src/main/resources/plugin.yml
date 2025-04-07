@@ -52,10 +52,14 @@ commands:
       - fix
   hat:
     description: Puts item in hand on head
-  tv:
+  timevote:
     description: Time vote
     aliases:
-      - timevote
+      - tv
+  timevote end:
+    description: End time vote
+    aliases:
+      - tv end
   tpa:
     description: Teleport request
   tpaccept:

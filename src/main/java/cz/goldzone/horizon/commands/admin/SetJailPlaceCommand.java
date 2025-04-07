@@ -7,7 +7,6 @@ import dev.digitality.digitalconfig.config.Configuration;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,17 +37,9 @@ public class SetJailPlaceCommand implements CommandExecutor {
 
     public static void load() {
         Configuration config = ConfigManager.getConfig("jail");
-        if (config.getSection("JailPlace.World") != null) {
-            World world = Bukkit.getWorld(Objects.requireNonNull(config.getString("JailPlace.World")));
-            if (world == null) return;
-
-            double x = config.getDouble("JailPlace.X");
-            double y = config.getDouble("JailPlace.Y");
-            double z = config.getDouble("JailPlace.Z");
-            float yaw = (float) config.getDouble("JailPlace.Yaw");
-            float pitch = (float) config.getDouble("JailPlace.Pitch");
-
-            jailLocation = new Location(world, x, y, z, yaw, pitch);
+        Location loc = config.get("JailPlace", Location.class);
+        if (loc != null && loc.getWorld() != null && Bukkit.getWorld(loc.getWorld().getName()) != null) {
+            jailLocation = loc;
         }
     }
 
@@ -72,7 +62,7 @@ public class SetJailPlaceCommand implements CommandExecutor {
 
         Configuration config = ConfigManager.getConfig("jail");
 
-        if (config.getSection("JailPlace.World") != null && !confirmationSet.contains(player.getUniqueId())) {
+        if (config.getSection("JailPlace") != null && !confirmationSet.contains(player.getUniqueId())) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<red>Jail location already exists!\n <gray>Retype the command to overwrite it.");
             confirmationSet.add(player.getUniqueId());
             Main.getInstance().getServer().getScheduler().runTaskLater(Main.getInstance(), () -> confirmationSet.remove(player.getUniqueId()), 600L);
@@ -82,12 +72,7 @@ public class SetJailPlaceCommand implements CommandExecutor {
         }
 
         Location loc = player.getLocation();
-        config.set("JailPlace.World", Objects.requireNonNull(loc.getWorld()).getName());
-        config.set("JailPlace.X", loc.getX());
-        config.set("JailPlace.Y", loc.getY());
-        config.set("JailPlace.Z", loc.getZ());
-        config.set("JailPlace.Yaw", loc.getYaw());
-        config.set("JailPlace.Pitch", loc.getPitch());
+        config.set("JailPlace", loc);
         config.save();
 
         set(loc);

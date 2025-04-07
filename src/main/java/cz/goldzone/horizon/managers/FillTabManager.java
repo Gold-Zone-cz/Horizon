@@ -45,7 +45,7 @@ public class FillTabManager implements TabCompleter {
                 if (sender.hasPermission("horizon.admin.economy")) suggestions.add("set");
             }
             case "warp", "delwarp" -> {
-                if (command.getName().equalsIgnoreCase("delwarp")) {  // Porovnání nezávislé na velikosti písmen
+                if (command.getName().equalsIgnoreCase("delwarp")) {
                     if (sender instanceof Player player && player.hasPermission("horizon.admin.warp")) {
                         suggestWarpNames(suggestions);
                     }

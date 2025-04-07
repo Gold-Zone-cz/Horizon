@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import cz.goldzone.horizon.admin.NetherListCommand;
 import cz.goldzone.horizon.commands.HorizonCommand;
 import cz.goldzone.horizon.commands.economy.BalTopCommand;
+import cz.goldzone.horizon.commands.economy.PayToggleCommand;
 import cz.goldzone.horizon.commands.player.*;
 import cz.goldzone.horizon.commands.playerwarps.PlayerWarpsCommand;
 import cz.goldzone.horizon.commands.admin.*;
@@ -20,7 +21,6 @@ import cz.goldzone.horizon.commands.warp.SetWarpCommand;
 import cz.goldzone.horizon.commands.warp.WarpCommand;
 import cz.goldzone.horizon.listeners.ClickListener;
 import cz.goldzone.horizon.listeners.JoinListener;
-import cz.goldzone.horizon.listeners.TimeVoteListener;
 import cz.goldzone.horizon.managers.*;
 import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
@@ -69,7 +69,7 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Arrays.asList(new FreezeManager(), new JoinListener(), new ClickListener(), new TimeVoteListener())
+        Arrays.asList(new FreezeManager(), new JoinListener(), new ClickListener())
                 .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
 
@@ -107,11 +107,12 @@ public final class Main extends JavaPlugin {
         registerCommand(commands, "balance", new BalanceCommand());
         registerCommand(commands, "anvil", new AnvilCommand());
         registerCommand(commands, "pay", new PayCommand());
-        registerCommand(commands, "paytoggle", new TpToggleCommand());
+        registerCommand(commands, "paytoggle", new PayToggleCommand());
         registerCommand(commands, "tptoggle", new TpToggleCommand());
         registerCommand(commands, "repair", new RepairCommand());
         registerCommand(commands, "hat", new HatCommand());
-        registerCommand(commands, "tv", new TimeVoteCommand());
+        registerCommand(commands, "timevote", new TimeVoteCommand());
+        registerCommand(commands, "timevote end", new TimeVoteEndCommand());
         registerCommand(commands, "freeze", new FreezeCommand());
         registerCommand(commands, "unfreeze", new UnFreezeCommand());
         registerCommand(commands, "rtp", new RandomTeleportCommand());

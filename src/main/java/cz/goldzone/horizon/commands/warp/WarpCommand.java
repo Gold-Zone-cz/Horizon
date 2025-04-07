@@ -64,6 +64,11 @@ public class WarpCommand implements CommandExecutor {
 
         World world = player.getServer().getWorld(worldName);
 
+        if (world == null) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>World not found for warp " + warpName + "!");
+            return;
+        }
+
         Location warpLocation = new Location(world, x, y, z, yaw, pitch);
 
         player.teleport(warpLocation);
