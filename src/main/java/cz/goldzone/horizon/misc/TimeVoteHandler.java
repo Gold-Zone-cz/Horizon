@@ -36,6 +36,11 @@ public class TimeVoteHandler {
 
         String result = (dayVotes > nightVotes) ? "Day" : "Night";
         Bukkit.broadcastMessage(Lang.getPrefix("TimeVote") + "<gray>The vote has been completed. The result is: <red>" + result + "<gray>!");
+        if (result.equals("Day")) {
+            Bukkit.getWorlds().forEach(world -> world.setTime(1000));
+        } else {
+            Bukkit.getWorlds().forEach(world -> world.setTime(13000));
+        }
 
         resetVotes();
     }

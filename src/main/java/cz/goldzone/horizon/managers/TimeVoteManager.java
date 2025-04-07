@@ -26,7 +26,7 @@ public class TimeVoteManager {
         voteInProgress = true;
         lastVoteTime = System.currentTimeMillis();
 
-        Bukkit.getServer().broadcastMessage("A vote for the time of day has started! Type /timevote to vote for " + voteOption + ".");
+        Bukkit.getServer().broadcastMessage(Lang.getPrefix("TimeVote") + "<gray>A vote for <red>" + voteOption + " <gray>has been initiated! <red>/timevote");
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             ConfirmGUI confirmGUI = new ConfirmGUI(() -> new TimeVoteHandler().handleVote(player, voteOption));
@@ -54,7 +54,7 @@ public class TimeVoteManager {
     }
 
     public static void handleEndVoteCommand(Player player) {
-        if (player.hasPermission("horizon.timevote.end")) {
+        if (player.hasPermission("horizon.staff.timevote.end")) {
             endVote();
             player.sendMessage(Lang.getPrefix("TimeVote") + "<gray>The time vote has been ended by staff <red>" + player.getName() + "<gray>.");
         } else {

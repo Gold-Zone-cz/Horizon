@@ -13,6 +13,7 @@ Horizon Plugin
 - horizon.staff.scan
 - horizon.staff.xray.notify
 - horizon.staff.notify
+- horizon.staff.timevote.end
 
 ### **Admin:**
 
