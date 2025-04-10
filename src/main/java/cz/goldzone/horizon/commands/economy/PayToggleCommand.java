@@ -22,7 +22,7 @@ public class PayToggleCommand implements CommandExecutor {
         }
 
         if (!player.hasPermission("horizon.player.paytoggle")) {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\n Use /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!");
             return true;
         }
 
@@ -36,7 +36,7 @@ public class PayToggleCommand implements CommandExecutor {
         return true;
     }
 
-    public static boolean isPayEnabled(@NotNull Player player) {
+    public static boolean isPayEnabled(Player player) {
         return payToggleMap.getOrDefault(player.getUniqueId(), true);
     }
 }

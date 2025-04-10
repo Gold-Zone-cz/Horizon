@@ -1,5 +1,6 @@
 package cz.goldzone.horizon.placeholders;
 
+import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.managers.VoteManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class VotePlaceholders extends PlaceholderExpansion {
     @NotNull
     @Override
     public String getVersion() {
-        return "1.0.2";
+        return Main.getInstance().getDescription().getVersion();
     }
 
     @Override

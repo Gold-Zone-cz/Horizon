@@ -40,7 +40,7 @@ public class TpaAcceptCommand implements CommandExecutor {
         }
 
         requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<green>Teleportation request accepted.");
-        requestSender.sendMessage(Lang.getPrefix("Teleport") + "<green>Your teleport request was accepted by <white>" + requestTarget.getName() + "<green>.");
+        requestSender.sendMessage(Lang.getPrefix("Teleport") + "<gray>Your request was accepted by <red>" + requestTarget.getName() + "<gray>! <red>Do not move for 3 seconds.");
 
         Location originalLocation = requestSender.getLocation().clone();
 
@@ -58,7 +58,7 @@ public class TpaAcceptCommand implements CommandExecutor {
                     performTeleport(requestSender, requestTarget);
                 }
             }
-        }.runTaskLater(Main.getInstance(), 60);
+        }.runTaskLater(Main.getInstance(), 60L);
 
         return true;
     }
@@ -73,8 +73,8 @@ public class TpaAcceptCommand implements CommandExecutor {
 
     private void performTeleport(Player requestSender, Player requestTarget) {
         requestSender.teleport(requestTarget);
-        requestSender.sendMessage(Lang.getPrefix("Teleport") + "<green>Teleported to <white>" + requestTarget.getName() + "<green>.");
-        requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<green>Teleported <white>" + requestSender.getName() + "<green> to you.");
+        requestSender.sendMessage(Lang.getPrefix("Teleport") + "<gray>Teleported to <red>" + requestTarget.getName() + "<gray>.");
+        requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<gray>Teleported <red>" + requestSender.getName() + "<gray> to you.");
 
         teleportManager.removeTeleportRequest(requestSender);
         teleportManager.removeTeleportRequest(requestTarget);

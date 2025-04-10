@@ -55,7 +55,7 @@ public class FreezeManager implements Listener {
         if (isFrozen(player)) {
             frozenPlayers.remove(player);
             freezingStaff.remove(player);
-            player.sendMessage(PREFIX + "<gray>You have been unfrozen!");
+            player.sendMessage(PREFIX + "<green>You have been unfrozen!");
             player.sendTitle("<green><bold>UNFROZEN!", "<gray>You have been unfrozen.", 0, 100, 0);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 

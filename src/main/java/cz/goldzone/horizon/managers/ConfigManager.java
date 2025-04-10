@@ -1,8 +1,8 @@
 package cz.goldzone.horizon.managers;
 
+import cz.goldzone.horizon.Main;
 import dev.digitality.digitalconfig.config.Configuration;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.HashMap;
@@ -12,10 +12,8 @@ public class ConfigManager {
 
     private static final Map<String, Configuration> configs = new HashMap<>();
     private static final String[] configFiles = {"warps", "votes", "config", "jail"};
-    private static JavaPlugin plugin;
 
-    public static void initialize(JavaPlugin pluginInstance) {
-        plugin = pluginInstance;
+    public static void initialize() {
         loadConfigs();
     }
 
@@ -24,12 +22,12 @@ public class ConfigManager {
     }
 
     private static void loadConfigs() {
-        if (plugin == null) {
+        if (Main.getInstance() == null) {
             Bukkit.getLogger().warning("[Horizon] Plugin not initialized.");
             return;
         }
 
-        File dataFolder = plugin.getDataFolder();
+        File dataFolder = Main.getInstance().getDataFolder();
         if (!dataFolder.exists() && !dataFolder.mkdirs()) {
             Bukkit.getLogger().warning("[Horizon] Failed to create the data folder.");
             return;

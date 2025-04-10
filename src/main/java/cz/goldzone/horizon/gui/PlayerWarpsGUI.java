@@ -48,7 +48,7 @@ public class PlayerWarpsGUI implements IGUI {
         Inventory inventory = Bukkit.createInventory(this, 54, "Player Warps - " + getCategoryName());
         DigitalGUI.fillInventory(inventory, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        List<String> warps = PlayerWarpsManager.getPlayerWarps(player).stream()
+        List<String> warps = PlayerWarpsManager.getAllPlayerWarps().stream()
                 .filter(warp -> PlayerWarpsManager.getPlayerWarpCategory(warp) == category)
                 .toList();
 
@@ -91,6 +91,11 @@ public class PlayerWarpsGUI implements IGUI {
         int visits = PlayerWarpsManager.getPlayerWarpVisitCount(warpName);
         String ownerName = PlayerWarpsManager.getPlayerWarpOwner(warpName);
 
+        if (ownerName == null) {
+            log.warn("Warp '{}' has no owner! Skipping item creation.", warpName);
+            return null;
+        }
+
         ItemStack item = PlayerWarpsManager.getCachedPlayerWarpItem(warpName, category);
         if (item == null) {
             throw new IllegalArgumentException("Item not found for warp: " + warpName);
@@ -109,10 +114,12 @@ public class PlayerWarpsGUI implements IGUI {
         InteractiveItem interactiveItem = new InteractiveItem(item);
         interactiveItem.onClick((player, clickType) -> {
             String rawWarpName = ChatColor.stripColor(warpName);
+            String currentPlayerName = player.getName();
+
             if (clickType.isLeftClick()) {
                 PlayerWarpsManager.teleportToPlayerWarp(player, rawWarpName);
             } else if (clickType.isRightClick()) {
-                if (PlayerWarpsManager.getPlayerWarpOwner(rawWarpName).equals(player.getName())) {
+                if (ownerName.equals(currentPlayerName)) {
                     player.sendMessage(Lang.getPrefix("PlayerWarps") + "<red>You cannot rate your own player warp!");
                     return;
                 }
@@ -122,7 +129,6 @@ public class PlayerWarpsGUI implements IGUI {
 
         return interactiveItem;
     }
-
 
     public static String getColorForCategory() {
         return switch (category) {
@@ -197,7 +203,7 @@ public class PlayerWarpsGUI implements IGUI {
         }
 
         if (name.equalsIgnoreCase("<aqua>Next Page")) {
-            if (page * PAGE_SIZE + PAGE_SIZE < PlayerWarpsManager.getPlayerWarps(player).size()) {
+            if (page * PAGE_SIZE + PAGE_SIZE < PlayerWarpsManager.getAllPlayerWarps().size()) {
                 page++;
             }
             player.openInventory(getInventory());

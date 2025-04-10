@@ -41,19 +41,19 @@ public class SetWarpCommand implements CommandExecutor {
         }
 
         if (!name.matches("^[a-zA-Z0-9_]+$")) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp name can only contain letters, numbers and underscores.");
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Name can only contain letters, numbers and underscores.");
             return false;
         }
 
         if (name.length() < 3 || name.length() > 16) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp name must be between 3 and 16 characters!");
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Name must be between 3 and 16 characters!");
             return false;
         }
 
-        boolean force = args.length >= 2 && (args[1].equalsIgnoreCase("-f") || args[1].equalsIgnoreCase("--force"));
+        boolean force = args.length >= 2 && (args[1].equalsIgnoreCase("--f") || args[1].equalsIgnoreCase("--force"));
 
         if (config.getSection("Warps." + name) != null && !force) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + " <red>already exists! Use <gray>-f <red>to overwrite.");
+            player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>already exists! Use <red>--force <gray>to overwrite.");
             return false;
         }
 

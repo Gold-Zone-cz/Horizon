@@ -22,7 +22,7 @@ public class CraftCommand implements CommandExecutor {
             player.openInventory(Bukkit.createInventory(player, InventoryType.WORKBENCH));
             player.playSound(player.getLocation(), "block.crafter.craft", 1, 1);
         } else {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\nUse /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!");
         }
 
         return true;

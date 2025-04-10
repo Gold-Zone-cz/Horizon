@@ -29,7 +29,8 @@ public class CategoriesGUI implements IGUI {
                 "<gray>Enjoy your farming!",
                 " "
         );
-        farmItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, Category.FARMS).getInventory()));
+        farmItem.onClick((player, clickType) ->
+                player.openInventory(new PlayerWarpsGUI(player, Category.FARMS).getInventory()));
         inv.setItem(11, farmItem);
 
         InteractiveItem shopItem = new InteractiveItem(Category.SHOPS.getMaterial(), Category.SHOPS.getDisplayName());
@@ -41,7 +42,8 @@ public class CategoriesGUI implements IGUI {
                 "<gray>Enjoy your shopping!",
                 " "
         );
-        shopItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, Category.SHOPS).getInventory()));
+        shopItem.onClick((player, clickType) ->
+                player.openInventory(new PlayerWarpsGUI(player, Category.SHOPS).getInventory()));
         inv.setItem(13, shopItem);
 
 
@@ -55,7 +57,8 @@ public class CategoriesGUI implements IGUI {
                 "<gray>Enjoy your activities!",
                 " "
         );
-        miscItem.onClick((player, clickType) -> player.openInventory(new PlayerWarpsGUI(player, Category.MISC).getInventory()));
+        miscItem.onClick((player, clickType) ->
+                player.openInventory(new PlayerWarpsGUI(player, Category.MISC).getInventory()));
         inv.setItem(15, miscItem);
 
         return inv;

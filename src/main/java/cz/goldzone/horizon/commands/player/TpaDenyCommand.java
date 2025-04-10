@@ -27,7 +27,7 @@ public class TpaDenyCommand implements CommandExecutor {
             Player requestSender = request.getSender();
 
             requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<gray>Teleportation request <red>denied");
-            requestSender.sendMessage(Lang.getPrefix("Teleport") + "<gray>Your teleport request was denied by <red>" + requestTarget.getName());
+            requestSender.sendMessage(Lang.getPrefix("Teleport") + "<gray>Your request was denied by <red>" + requestTarget.getName());
 
             teleportManager.removeTeleportRequest(requestSender);
             teleportManager.removeTeleportRequest(requestTarget);

@@ -12,8 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-
 public class WarpCommand implements CommandExecutor {
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
@@ -47,30 +47,32 @@ public class WarpCommand implements CommandExecutor {
 
     private void teleportToWarp(Player player, String warpName) {
         Configuration config = ConfigManager.getConfig("warps");
+        ConfigurationSection configPath = config.getSection("Warps." + warpName);
 
-        ConfigurationSection warpConfig = config.getSection("Warps." + warpName);
-
-        if (warpConfig == null) {
+        if (configPath == null) {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>No warp found with the name: " + warpName + "!");
             return;
         }
 
-        String worldName = warpConfig.getString("location.world");
-        double x = warpConfig.getDouble("location.x");
-        double y = warpConfig.getDouble("location.y");
-        double z = warpConfig.getDouble("location.z");
-        float yaw = (float) warpConfig.getDouble("location.yaw");
-        float pitch = (float) warpConfig.getDouble("location.pitch");
-
-        World world = player.getServer().getWorld(worldName);
-
-        if (world == null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>World not found for warp " + warpName + "!");
+        String worldName = configPath.getString(".location" + ".world");
+        if (worldName == null) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>World name is missing for warp " + warpName + "!");
             return;
         }
 
-        Location warpLocation = new Location(world, x, y, z, yaw, pitch);
+        World world = org.bukkit.Bukkit.getWorld(worldName);
+        if (world == null) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>World " + worldName + " does not exist or is not loaded!");
+            return;
+        }
 
+        double x = configPath.getDouble(".location" + ".x");
+        double y = configPath.getDouble(".location" + ".y");
+        double z = configPath.getDouble(".location" + ".z");
+        float yaw = (float) configPath.getDouble(".location" + ".yaw");
+        float pitch = (float) configPath.getSection("Warps." + warpName).getDouble(".location" + ".pitch");
+
+        Location warpLocation = new Location(world, x, y, z, yaw, pitch);
         player.teleport(warpLocation);
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>You have been teleported to warp <red>" + warpName + "<gray>!");
     }

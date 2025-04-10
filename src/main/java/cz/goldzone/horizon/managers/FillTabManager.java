@@ -1,8 +1,8 @@
 package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
-import cz.goldzone.horizon.commands.admin.SetJailPlaceCommand;
 import dev.digitality.digitalconfig.config.Configuration;
+import dev.digitality.digitalconfig.config.ConfigurationSection;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -35,7 +35,9 @@ public class FillTabManager implements TabCompleter {
                 if (sender.hasPermission("horizon.admin.reload")) suggestions.add("reload");
             }
             case "jail" -> {
-                if (sender instanceof Player player && player.hasPermission("horizon.admin.jail") && SetJailPlaceCommand.isSet()) {
+                Configuration config = ConfigManager.getConfig("jail");
+                ConfigurationSection jailLocation = config.getSection("JailPlace");
+                if (sender instanceof Player player && player.hasPermission("horizon.admin.jail") && jailLocation != null) {
                     suggestOnlinePlayersExcept(sender, suggestions);
                 }
             }

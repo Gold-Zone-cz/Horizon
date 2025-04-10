@@ -22,7 +22,7 @@ public class AnvilCommand implements CommandExecutor {
             player.openInventory(Bukkit.createInventory(player, InventoryType.ANVIL));
             player.playSound(player.getLocation(), "block.anvil.place", 1, 1);
         } else {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\n Use /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!");
         }
         return true;
     }

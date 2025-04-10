@@ -4,8 +4,6 @@ import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
-import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,29 +17,6 @@ import java.util.UUID;
 
 public class SetJailPlaceCommand implements CommandExecutor {
     private static final Set<UUID> confirmationSet = new HashSet<>();
-
-    @Getter
-    private static Location jailLocation;
-
-    public static boolean isSet() {
-        return jailLocation != null;
-    }
-
-    public static void set(Location loc) {
-        jailLocation = loc;
-    }
-
-    public static Location get() {
-        return jailLocation;
-    }
-
-    public static void load() {
-        Configuration config = ConfigManager.getConfig("jail");
-        Location loc = config.get("JailPlace", Location.class);
-        if (loc != null && loc.getWorld() != null && Bukkit.getWorld(loc.getWorld().getName()) != null) {
-            jailLocation = loc;
-        }
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
@@ -71,12 +46,9 @@ public class SetJailPlaceCommand implements CommandExecutor {
             confirmationSet.remove(player.getUniqueId());
         }
 
-        Location loc = player.getLocation();
-        config.set("JailPlace", loc);
+        Location location = player.getLocation();
+        config.set("JailPlace", location);
         config.save();
-
-        set(loc);
-        load();
 
         player.sendMessage(Lang.getPrefix("Jail") + "<gray>Location has been set!");
         return true;

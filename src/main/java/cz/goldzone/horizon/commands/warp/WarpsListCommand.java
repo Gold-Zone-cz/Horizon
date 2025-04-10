@@ -23,13 +23,12 @@ public class WarpsListCommand implements CommandExecutor {
             return true;
         }
 
-        Configuration config = ConfigManager.getConfig("warps");
-
         player.sendMessage("<white>");
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>Available warps:");
         player.sendMessage("<white>");
 
-        ConfigurationSection warpSection = config.getSection("Warps");
+        Configuration config = ConfigManager.getConfig("warps");
+        ConfigurationSection warpSection = config.getSection("Warps.");
 
         if (warpSection == null || warpSection.getKeys().isEmpty()) {
             player.sendMessage("<dark_gray>【 <red>No warps available. <dark_gray>】");

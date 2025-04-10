@@ -42,6 +42,7 @@ public class RateGUI implements IGUI {
             item.setLore("<gray>\n<gray>Click to visit this player warp\n<gray>");
             item.onClick((player, clickType) -> {
                 PlayerWarpsManager.teleportToPlayerWarp(player, warpName);
+                PlayerWarpsManager.markWarpAsVisited(player, warpName);
                 player.closeInventory();
             });
             inventory.setItem(13, item);

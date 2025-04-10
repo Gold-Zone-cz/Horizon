@@ -1,6 +1,6 @@
 name: Horizon
-author: MrJogger_
-version: '1.0.2'
+author: jogg15
+version: ${version}
 main: cz.goldzone.horizon.Main
 api-version: '1.21'
 

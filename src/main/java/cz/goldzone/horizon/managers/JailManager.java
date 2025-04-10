@@ -2,11 +2,11 @@ package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.admin.StaffNotify;
-import cz.goldzone.horizon.commands.admin.SetJailPlaceCommand;
 import cz.goldzone.neuron.shared.Lang;
 import cz.goldzone.neuron.shared.player.GamePlayer;
 import cz.goldzone.neuron.spigot.managers.GodManager;
 import dev.digitality.digitalconfig.config.Configuration;
+import dev.digitality.digitalconfig.config.ConfigurationSection;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -83,22 +83,33 @@ public class JailManager implements Listener {
 
     public static void unjail(Player player) {
         remove(player, false);
-        Configuration config = ConfigManager.getConfig("jail");
-        GamePlayer playerName = GamePlayer.get(player.getName());
 
-        config.set("Jail." + playerName, null);
+        Configuration config = ConfigManager.getConfig("jail");
+        GamePlayer gamePlayer = GamePlayer.get(player.getName());
+
+        config.set("Jail." + gamePlayer, null);
         config.save();
 
-        WebhookManager.sendJailWebhook(player,
-                playerName.getLastIP(),
-                playerName.getServer(),
-                "UNJAIL",
-                jailReason.get(player),
-                jailTime.get(player),
-                jailedBy.get(player));
+        String reason = jailReason.getOrDefault(player, "Unknown");
+        Integer time = jailTime.getOrDefault(player, 0);
+        String staff = jailedBy.getOrDefault(player, "Unknown");
 
-        Optional<Location> lastLocationOpt = Optional.ofNullable(config.get("Jail." + playerName + ".LastLocation", Location.class));
-        lastLocationOpt.ifPresentOrElse(player::teleport, () -> player.performCommand("spawn"));
+        WebhookManager.sendJailWebhook(player,
+                gamePlayer.getLastIP(),
+                gamePlayer.getServer(),
+                "UNJAIL",
+                reason,
+                time,
+                staff);
+
+        Optional<Location> lastLocationOpt = Optional.ofNullable(config.get("Jail." + gamePlayer + ".LastLocation", Location.class));
+        lastLocationOpt.ifPresentOrElse(
+                player::teleport,
+                () -> {
+                    player.performCommand("spawn");
+                    Main.getInstance().getLogger().info("Player " + player.getName() + " teleported to spawn as no last location was found.");
+                }
+        );
 
         player.sendMessage(PREFIX + "<green>You have been released from jail!");
         resetPlayerState(player);
@@ -193,11 +204,33 @@ public class JailManager implements Listener {
     }
 
     private static void teleportToJail(Player target, String reason) {
-        Location jailLocation = SetJailPlaceCommand.getJailLocation();
-        if (jailLocation == null) {
+        Configuration config = ConfigManager.getConfig("jail");
+        ConfigurationSection jailConfig = config.getSection("JailPlace");
+
+        if (jailConfig == null) {
             Main.getInstance().getLogger().warning("Jail location is not set! Use /setjail to set it.");
             return;
         }
+
+        String worldName = jailConfig.getString(".world");
+        if (worldName == null) {
+            Main.getInstance().getLogger().warning("Jail world is not set in the configuration!");
+            return;
+        }
+
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) {
+            Main.getInstance().getLogger().warning("World '" + worldName + "' does not exist or is not loaded!");
+            return;
+        }
+
+        double x = jailConfig.getDouble(".x");
+        double y = jailConfig.getDouble(".y");
+        double z = jailConfig.getDouble(".z");
+        float yaw = (float) jailConfig.getDouble(".yaw");
+        float pitch = (float) jailConfig.getDouble(".pitch");
+
+        Location jailLocation = new Location(world, x, y, z, yaw, pitch);
 
         target.teleport(jailLocation);
         resetPlayerState(target);
@@ -218,7 +251,7 @@ public class JailManager implements Listener {
                 durationText = duration + "m";
             }
 
-            StaffNotify.setStaffNotify(target, "JAILED BY " + staffPlayer + " (" + durationText + ") for " + reason);
+            StaffNotify.setStaffNotify(target, "JAILED BY " + staff + " (" + durationText + ") for " + reason);
         }
     }
 

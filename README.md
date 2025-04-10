@@ -5,7 +5,7 @@ Horizon Plugin
 
 #### Created on: March 22, 2025
 
-#### Version: 1.0.2
+#### Version: ${version}"
 
 ## Permissions:
 ### **Staff:**
@@ -14,6 +14,7 @@ Horizon Plugin
 - horizon.staff.xray.notify
 - horizon.staff.notify
 - horizon.staff.timevote.end
+- horizon.staff.freeze
 
 ### **Admin:**
 

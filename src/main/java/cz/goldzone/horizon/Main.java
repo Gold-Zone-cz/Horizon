@@ -1,6 +1,5 @@
 package cz.goldzone.horizon;
 
-import com.google.gson.Gson;
 import cz.goldzone.horizon.admin.NetherListCommand;
 import cz.goldzone.horizon.commands.HorizonCommand;
 import cz.goldzone.horizon.commands.economy.BalTopCommand;
@@ -36,14 +35,12 @@ import java.util.*;
 public final class Main extends JavaPlugin {
 
     @Getter
-    private static final Gson gson = new Gson();
-    @Getter
     private static Main instance;
 
     @Override
     public void onEnable() {
         instance = this;
-        ConfigManager.initialize(this);
+        ConfigManager.initialize();
         DigitalGUI.register(this);
 
         initializeManagers();
@@ -64,10 +61,10 @@ public final class Main extends JavaPlugin {
         HomesManager.createHomesTable();
         EconomyManager.createBalanceTable();
         PlayerWarpsManager.createPlayerWarpTable();
+        WebhookManager.initialize();
         FreezeManager.startTask();
         JailManager.startTask();
         VoteManager.loadVotes();
-        WebhookManager.initialize();
     }
 
     private void registerListeners() {

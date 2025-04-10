@@ -1,5 +1,6 @@
 package cz.goldzone.horizon.placeholders;
 
+import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.managers.EconomyManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -15,13 +16,13 @@ public class EconomyPlaceholders extends PlaceholderExpansion {
     @NotNull
     @Override
     public String getAuthor() {
-        return "MrJogger_";
+        return "jogg15";
     }
 
     @NotNull
     @Override
     public String getVersion() {
-        return "1.0.2";
+        return Main.getInstance().getDescription().getVersion();
     }
 
     @Override

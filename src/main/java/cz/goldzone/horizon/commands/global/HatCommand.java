@@ -32,7 +32,7 @@ public class HatCommand implements CommandExecutor {
                 player.getInventory().addItem(currentHat);
             } else {
                 player.getWorld().dropItemNaturally(player.getLocation(), currentHat);
-                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Inventory full!\nYour previous hat was dropped on the ground!");
+                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Inventory full!\n<red>Your previous hat was dropped on the ground!");
             }
         }
 
@@ -66,7 +66,7 @@ public class HatCommand implements CommandExecutor {
         if (player.hasPermission("horizon.player.hat")) {
             return setHat(player);
         } else {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\nUse /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!");
             return true;
         }
     }

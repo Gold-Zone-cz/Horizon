@@ -35,7 +35,7 @@ public class PlayerWarpsManager {
                         + "visit_count INT DEFAULT 0, "
                         + "rating INT DEFAULT 0, "
                         + "rate_message TEXT DEFAULT NULL, "
-                        + "rate_threshold INT DEFAULT 3"
+                        + "rate_threshold INT DEFAULT 0"
                         + ")", TABLE_NAME);
         executeUpdate(sql);
     }
@@ -225,23 +225,20 @@ public class PlayerWarpsManager {
         return "Unknown";
     }
 
-    public static List<String> getPlayerWarps(Player player) {
-        GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
-
+    public static List<String> getAllPlayerWarps() {
         List<String> warpNames = new ArrayList<>();
         try {
-            String sql = "SELECT name FROM " + TABLE_NAME + " WHERE user_id = ?";
+            String sql = "SELECT name FROM " + TABLE_NAME;
 
             @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
             @Cleanup PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setLong(1, gamePlayer.getId());
 
             @Cleanup ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 warpNames.add(rs.getString("name"));
             }
         } catch (SQLException e) {
-            logError("Error getting player warps: ", e);
+            logError("Error getting all player warps: ", e);
         }
 
         return warpNames;
@@ -287,8 +284,27 @@ public class PlayerWarpsManager {
         }
     }
 
-    public static boolean hasVisitedPlayerWarp(Player player, String warpName) {
+    public static void markWarpAsVisited(Player player, String warpName) {
         GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
+
+        try {
+            String sql = "INSERT INTO " + TABLE_NAME + " (name, user_id, visit_count) VALUES (?, ?, 1) " +
+                    "ON DUPLICATE KEY UPDATE visit_count = visit_count + 1";
+
+            @Cleanup Connection connection = Core.getPluginMySQL().getConnection();
+            @Cleanup PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, warpName.toLowerCase());
+            ps.setLong(2, gamePlayer.getId());
+
+            ps.executeUpdate();
+            Main.getInstance().getLogger().info("Marked warp '" + warpName + "' as visited for player " + player.getName() + ".");
+        } catch (SQLException e) {
+            logError("Error marking warp as visited: ", e);
+        }
+    }
+
+    public static boolean hasVisitedPlayerWarp(Player player, String warpName) { GamePlayer gamePlayer = Core.getPlatformCompatibility().getGamePlayer(player);
+
 
         try {
             String sql = "SELECT visit_count FROM " + TABLE_NAME + " WHERE name = ? AND user_id = ?";
@@ -298,13 +314,13 @@ public class PlayerWarpsManager {
             ps.setString(1, warpName.toLowerCase());
             ps.setLong(2, gamePlayer.getId());
 
-            try {
-                @Cleanup ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            } catch (SQLException e) {
-                logError("Error checking if player has visited warp: ", e);
+            @Cleanup ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int visitCount = rs.getInt("visit_count");
+                Main.getInstance().getLogger().info("Player " + player.getName() + " has visited warp '" + warpName + "' " + visitCount + " times.");
+                return visitCount > 0;
+            } else {
+                Main.getInstance().getLogger().info("No record found for player " + player.getName() + " and warp '" + warpName + "'.");
             }
         } catch (SQLException e) {
             logError("Error checking if player has visited warp: ", e);

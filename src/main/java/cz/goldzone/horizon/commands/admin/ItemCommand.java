@@ -50,7 +50,7 @@ public class ItemCommand implements CommandExecutor {
         quantity = Math.min(quantity, item.getMaxStackSize());
         item.setAmount(quantity);
         player.getInventory().addItem(item);
-        player.sendMessage(Lang.getPrefix("Admin") + "<gray>You have received <red>" + quantity + "x <gray>" + getDisplayName(item));
+        player.sendMessage(Lang.getPrefix("Admin") + "<gray>You have received <red>x" + quantity + " " + getDisplayName(item));
         return true;
     }
 
@@ -85,10 +85,17 @@ public class ItemCommand implements CommandExecutor {
         if (item.hasItemMeta() && Objects.requireNonNull(item.getItemMeta()).hasDisplayName()) {
             return item.getItemMeta().getDisplayName();
         }
-        return "<gray>" + formatMaterialName(item.getType().name());
+        return formatMaterialName(item.getType().name());
     }
 
     private String formatMaterialName(String materialName) {
-        return materialName.toLowerCase().replace("_", " ");
+        String[] parts = materialName.toLowerCase().split("_");
+        StringBuilder formattedName = new StringBuilder();
+
+        for (String part : parts) {
+            formattedName.append(part.substring(0, 1).toUpperCase()).append(part.substring(1)).append(" ");
+        }
+
+        return formattedName.toString().trim();
     }
 }

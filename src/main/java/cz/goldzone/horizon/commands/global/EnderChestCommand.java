@@ -19,7 +19,7 @@ public class EnderChestCommand implements CommandExecutor {
         if (player.hasPermission("horizon.player.ec")) {
             player.openInventory(player.getEnderChest());
         } else {
-            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!\nUse /vip for more information.");
+            player.sendMessage(Lang.getPrefix("VIP") + "<red>You need VIP rank to use this command!");
         }
 
         return true;

@@ -15,11 +15,13 @@ public class FillTabItemManager implements TabCompleter {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> suggestions = new ArrayList<>();
 
-        if (args.length == 1 && command.getName().equalsIgnoreCase("i")) {
-            for (Material material : Material.values()) {
-                if (material.isItem()) {
-                    if (args[0].isEmpty() || material.name().toLowerCase().startsWith(args[0].toLowerCase())) {
-                        suggestions.add(material.name().toLowerCase());
+        if (sender.hasPermission("horizon.admin.give")) {
+            if (args.length == 1 && command.getName().equalsIgnoreCase("i")) {
+                for (Material material : Material.values()) {
+                    if (material.isItem()) {
+                        if (args[0].isEmpty() || material.name().toLowerCase().startsWith(args[0].toLowerCase())) {
+                            suggestions.add(material.name().toLowerCase());
+                        }
                     }
                 }
             }

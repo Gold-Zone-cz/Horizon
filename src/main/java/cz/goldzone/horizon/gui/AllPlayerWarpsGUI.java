@@ -35,7 +35,7 @@ public class AllPlayerWarpsGUI implements IGUI {
         Inventory inventory = Bukkit.createInventory(this, 54, "All Player Warps");
         DigitalGUI.fillInventory(inventory, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
-        List<String> warps = PlayerWarpsManager.getPlayerWarps(player);
+        List<String> warps = PlayerWarpsManager.getAllPlayerWarps();
         populateWarps(inventory, warps);
         setupNavigationButtons(inventory, warps.size());
         addBackItem(inventory);
