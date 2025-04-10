@@ -35,7 +35,7 @@ public class WebhookManager {
         webhookClient.send(message);
     }
 
-    public static void sendJail(Player playerName, String ip, String serverName, String action, String reason, int duration) {
+    public static void sendJailWebhook(Player playerName, String ip, String serverName, String action, String reason, int duration) {
         if (isInitialized()) {
 
             WebhookEmbedBuilder builder = new WebhookEmbedBuilder();
@@ -54,7 +54,7 @@ public class WebhookManager {
         }
     }
 
-    public static void sendFreeze(Player playerName, InetAddress ip, String serverName, String action, int duration) {
+    public static void sendFreezeWebhook(Player playerName, InetAddress ip, String serverName, String action, int duration) {
         if (isInitialized()) {
 
             WebhookEmbedBuilder builder = new WebhookEmbedBuilder();

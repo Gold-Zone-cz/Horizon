@@ -68,7 +68,11 @@ public class FreezeManager implements Listener {
         player.setHealth(20);
         player.setFoodLevel(20);
 
-        WebhookManager.sendFreeze(player, Objects.requireNonNull(player.getAddress()).getAddress(), Main.getInstance().getServer().getName(), staff, minutes);
+        player.sendMessage(Lang.getPrefix("Admin") + "<gray>You have been frozen for <red>" + minutes + " <gray>minutes!");
+        player.sendTitle("<red><bold>FROZEN!", "<gray>You have been frozen for " + minutes + " minutes.", 0, 50, 0);
+        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.0f, 1.0f);
+
+        WebhookManager.sendFreezeWebhook(player, Objects.requireNonNull(player.getAddress()).getAddress(), Main.getInstance().getServer().getName(), staff, minutes);
         logFreezeEvent(player, staff, minutes);
     }
 
@@ -128,9 +132,9 @@ public class FreezeManager implements Listener {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event, String staff) {
+    public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (isFrozen(player) && staff != null) {
+        if (isFrozen(player)) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tempban " + player.getName() + " 3d Leaving the server while frozen");
             unfreezePlayer(player);
         }
