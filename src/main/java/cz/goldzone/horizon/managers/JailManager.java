@@ -155,6 +155,11 @@ public class JailManager implements Listener {
         config.set("Jail." + targetName + ".Staff", staff);
         config.save();
 
+        WebhookManager.sendJail(target,
+                String.valueOf(Objects.requireNonNull(target.getAddress()).getAddress()),
+                Main.getInstance().getServer().getName(),
+                staff, reason, duration);
+
         checkInventory(target);
         teleportToJail(target, reason);
         notifyStaff(staff, target, duration, reason);

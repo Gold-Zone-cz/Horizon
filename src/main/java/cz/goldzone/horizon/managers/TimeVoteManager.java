@@ -1,8 +1,6 @@
 package cz.goldzone.horizon.managers;
 
 import cz.goldzone.horizon.Main;
-import cz.goldzone.horizon.gui.ConfirmGUI;
-import cz.goldzone.horizon.misc.TimeVoteHandler;
 import cz.goldzone.neuron.shared.Lang;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -17,21 +15,23 @@ public class TimeVoteManager {
     private static final long VOTE_COOLDOWN = 60 * 60 * 1000;
     private static final long VOTE_DURATION = 20 * 60 * 5;
 
-    public static void startVote(String voteOption) {
+    @Getter
+    private static String voteOption;
+    @Getter
+    private static Player voteCreator;
+
+    public static void startVote(String voteOption, Player creator) {
         if (isVoteInProgress()) {
-            Bukkit.getServer().broadcastMessage(Lang.getPrefix("TimeVote") + "<red>A vote is already in progress. Please wait for it to finish.");
+            Bukkit.getServer().broadcastMessage(Lang.getPrefix("TimeVote") + "<red>A vote is already in progress.");
             return;
         }
 
         voteInProgress = true;
         lastVoteTime = System.currentTimeMillis();
+        TimeVoteManager.voteOption = voteOption;
+        TimeVoteManager.voteCreator = creator;
 
         Bukkit.getServer().broadcastMessage(Lang.getPrefix("TimeVote") + "<gray>A vote for <red>" + voteOption + " <gray>has been initiated! <red>/timevote");
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            ConfirmGUI confirmGUI = new ConfirmGUI(() -> new TimeVoteHandler().handleVote(player, voteOption));
-            player.openInventory(confirmGUI.getInventory());
-        }
 
         new BukkitRunnable() {
             @Override

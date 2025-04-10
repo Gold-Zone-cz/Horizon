@@ -23,7 +23,7 @@ public class FreezeCommand implements CommandExecutor {
         if (minutes == 0) {
             FreezeManager.unfreezePlayer(player);
         } else {
-            FreezeManager.freezePlayer(player, minutes, staff, true);
+            FreezeManager.freezePlayer(player, minutes, staff);
         }
     }
 

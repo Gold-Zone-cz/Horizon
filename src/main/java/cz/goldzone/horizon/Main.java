@@ -24,7 +24,6 @@ import cz.goldzone.horizon.listeners.JoinListener;
 import cz.goldzone.horizon.managers.*;
 import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
-import cz.goldzone.neuron.shared.api.discord.webhook.WebhookClient;
 import dev.digitality.digitalgui.DigitalGUI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -36,8 +35,6 @@ import java.util.*;
 
 public final class Main extends JavaPlugin {
 
-    @Getter
-    private static WebhookClient webhookClient;
     @Getter
     private static final Gson gson = new Gson();
     @Getter
@@ -54,9 +51,13 @@ public final class Main extends JavaPlugin {
         registerListeners();
         registerPlaceholders();
         registerVault();
-        initializeWebhookClient();
 
         getLogger().info("Horizon (" + getDescription().getVersion() + ") successfully loaded.");
+    }
+
+    @Override
+    public void onDisable() {
+        WebhookManager.shutdown();
     }
 
     private void initializeManagers() {
@@ -66,6 +67,7 @@ public final class Main extends JavaPlugin {
         FreezeManager.startTask();
         JailManager.startTask();
         VoteManager.loadVotes();
+        WebhookManager.initialize();
     }
 
     private void registerListeners() {
@@ -153,16 +155,6 @@ public final class Main extends JavaPlugin {
             }
         } else {
             getLogger().warning("Economy provider not found. Economy features will not work.");
-        }
-    }
-
-    private void initializeWebhookClient() {
-        String webhookUrl = ConfigManager.getConfig("config").getString("WebhookURL");
-        if (webhookUrl != null) {
-            webhookClient = WebhookClient.withUrl(webhookUrl);
-            getLogger().info("Webhook client initialized successfully.");
-        } else {
-            getLogger().warning("Webhook URL is not configured!");
         }
     }
 }
