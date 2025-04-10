@@ -22,7 +22,7 @@ import cz.goldzone.horizon.commands.warp.WarpCommand;
 import cz.goldzone.horizon.listeners.ClickListener;
 import cz.goldzone.horizon.listeners.JoinListener;
 import cz.goldzone.horizon.managers.*;
-import cz.goldzone.horizon.placeholders.MoneyPlaceholders;
+import cz.goldzone.horizon.placeholders.EconomyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
 import dev.digitality.digitalgui.DigitalGUI;
 import lombok.Getter;
@@ -52,12 +52,12 @@ public final class Main extends JavaPlugin {
         registerPlaceholders();
         registerVault();
 
-        getLogger().info("Horizon (" + getDescription().getVersion() + ") successfully loaded.");
     }
 
     @Override
     public void onDisable() {
         WebhookManager.shutdown();
+        ConfigManager.saveConfigs();
     }
 
     private void initializeManagers() {
@@ -78,7 +78,7 @@ public final class Main extends JavaPlugin {
     private void registerPlaceholders() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new VotePlaceholders().register();
-            new MoneyPlaceholders().register();
+            new EconomyPlaceholders().register();
             getLogger().info("PlaceholderAPI registered successfully, support enabled.");
         } else {
             getLogger().warning("PlaceholderAPI not found. Placeholders will not work.");

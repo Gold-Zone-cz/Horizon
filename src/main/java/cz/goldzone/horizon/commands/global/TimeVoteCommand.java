@@ -65,7 +65,7 @@ public class TimeVoteCommand implements CommandExecutor {
 
             ConfirmGUI confirmGUI = new ConfirmGUI(() -> voteHandler.handleVote(player, voteOption));
             player.openInventory(confirmGUI.getInventory());
-            player.sendMessage(Lang.getPrefix("TimeVote") + "<gray>You have opened the vote to change the time to <red>" + voteOption + "<gray>!");
+            player.sendMessage(Lang.getPrefix("TimeVote") + "<gray>You have opened the voting for <red>" + voteOption + "<gray>.");
             return true;
         }
 

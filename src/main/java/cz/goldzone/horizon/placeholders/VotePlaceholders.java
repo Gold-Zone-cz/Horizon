@@ -39,11 +39,11 @@ public class VotePlaceholders extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
         if (player == null) return null;
 
-        if (identifier.startsWith("top_key_")) {
+        if (identifier.startsWith("top_voter")) {
             return getTopVoterName(identifier.replace("top_key_", ""));
         }
 
-        if (identifier.startsWith("top_value_")) {
+        if (identifier.startsWith("top_player_votes")) {
             return getTopVoterVotes(identifier.replace("top_value_", ""));
         }
 

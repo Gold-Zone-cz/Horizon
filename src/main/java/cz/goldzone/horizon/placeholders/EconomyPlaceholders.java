@@ -5,7 +5,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class MoneyPlaceholders extends PlaceholderExpansion {
+public class EconomyPlaceholders extends PlaceholderExpansion {
     @NotNull
     @Override
     public String getIdentifier() {

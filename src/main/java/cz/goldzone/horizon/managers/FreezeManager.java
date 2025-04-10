@@ -3,6 +3,7 @@ package cz.goldzone.horizon.managers;
 import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.admin.StaffNotify;
 import cz.goldzone.neuron.shared.Lang;
+import cz.goldzone.neuron.shared.player.GamePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -23,6 +24,8 @@ import java.util.Objects;
 public class FreezeManager implements Listener {
     private static final Map<Player, Integer> frozenPlayers = new HashMap<>();
     private static final Map<Player, String> freezingStaff = new HashMap<>();
+
+    private static final String PREFIX = Lang.getPrefix("Horizon");
 
     public static boolean isFrozen(Player player) {
         return frozenPlayers.containsKey(player);
@@ -48,16 +51,26 @@ public class FreezeManager implements Listener {
     }
 
     public static void unfreezePlayer(Player player) {
+        GamePlayer gamePlayer = GamePlayer.get(player.getName());
         if (isFrozen(player)) {
             frozenPlayers.remove(player);
             freezingStaff.remove(player);
-            player.sendMessage(Lang.getPrefix("Admin") + "<gray>You have been unfrozen!");
+            player.sendMessage(PREFIX + "<gray>You have been unfrozen!");
             player.sendTitle("<green><bold>UNFROZEN!", "<gray>You have been unfrozen.", 0, 100, 0);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+
+            WebhookManager.sendFreezeWebhook(player,
+                    gamePlayer.getLastIP(),
+                    gamePlayer.getServer(),
+                    "UNFREEZE",
+                    null,
+                    freezingStaff.get(player));
         }
     }
 
     public static void freezePlayer(Player player, int minutes, String staff) {
+        GamePlayer gamePlayer = GamePlayer.get(player.getName());
+
         if (isFrozen(player)) {
             return;
         }
@@ -68,19 +81,19 @@ public class FreezeManager implements Listener {
         player.setHealth(20);
         player.setFoodLevel(20);
 
-        player.sendMessage(Lang.getPrefix("Admin") + "<gray>You have been frozen for <red>" + minutes + " <gray>minutes!");
+        player.sendMessage(PREFIX + "<gray>You have been frozen for <red>" + minutes + " <gray>minutes!");
         player.sendTitle("<red><bold>FROZEN!", "<gray>You have been frozen for " + minutes + " minutes.", 0, 50, 0);
         player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1.0f, 1.0f);
 
-        WebhookManager.sendFreezeWebhook(player, Objects.requireNonNull(player.getAddress()).getAddress(), Main.getInstance().getServer().getName(), staff, minutes);
-        logFreezeEvent(player, staff, minutes);
+        WebhookManager.sendFreezeWebhook(player, gamePlayer.getLastIP(), gamePlayer.getServer(), "FREEZE", minutes, staff);
+        logFreezeEvent(player, staff);
     }
 
-    private static void logFreezeEvent(Player player, String staff, int minutes) {
-        String eventText = "FREEZE: " + player.getName() + " for " + minutes + " minutes";
+    private static void logFreezeEvent(Player player, String staff) {
+        String eventText = "EXECUTED FREEZE BY " + staff;
         Player staffPlayer = Bukkit.getPlayer(staff);
         if (staffPlayer != null) {
-            StaffNotify.setStaffNotify(staffPlayer, eventText);
+            StaffNotify.setStaffNotify(player, eventText);
         }
     }
 

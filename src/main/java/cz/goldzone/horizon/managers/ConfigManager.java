@@ -42,6 +42,12 @@ public class ConfigManager {
         }
     }
 
+    public static void saveConfigs() {
+        for (Configuration config : configs.values()) {
+            config.save();
+        }
+    }
+
     public static void reloadAllConfigs() {
         configs.clear();
         loadConfigs();

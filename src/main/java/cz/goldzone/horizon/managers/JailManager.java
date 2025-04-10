@@ -4,6 +4,7 @@ import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.admin.StaffNotify;
 import cz.goldzone.horizon.commands.admin.SetJailPlaceCommand;
 import cz.goldzone.neuron.shared.Lang;
+import cz.goldzone.neuron.shared.player.GamePlayer;
 import cz.goldzone.neuron.spigot.managers.GodManager;
 import dev.digitality.digitalconfig.config.Configuration;
 import net.md_5.bungee.api.ChatMessageType;
@@ -83,10 +84,18 @@ public class JailManager implements Listener {
     public static void unjail(Player player) {
         remove(player, false);
         Configuration config = ConfigManager.getConfig("jail");
-        String playerName = player.getName().toLowerCase();
+        GamePlayer playerName = GamePlayer.get(player.getName());
 
         config.set("Jail." + playerName, null);
         config.save();
+
+        WebhookManager.sendJailWebhook(player,
+                playerName.getLastIP(),
+                playerName.getServer(),
+                "UNJAIL",
+                jailReason.get(player),
+                jailTime.get(player),
+                jailedBy.get(player));
 
         Optional<Location> lastLocationOpt = Optional.ofNullable(config.get("Jail." + playerName + ".LastLocation", Location.class));
         lastLocationOpt.ifPresentOrElse(player::teleport, () -> player.performCommand("spawn"));
@@ -141,7 +150,7 @@ public class JailManager implements Listener {
         }
 
         Configuration config = ConfigManager.getConfig("jail");
-        String targetName = target.getName().toLowerCase();
+        GamePlayer targetName = GamePlayer.get(target.getName());
 
         Location lastLocation = adjustLastLocation(target);
         remove(target, false);
@@ -156,9 +165,10 @@ public class JailManager implements Listener {
         config.save();
 
         WebhookManager.sendJailWebhook(target,
-                String.valueOf(Objects.requireNonNull(target.getAddress()).getAddress()),
-                Main.getInstance().getServer().getName(),
-                staff, reason, duration);
+                targetName.getLastIP(),
+                targetName.getServer(),
+                "JAIL",
+                reason, duration, staff);
 
         checkInventory(target);
         teleportToJail(target, reason);
@@ -167,12 +177,19 @@ public class JailManager implements Listener {
 
     private static Location adjustLastLocation(Player target) {
         Location lastLocation = target.getLocation();
-        if (WorldManager.isValidSourceWorld(Objects.requireNonNull(lastLocation.getWorld()))) {
-            return Optional.ofNullable(Bukkit.getWorld("world"))
-                    .map(world -> Objects.requireNonNull(Bukkit.getWorld("Spawn")).getSpawnLocation())
-                    .orElse(lastLocation);
+
+        World world = lastLocation.getWorld();
+        if (!WorldManager.isValidSourceWorld(world)) {
+            return lastLocation;
         }
-        return lastLocation;
+
+        World spawnWorld = Bukkit.getWorld("Spawn");
+        if (spawnWorld != null) {
+            return spawnWorld.getSpawnLocation();
+        } else {
+            Main.getInstance().getLogger().warning("Spawn world is not loaded. Using current location instead.");
+            return lastLocation;
+        }
     }
 
     private static void teleportToJail(Player target, String reason) {
@@ -192,8 +209,16 @@ public class JailManager implements Listener {
     private static void notifyStaff(String staff, Player target, int duration, String reason) {
         Player staffPlayer = Bukkit.getPlayer(staff);
         if (staffPlayer != null) {
-            String eventText = "JAIL: " + reason + " (" + duration + " minutes) -> " + target.getName();
-            StaffNotify.setStaffNotify(staffPlayer, eventText);
+            String durationText;
+            if (duration >= 60) {
+                int hours = duration / 60;
+                int minutes = duration % 60;
+                durationText = hours + "h" + (minutes > 0 ? " " + minutes + "m" : "");
+            } else {
+                durationText = duration + "m";
+            }
+
+            StaffNotify.setStaffNotify(target, "JAILED BY " + staffPlayer + " (" + durationText + ") for " + reason);
         }
     }
 
