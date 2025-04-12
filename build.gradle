@@ -1,101 +1,93 @@
-    plugins {
-        id "com.gradleup.shadow" version "8.3.6"
-        id "java"
+plugins {
+    id "com.gradleup.shadow" version "8.3.6"
+    id "java"
+}
+
+group = "cz.goldzone"
+description = "Horizon"
+version = "1.0.3"
+
+java.sourceCompatibility = JavaLanguageVersion.of(21)
+java.targetCompatibility = JavaLanguageVersion.of(21)
+compileJava.options.encoding = "UTF-8"
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     }
 
-    group = 'cz.goldzone'
-    version = '1.0.3'
-
-    repositories {
-        mavenCentral()
-        maven {
-            url "https://libraries.minecraft.net/"
-        }
-        maven {
-            url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
-        }
-        maven {
-            url = "https://repo.codemc.io/repository/maven-snapshots/"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/groups/public/"
-        }
-        maven {
-            name = "goldzoneRepoReleases"
-            url = "https://repo.gold-zone.cz/releases"
-        }
-        maven {
-            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-        }
-        maven {
-            url 'https://jitpack.io'
-        }
-        maven {
-            name = "goldzoneRepoPrivate"
-            url = uri("https://repo.gold-zone.cz/private")
-
-            credentials {
-                username = project.findProperty("goldzoneRepo.username") ?: System.getenv("GOLDZONE_REPO_USERNAME")
-                password = project.findProperty("goldzoneRepo.password") ?: System.getenv("GOLDZONE_REPO_PASSWORD")
-            }
-
-            authentication {
-                create("basic", BasicAuthentication)
-            }
-        }
+    maven {
+        url = "https://repo.codemc.io/repository/maven-snapshots/"
     }
 
-    dependencies {
-        compileOnly "org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT"
-
-        compileOnly "cz.goldzone:neuron-spigot:1.0.0-SNAPSHOT"
-        compileOnly "me.clip:placeholderapi:2.11.6"
-        compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
-
-        implementation "dev.digitality:digitalconfig:1.1.1"
-        implementation "net.md-5:bungeecord-chat:1.20-R0.2"
-        implementation "com.github.cryptomorin:XSeries:13.2.0"
-        implementation "dev.digitality:digitalgui:1.1.1"
-
-        implementation "org.projectlombok:lombok:1.18.32"
-        annotationProcessor "org.projectlombok:lombok:1.18.32"
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
     }
 
-    shadowJar {
-        minimize {
-            exclude(dependency("dev.digitality:digitalgui:.*"))
-            exclude(dependency("net.md-5:bungeecord-config:.*"))
+    maven {
+        url = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
+    }
+
+    maven {
+        url "https://jitpack.io"
+    }
+
+    maven {
+        name = "goldzoneRepoReleases"
+        url = "https://repo.gold-zone.cz/releases"
+    }
+
+    maven {
+        name = "goldzoneRepoPrivate"
+        url = uri("https://repo.gold-zone.cz/private")
+
+        credentials {
+            username = project.findProperty("goldzoneRepo.username") ?: System.getenv("GOLDZONE_REPO_USERNAME")
+            password = project.findProperty("goldzoneRepo.password") ?: System.getenv("GOLDZONE_REPO_PASSWORD")
         }
-        relocate "dev.digitality.digitalgui", "cz.goldzone.horizon.api.digitalgui"
 
-        archiveClassifier = null
-        archiveFileName = "${project.name}.jar"
-    }
-
-    def targetJavaVersion = 21
-    java {
-        def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
-        if (JavaVersion.current() < javaVersion) {
-            toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+        authentication {
+            create("basic", BasicAuthentication)
         }
     }
+}
 
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = 'UTF-8'
+dependencies {
+    compileOnly "org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT"
+    compileOnly "cz.goldzone:neuron-spigot:1.0.0-SNAPSHOT"
 
-        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-            options.release.set(targetJavaVersion)
-        }
+    implementation "net.md-5:bungeecord-chat:1.20-R0.2"
+    implementation "com.github.cryptomorin:XSeries:13.2.0"
+    implementation "dev.digitality:digitalgui:1.1.1"
+    implementation "dev.digitality:digitalconfig:1.1.1"
+
+    compileOnly "me.clip:placeholderapi:2.11.6"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
+
+    implementation "org.projectlombok:lombok:1.18.32"
+    annotationProcessor "org.projectlombok:lombok:1.18.32"
+}
+
+shadowJar {
+    minimize {
+        exclude dependency("dev.digitality:digitalgui:.*")
     }
 
-    processResources {
-        def props = ["version": version]
-        inputs.properties props
-        filteringCharset "UTF-8"
-        filesMatching(["*.yml", "*.properties", "*.json"]) {
-            expand props
-        }
+    relocate "dev.digitality.digitalgui", "cz.goldzone.horizon.api.digitalgui"
+    relocate "dev.digitality.digitalconfig", "cz.goldzone.horizon.api.digitalconfig"
+
+    archiveClassifier = null
+    archiveFileName = "${project.name}.jar"
+}
+
+processResources {
+    def props = ["version": version]
+    inputs.properties props
+    filteringCharset "UTF-8"
+    filesMatching(["*.yml", "*.properties", "*.json"]) {
+        expand props
     }
+}
