@@ -95,7 +95,7 @@
         def props = ["version": version]
         inputs.properties props
         filteringCharset "UTF-8"
-        filesMatching(["*.yml", "*.properties", "*.json", "*.md"]) {
+        filesMatching(["*.yml", "*.properties", "*.json"]) {
             expand props
         }
     }

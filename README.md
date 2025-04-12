@@ -5,7 +5,7 @@ Horizon Plugin
 
 #### Created on: March 22, 2025
 
-#### Version: ${version}"
+#### Version: 1.0.3
 
 ## Permissions:
 ### **Staff:**
