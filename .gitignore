@@ -19,7 +19,5 @@ bin/
 *.war
 *.ear
 
-logs/
-
 !gradle/wrapper/gradle-wrapper.jar
 !**/libs/*.jar
