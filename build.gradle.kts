@@ -91,7 +91,7 @@ tasks {
         filteringCharset = "UTF-8"
 
         filesMatching("plugin.yml") {
-            expand(hashMapOf("version" to project.version))
+            expand(hashMapOf("version" to version))
         }
     }
 }
