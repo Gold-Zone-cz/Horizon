@@ -31,7 +31,7 @@ public class PayCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayerExact(args[0]);
         if (target == null || !target.isOnline()) {
-            player.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found or offline!");
+            player.sendMessage(Lang.getPrefix("Economy") + Lang.get("core.player_offline", player));
             return false;
         }
 

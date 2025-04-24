@@ -54,7 +54,7 @@ public class WarpCommand implements CommandExecutor {
             return;
         }
 
-        String worldName = configPath.getString(".location" + ".world");
+        String worldName = configPath.getString(".location.world");
         if (worldName == null) {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>World name is missing for warp " + warpName + "!");
             return;
@@ -66,14 +66,9 @@ public class WarpCommand implements CommandExecutor {
             return;
         }
 
-        double x = configPath.getDouble(".location" + ".x");
-        double y = configPath.getDouble(".location" + ".y");
-        double z = configPath.getDouble(".location" + ".z");
-        float yaw = (float) configPath.getDouble(".location" + ".yaw");
-        float pitch = (float) configPath.getSection("Warps." + warpName).getDouble(".location" + ".pitch");
+        Location location = configPath.get("location", Location.class);
 
-        Location warpLocation = new Location(world, x, y, z, yaw, pitch);
-        player.teleport(warpLocation);
+        player.teleport(location);
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>You have been teleported to warp <red>" + warpName + "<gray>!");
     }
 }

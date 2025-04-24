@@ -212,25 +212,7 @@ public class JailManager implements Listener {
             return;
         }
 
-        String worldName = jailConfig.getString(".world");
-        if (worldName == null) {
-            Main.getInstance().getLogger().warning("Jail world is not set in the configuration!");
-            return;
-        }
-
-        World world = Bukkit.getWorld(worldName);
-        if (world == null) {
-            Main.getInstance().getLogger().warning("World '" + worldName + "' does not exist or is not loaded!");
-            return;
-        }
-
-        double x = jailConfig.getDouble(".x");
-        double y = jailConfig.getDouble(".y");
-        double z = jailConfig.getDouble(".z");
-        float yaw = (float) jailConfig.getDouble(".yaw");
-        float pitch = (float) jailConfig.getDouble(".pitch");
-
-        Location jailLocation = new Location(world, x, y, z, yaw, pitch);
+        Location jailLocation = jailConfig.get("location", Location.class);
 
         target.teleport(jailLocation);
         resetPlayerState(target);

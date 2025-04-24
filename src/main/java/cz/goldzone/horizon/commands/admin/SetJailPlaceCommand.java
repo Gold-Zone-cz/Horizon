@@ -50,7 +50,7 @@ public class SetJailPlaceCommand implements CommandExecutor {
         config.set("JailPlace", location);
         config.save();
 
-        player.sendMessage(Lang.getPrefix("Jail") + "<gray>Location has been set!");
+        player.sendMessage(Lang.getPrefix("Jail") + "<gray>Jail location has been <red>successfully <gray>set!");
         return true;
     }
 }

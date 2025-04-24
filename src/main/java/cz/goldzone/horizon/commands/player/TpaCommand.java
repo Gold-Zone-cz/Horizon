@@ -32,7 +32,7 @@ public class TpaCommand implements CommandExecutor {
         Player requestTarget = Bukkit.getPlayer(args[0]);
 
         if (requestTarget == null) {
-            player.sendMessage(Lang.getPrefix("Teleport") + "<red>Player is unavailable or does not exist!");
+            player.sendMessage(Lang.getPrefix("Teleport") + Lang.get("core.player_offline", player));
             return false;
         }
 

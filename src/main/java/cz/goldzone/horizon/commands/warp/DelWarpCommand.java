@@ -36,9 +36,8 @@ public class DelWarpCommand implements CommandExecutor {
         }
 
         Configuration config = ConfigManager.getConfig("warps");
-        String path = "Warps." + name;
 
-        if (config.getSection(path) == null) {
+        if (config.getSection("Warps." + name) == null) {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp <gray>" + name + " <red>does not exist!");
             return false;
         }
@@ -50,7 +49,7 @@ public class DelWarpCommand implements CommandExecutor {
             return true;
         }
 
-        config.set(path, null);
+        config.set("Warps." + name, null);
         config.save();
 
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>Warp <red>" + name + " <gray>has been permanently deleted.");

@@ -53,44 +53,36 @@ public class RateGUI implements IGUI {
 
     private InteractiveItem createRatingItem(int rating) {
         String displayName = "<yellow><bold>Rate</bold> " + warpName;
-        String lore = Lang.format(
-                "<gray>\n<gray>Click to rate with <yellow>%{1} star%{2}\n<gray>",
-                String.valueOf(rating), (rating > 1 ? "s" : "")
-        );
-        if (rating == 1) {
-            lore += "\n<red>Worst rating!";
-        } else if (rating == 5) {
-            lore += "\n<green>Great rating!";
-        } else if (rating == 3) {
-            lore += "\n<yellow>Average rating!";
-        }
-
+        String lore = Lang.format("<gray>\n<gray>Click to rate with <yellow>%{1} star%{2}\n<gray>", String.valueOf(rating), rating > 1 ? "s" : "");
+        if (rating == 1) lore += "\n<red>Worst rating!";
+        else if (rating == 5) lore += "\n<green>Great rating!";
+        else if (rating == 3) lore += "\n<yellow>Average rating!";
         InteractiveItem item = new InteractiveItem(Objects.requireNonNull(XMaterial.NETHER_STAR.parseItem()));
         item.setDisplayName(displayName);
         item.setLore(lore);
 
-        item.onClick((player, clickType) -> {
+        InteractiveItem star = new InteractiveItem(Objects.requireNonNull(XMaterial.NETHER_STAR.parseItem()));
+        star.setDisplayName(displayName);
+        star.setLore(lore);
+        star.onClick((player, clickType) -> {
             int clampedRating = Math.min(rating, 5);
             PlayerWarpsManager.setPlayerWarpRating(warpName, clampedRating);
             player.closeInventory();
-            player.sendMessage(Lang.getPrefix("PlayerWarps") + Lang.format("<gray>You rated the player warp <red>%{1} <gray>with <yellow>%{2} star%{3}", warpName, String.valueOf(clampedRating), (clampedRating > 1 ? "s" : "")));
-
+            player.sendMessage(Lang.getPrefix("PlayerWarps") + Lang.format("<gray>You rated the player warp <red>%{1} <gray>with <yellow>%{2} star%{3}", warpName, String.valueOf(clampedRating), clampedRating > 1 ? "s" : ""));
             sendThankYouMessages(warpName, clampedRating, player);
         });
 
-        return item;
+        return star;
     }
 
     public static void sendThankYouMessages(String warpName, int givenRating, Player ratingPlayer) {
         String message = PlayerWarpsManager.getRateMessage(warpName);
         int requiredThreshold = PlayerWarpsManager.getRateThreshold(warpName);
 
-        if (message == null || message.isEmpty() || givenRating < requiredThreshold) {
-            return;
-        }
+        if (message == null || message.isEmpty() || givenRating < requiredThreshold) return;
 
-        String formattedMessage = message.replace("{player}", ratingPlayer.getName()).replace("{warp}", warpName);
-        ratingPlayer.sendMessage(Lang.getPrefix("Rate") + "<gray>" + formattedMessage);
+        String formatted = message.replace("{player}", ratingPlayer.getName()).replace("{warp}", warpName);
+        ratingPlayer.sendMessage(Lang.getPrefix("Rate") + "<gray>" + formatted);
     }
 
     private boolean hasPlayerVisitedWarp(String warpName, Player player) {

@@ -48,11 +48,15 @@ public class AllPlayerWarpsGUI implements IGUI {
         int end = Math.min(start + 28, warps.size());
 
         int[] slots = getWarpSlots();
+        int slotIndex = 0;
 
-        for (int i = start, slotIndex = 0; i < end && slotIndex < slots.length; i++, slotIndex++) {
-            Optional<ItemStack> cachedItemOptional = Optional.ofNullable(PlayerWarpsGUI.cachedWarpItems.get(warps.get(i)));
+        for (int i = start; i < end && slotIndex < slots.length; i++) {
+            String warpName = warps.get(i);
+            Optional<ItemStack> cachedItemOptional = Optional.ofNullable(PlayerWarpsGUI.cachedWarpItems.get(warpName));
+
             if (cachedItemOptional.isPresent()) {
-                inventory.setItem(slots[slotIndex], createWarpItem(warps.get(i)));
+                inventory.setItem(slots[slotIndex], createWarpItem(warpName));
+                slotIndex++;
             }
         }
     }
@@ -78,7 +82,7 @@ public class AllPlayerWarpsGUI implements IGUI {
                 PlayerWarpsManager.teleportToPlayerWarp(player, warpName);
             } else if (clickType.isRightClick()) {
                 if (player.getName().equalsIgnoreCase(owner)) {
-                    player.sendMessage(Lang.format("<red>You cannot rate your own warp!"));
+                    player.sendMessage(Lang.getPrefix("Rate") + Lang.format("<gray>You cannot rate your own warp <red>%{1}", warpName));
                     return;
                 }
                 player.openInventory(new RateGUI(warpName, player).getInventory());

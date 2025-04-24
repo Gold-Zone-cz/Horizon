@@ -28,7 +28,7 @@ public class PlayerWarpsGUI implements IGUI {
     private final int PAGE_SIZE = 28;
 
     private final Player player;
-    private static Category category;
+    private final Category category;
     private int page = 0;
 
     private static final String ALL_WARPS_BUTTON_NAME = ChatColor.stripColor(
@@ -39,7 +39,7 @@ public class PlayerWarpsGUI implements IGUI {
 
     public PlayerWarpsGUI(Player player, Category category) {
         this.player = player;
-        PlayerWarpsGUI.category = category;
+        this.category = category;
     }
 
     @NotNull
@@ -118,6 +118,7 @@ public class PlayerWarpsGUI implements IGUI {
 
             if (clickType.isLeftClick()) {
                 PlayerWarpsManager.teleportToPlayerWarp(player, rawWarpName);
+                PlayerWarpsManager.markWarpAsVisited(player, rawWarpName);
             } else if (clickType.isRightClick()) {
                 if (ownerName.equals(currentPlayerName)) {
                     player.sendMessage(Lang.getPrefix("PlayerWarps") + "<red>You cannot rate your own player warp!");
@@ -130,7 +131,7 @@ public class PlayerWarpsGUI implements IGUI {
         return interactiveItem;
     }
 
-    public static String getColorForCategory() {
+    public String getColorForCategory() {
         return switch (category) {
             case FARMS -> "&e";
             case SHOPS -> "&a";

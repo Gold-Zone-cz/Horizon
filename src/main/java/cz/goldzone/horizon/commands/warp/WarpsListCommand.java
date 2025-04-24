@@ -28,7 +28,7 @@ public class WarpsListCommand implements CommandExecutor {
         player.sendMessage("<white>");
 
         Configuration config = ConfigManager.getConfig("warps");
-        ConfigurationSection warpSection = config.getSection("Warps.");
+        ConfigurationSection warpSection = config.getSection("Warps");
 
         if (warpSection == null || warpSection.getKeys().isEmpty()) {
             player.sendMessage("<dark_gray>【 <red>No warps available. <dark_gray>】");

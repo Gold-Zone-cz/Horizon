@@ -86,40 +86,40 @@ public final class Main extends JavaPlugin {
         Map<String, CommandExecutor> commands = new HashMap<>();
         TeleportManager teleportManager = new TeleportManager();
 
-        registerCommand(commands, "horizon", new HorizonCommand());
-        registerCommand(commands, "netherlist", new NetherListCommand());
-        registerCommand(commands, "warp", new WarpCommand());
-        registerCommand(commands, "warps", new WarpsListCommand());
-        registerCommand(commands, "setwarp", new SetWarpCommand());
-        registerCommand(commands, "delwarp", new DelWarpCommand());
-        registerCommand(commands, "playerwarps", new PlayerWarpsCommand());
-        registerCommand(commands, "sethome", new SetHomeCommand());
-        registerCommand(commands, "delhome", new DelHomeCommand());
-        registerCommand(commands, "home", new HomeCommand());
-        registerCommand(commands, "homes", new HomeListCommand());
-        registerCommand(commands, "wb", new CraftCommand());
-        registerCommand(commands, "enderchest", new EnderChestCommand());
-        registerCommand(commands, "tpa", new TpaCommand(teleportManager));
-        registerCommand(commands, "tpaccept", new TpaAcceptCommand(teleportManager));
-        registerCommand(commands, "tpdeny", new TpaDenyCommand(teleportManager));
-        registerCommand(commands, "i", new ItemCommand());
-        registerCommand(commands, "balance", new BalanceCommand());
-        registerCommand(commands, "anvil", new AnvilCommand());
-        registerCommand(commands, "pay", new PayCommand());
-        registerCommand(commands, "paytoggle", new PayToggleCommand());
-        registerCommand(commands, "tptoggle", new TpToggleCommand());
-        registerCommand(commands, "repair", new RepairCommand());
-        registerCommand(commands, "hat", new HatCommand());
-        registerCommand(commands, "timevote", new TimeVoteCommand());
-        registerCommand(commands, "timevote end", new TimeVoteEndCommand());
-        registerCommand(commands, "freeze", new FreezeCommand());
-        registerCommand(commands, "unfreeze", new UnFreezeCommand());
-        registerCommand(commands, "rtp", new RandomTeleportCommand());
-        registerCommand(commands, "setjail", new SetJailPlaceCommand());
-        registerCommand(commands, "jail", new JailCommand());
-        registerCommand(commands, "unjail", new UnJailCommand());
-        registerCommand(commands, "baltop", new BalTopCommand());
-        registerCommand(commands, "ratemessage", new RateMessageCommand());
+        register(commands, "horizon", new HorizonCommand());
+        register(commands, "netherlist", new NetherListCommand());
+        register(commands, "warp", new WarpCommand());
+        register(commands, "warps", new WarpsListCommand());
+        register(commands, "setwarp", new SetWarpCommand());
+        register(commands, "delwarp", new DelWarpCommand());
+        register(commands, "playerwarps", new PlayerWarpsCommand());
+        register(commands, "sethome", new SetHomeCommand());
+        register(commands, "delhome", new DelHomeCommand());
+        register(commands, "home", new HomeCommand());
+        register(commands, "homes", new HomeListCommand());
+        register(commands, "wb", new CraftCommand());
+        register(commands, "enderchest", new EnderChestCommand());
+        register(commands, "tpa", new TpaCommand(teleportManager));
+        register(commands, "tpaccept", new TpaAcceptCommand(teleportManager));
+        register(commands, "tpdeny", new TpaDenyCommand(teleportManager));
+        register(commands, "i", new ItemCommand());
+        register(commands, "balance", new BalanceCommand());
+        register(commands, "anvil", new AnvilCommand());
+        register(commands, "pay", new PayCommand());
+        register(commands, "paytoggle", new PayToggleCommand());
+        register(commands, "tptoggle", new TpToggleCommand());
+        register(commands, "repair", new RepairCommand());
+        register(commands, "hat", new HatCommand());
+        register(commands, "timevote", new TimeVoteCommand());
+        register(commands, "timevote end", new TimeVoteEndCommand());
+        register(commands, "freeze", new FreezeCommand());
+        register(commands, "unfreeze", new UnFreezeCommand());
+        register(commands, "rtp", new RandomTeleportCommand());
+        register(commands, "setjail", new SetJailPlaceCommand());
+        register(commands, "jail", new JailCommand());
+        register(commands, "unjail", new UnJailCommand());
+        register(commands, "baltop", new BalTopCommand());
+        register(commands, "ratemessage", new RateMessageCommand());
 
         commands.forEach((cmd, executor) -> {
             if (getCommand(cmd) != null) {
@@ -139,7 +139,7 @@ public final class Main extends JavaPlugin {
         }
     }
 
-    private void registerCommand(Map<String, CommandExecutor> commands, String commandName, CommandExecutor executor) {
+    private void register(Map<String, CommandExecutor> commands, String commandName, CommandExecutor executor) {
         commands.put(commandName, executor);
     }
 
