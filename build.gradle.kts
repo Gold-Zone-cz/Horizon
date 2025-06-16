@@ -59,7 +59,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT")
     compileOnly("cz.goldzone:neuron-spigot:1.0.33")
 
-    implementation("net.md-5:bungeecord-chat:1.21-R0.2")
+    implementation("net.md-5:bungeecord-chat:1.21-R0.3")
     implementation("com.github.cryptomorin:XSeries:13.3.1")
     implementation("dev.digitality:digitalgui:1.1.3")
     implementation("dev.digitality:digitalconfig:1.2.0")
