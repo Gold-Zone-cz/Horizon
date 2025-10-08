@@ -57,7 +57,7 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT")
-    compileOnly("cz.goldzone:neuron-spigot:1.0.96")
+    compileOnly("cz.goldzone:neuron-spigot:1.0.99")
 
     implementation("net.md-5:bungeecord-chat:1.21-R0.4")
     implementation("com.github.cryptomorin:XSeries:13.5.0")
