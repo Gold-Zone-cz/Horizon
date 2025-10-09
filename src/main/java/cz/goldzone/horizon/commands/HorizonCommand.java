@@ -30,7 +30,7 @@ public class HorizonCommand implements CommandExecutor {
 
     private void displayHelp(CommandSender sender) {
         sender.sendMessage("<white>");
-        sender.sendMessage(Lang.getPrefix("Horizon") + "<gray>Available commands:");
+        sender.sendMessage(Lang.getPrefix("Horizon") + "<gray>Made with <red>❤ <gray>by <white>jogg15");
         sender.sendMessage("<white>");
         sender.sendMessage("<#333333>【 <red>/horizon reload <#333333>】 <gray>Reload all configurations");
         sender.sendMessage("<white>");
