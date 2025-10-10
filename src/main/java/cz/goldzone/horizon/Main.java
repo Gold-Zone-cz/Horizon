@@ -86,44 +86,59 @@ public final class Main extends JavaPlugin {
         Map<String, CommandExecutor> commands = new HashMap<>();
         TeleportManager teleportManager = new TeleportManager();
 
+        // --- Horizon ---
         register(commands, "horizon", new HorizonCommand());
-        register(commands, "netherlist", new NetherListCommand());
+
+        // --- Warps ---
         register(commands, "warp", new WarpCommand());
         register(commands, "warps", new WarpsListCommand());
         register(commands, "setwarp", new SetWarpCommand());
         register(commands, "delwarp", new DelWarpCommand());
+
+        // --- Player Warps ---
         register(commands, "playerwarps", new PlayerWarpsCommand());
+
+        // --- Homes ---
         register(commands, "sethome", new SetHomeCommand());
         register(commands, "delhome", new DelHomeCommand());
         register(commands, "home", new HomeCommand());
         register(commands, "homes", new HomeListCommand());
-        register(commands, "wb", new CraftCommand());
-        register(commands, "enderchest", new EnderChestCommand());
+
+        // --- Economy ---
+        register(commands, "balance", new BalanceCommand());
+        register(commands, "baltop", new BalTopCommand());
+        register(commands, "pay", new PayCommand());
+        register(commands, "paytoggle", new PayToggleCommand());
+
+        // --- Player ---
         register(commands, "tpa", new TpaCommand(teleportManager));
         register(commands, "tpaccept", new TpaAcceptCommand(teleportManager));
         register(commands, "tpdeny", new TpaDenyCommand(teleportManager));
-        register(commands, "i", new ItemCommand());
-        register(commands, "balance", new BalanceCommand());
-        register(commands, "anvil", new AnvilCommand());
-        register(commands, "pay", new PayCommand());
-        register(commands, "paytoggle", new PayToggleCommand());
         register(commands, "tptoggle", new TpToggleCommand());
+        register(commands, "rtp", new RandomTeleportCommand());
+        register(commands, "ratemessage", new RateMessageCommand());
+
+        // --- Global ---
+        register(commands, "wb", new CraftCommand());
+        register(commands, "anvil", new AnvilCommand());
+        register(commands, "enderchest", new EnderChestCommand());
         register(commands, "repair", new RepairCommand());
         register(commands, "hat", new HatCommand());
         register(commands, "timevote", new TimeVoteCommand());
-        register(commands, "timevote end", new TimeVoteEndCommand());
+
+        // --- Admin ---
         register(commands, "freeze", new FreezeCommand());
         register(commands, "unfreeze", new UnFreezeCommand());
-        register(commands, "rtp", new RandomTeleportCommand());
         register(commands, "setjail", new SetJailPlaceCommand());
         register(commands, "jail", new JailCommand());
         register(commands, "unjail", new UnJailCommand());
-        register(commands, "baltop", new BalTopCommand());
-        register(commands, "ratemessage", new RateMessageCommand());
+        register(commands, "netherlist", new NetherListCommand());
+        register(commands, "setspawnlocation", new SpawnLocationCommand());
 
         commands.forEach((cmd, executor) -> {
-            if (getCommand(cmd) != null) {
-                Objects.requireNonNull(getCommand(cmd)).setExecutor(executor);
+            var c = getCommand(cmd);
+            if (c != null) {
+                c.setExecutor(executor);
                 setTabCompleter(cmd);
             } else {
                 getLogger().warning("Command " + cmd + " not found in plugin.yml.");

@@ -98,6 +98,8 @@ commands:
     description: Make a thank you message if someone rates the player warp
     aliases:
         - ratemsg
+  setspawnlocation:
+    description: Set the spawn location for first-time players
 
 
 
