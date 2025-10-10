@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 
 public class CategoriesGUI implements IGUI {
 
@@ -20,7 +22,7 @@ public class CategoriesGUI implements IGUI {
         DigitalGUI.fillInventory(inv, XMaterial.GRAY_STAINED_GLASS_PANE.parseItem(), null);
 
 
-        InteractiveItem farmItem = new InteractiveItem(Category.FARMS.getMaterial(), Category.FARMS.getDisplayName());
+        InteractiveItem farmItem = new InteractiveItem(Objects.requireNonNull(Category.FARMS.getMaterial()), Category.FARMS.getDisplayName());
         farmItem.setLore(
                 " ",
                 "<gray>Click to view player warps",
@@ -33,7 +35,7 @@ public class CategoriesGUI implements IGUI {
                 player.openInventory(new PlayerWarpsGUI(player, Category.FARMS).getInventory()));
         inv.setItem(11, farmItem);
 
-        InteractiveItem shopItem = new InteractiveItem(Category.SHOPS.getMaterial(), Category.SHOPS.getDisplayName());
+        InteractiveItem shopItem = new InteractiveItem(Objects.requireNonNull(Category.SHOPS.getMaterial()), Category.SHOPS.getDisplayName());
         shopItem.setLore(
                 " ",
                 "<gray>Click to view player warps",
@@ -48,7 +50,7 @@ public class CategoriesGUI implements IGUI {
 
 
 
-        InteractiveItem miscItem = new InteractiveItem(Category.MISC.getMaterial(), Category.MISC.getDisplayName());
+        InteractiveItem miscItem = new InteractiveItem(Objects.requireNonNull(Category.MISC.getMaterial()), Category.MISC.getDisplayName());
         miscItem.setLore(
                 " ",
                 "<gray>Click to view player warps",

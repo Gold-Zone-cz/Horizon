@@ -37,7 +37,7 @@ public class TimeVoteCommand implements CommandExecutor {
             }
 
             TimeVoteManager.endVote();
-            player.sendMessage(Lang.getPrefix("TimeVote") + "<gray>The time vote has been forcibly ended by staff <red>" + player.getName());
+            player.sendMessage(Lang.getPrefix("TimeVote") + "<gray>The time vote has been ended by staff <red>" + player.getName());
             return true;
         }
 

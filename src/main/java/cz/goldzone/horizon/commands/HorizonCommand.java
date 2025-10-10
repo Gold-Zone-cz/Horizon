@@ -2,15 +2,16 @@ package cz.goldzone.horizon.commands;
 
 import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class HorizonCommand implements CommandExecutor {
 
@@ -43,16 +44,11 @@ public class HorizonCommand implements CommandExecutor {
         sender.sendMessage("<white>");
 
         if (sender instanceof Player player) {
-            Component clickableCommand = Component.text("【 ")
-                    .color(NamedTextColor.DARK_GRAY)
-                    .append(Component.text("/horizon reload", NamedTextColor.RED)
-                            .hoverEvent(HoverEvent.showText(Component.text("Click to fill chat", NamedTextColor.GRAY)))
-                            .clickEvent(ClickEvent.suggestCommand("/horizon reload")))
-                    .append(Component.text(" 】", NamedTextColor.DARK_GRAY))
-                    .append(Component.text(" - Reload all configurations", NamedTextColor.GRAY));
+            TextComponent clickableCommand = new TextComponent("<dark_gray>【 <red>/horizon reload <dark_gray>】 <gray>- Reload all configurations");
+            clickableCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("<gray>Click to fill chat")));
+            clickableCommand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/horizon reload"));
 
-            player.sendMessage(String.valueOf(clickableCommand));
-
+            player.spigot().sendMessage(clickableCommand);
             sender.sendMessage("<white>");
         }
     }

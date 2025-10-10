@@ -38,7 +38,7 @@ public class JoinListener implements Listener {
 
         } else {
             title = toLegacy("<bold><gradient:#2CDB54:#54B65F>SURVIVAL</gradient></bold>");
-            subtitle = toLegacy("<gray>Welcome back, <green>" + player.getName() + "<gray>!");
+            subtitle = toLegacy("<gray>Welcome back, <green>" + player.getName());
 
         }
         player.sendTitle(title, subtitle, 10, 70, 20);

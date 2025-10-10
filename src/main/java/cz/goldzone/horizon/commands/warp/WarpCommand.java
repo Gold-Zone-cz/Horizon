@@ -5,7 +5,6 @@ import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
 import dev.digitality.digitalconfig.config.ConfigurationSection;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,19 +53,11 @@ public class WarpCommand implements CommandExecutor {
             return;
         }
 
-        String worldName = configPath.getString(".location.world");
-        if (worldName == null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>World name is missing for warp " + warpName + "!");
-            return;
-        }
-
-        World world = org.bukkit.Bukkit.getWorld(worldName);
-        if (world == null) {
-            player.sendMessage(Lang.getPrefix("Warps") + "<red>World " + worldName + " does not exist or is not loaded!");
-            return;
-        }
-
         Location location = configPath.get("location", Location.class);
+        if (location == null) {
+            player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp location not set for " + warpName + "!");
+            return;
+        }
 
         player.teleport(location);
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>You have been teleported to warp <red>" + warpName + "<gray>!");
