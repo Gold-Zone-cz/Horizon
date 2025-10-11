@@ -6,7 +6,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class VotePlaceholders extends PlaceholderExpansion {
+public class VotePlaceholder extends PlaceholderExpansion {
 
     @Override
     public boolean persist() {
@@ -40,15 +40,15 @@ public class VotePlaceholders extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
         if (player == null) return null;
 
-        if (identifier.startsWith("top_voter")) {
+        if (identifier.startsWith("horizon_top_voter")) {
             return getTopVoterName(identifier.replace("top_key_", ""));
         }
 
-        if (identifier.startsWith("top_player_votes")) {
+        if (identifier.startsWith("horizon_top_player_votes")) {
             return getTopVoterVotes(identifier.replace("top_value_", ""));
         }
 
-        if (identifier.equals("player_votes")) {
+        if (identifier.equals("horizon_player_votes")) {
             return String.valueOf(VoteManager.getVotes(player.getName()));
         }
 

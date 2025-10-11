@@ -6,7 +6,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class EconomyPlaceholders extends PlaceholderExpansion {
+public class EconomyPlaceholder extends PlaceholderExpansion {
     @NotNull
     @Override
     public String getIdentifier() {
@@ -39,10 +39,15 @@ public class EconomyPlaceholders extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
 
-        if (identifier.equals("player_money")) {
-            return String.valueOf(EconomyManager.getBalance(player));
+        if (identifier.equals("horizon_player_money")) {
+            double balance = EconomyManager.getBalance(player);
+            return formatCurrency(balance);
         }
 
         return null;
+    }
+
+    public static String formatCurrency(double amount) {
+        return String.format("$%,.0f", amount).replace(",", " ");
     }
 }

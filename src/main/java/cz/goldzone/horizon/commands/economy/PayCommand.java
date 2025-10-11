@@ -70,7 +70,7 @@ public class PayCommand implements CommandExecutor {
                 }
 
                 if (!EconomyManager.hasEnough(player, amount)) {
-                    player.sendMessage(Lang.getPrefix("Economy") + "<red>You don't have enough money!");
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>You don't have enough money! Your balance is: " + EconomyManager.formatCurrency(EconomyManager.getBalance(player)));
                     return;
                 }
 

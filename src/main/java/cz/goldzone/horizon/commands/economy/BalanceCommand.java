@@ -20,7 +20,7 @@ public class BalanceCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Your balance: <red>" + EconomyManager.formatCurrency(EconomyManager.getBalance(player)));
+            player.sendMessage(Lang.getPrefix("Economy") + "<gray>Your balance: <red>" + EconomyManager.formatCurrency(EconomyManager.getBalance(player)));
             return true;
         }
 
@@ -40,12 +40,12 @@ public class BalanceCommand implements CommandExecutor {
         }
 
         if (target == null) {
-            player.sendMessage(Lang.getPrefix("Horizon") + "<red>Player not found!");
+            player.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found!");
             return true;
         }
 
         double targetBalance = EconomyManager.getBalance(target);
-        player.sendMessage(Lang.getPrefix("Horizon") + "<red>" + target.getName() + "<gray> has <red>" + EconomyManager.formatCurrency(targetBalance));
+        player.sendMessage(Lang.getPrefix("Economy") + "<red>" + target.getName() + "<gray> has <red>" + EconomyManager.formatCurrency(targetBalance));
         return true;
     }
 }

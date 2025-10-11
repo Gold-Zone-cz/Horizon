@@ -2,6 +2,7 @@ package cz.goldzone.horizon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.managers.BackCommandManager;
 import cz.goldzone.horizon.managers.WorldManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalgui.DigitalGUI;
@@ -88,6 +89,7 @@ public class RandomTeleportGUI implements Listener, IGUI {
                     player.sendMessage(Lang.getPrefix("RTP") + "<red>Could not find a safe location to teleport.");
                     return;
                 }
+                BackCommandManager.setLastLocation(player, player.getLocation());
 
                 player.teleport(randomLocation);
                 player.sendMessage(Lang.getPrefix("RTP") + Lang.format("<gray>Teleported to the <green>%{1}", worldName));

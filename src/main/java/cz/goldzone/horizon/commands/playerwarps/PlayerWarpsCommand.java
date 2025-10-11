@@ -78,7 +78,7 @@ public class PlayerWarpsCommand implements CommandExecutor {
         boolean canDeleteOther = player.hasPermission("horizon.admin.pwarps.delete");
 
         if (!isOwner && !canDeleteOther) {
-            sendErrorMessage(player, "You do not have permission to delete another player's warp!");
+            sendErrorMessage(player, Lang.getPrefix("PlayerWarps") + "<red>You do not have permission to delete this player warp!");
             return false;
         }
 

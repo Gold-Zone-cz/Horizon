@@ -1,12 +1,10 @@
 package cz.goldzone.horizon.misc;
 
-import cz.goldzone.horizon.Main;
 import cz.goldzone.neuron.shared.Core;
 import net.milkbowl.vault.economy.AbstractEconomy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.ServicePriority;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -218,13 +216,5 @@ public class EconomyHandler extends AbstractEconomy {
     @Override
     public boolean createPlayerAccount(String playerName, String worldName) {
         return createPlayerAccount(playerName);
-    }
-
-    public static void register() {
-        Bukkit.getServicesManager().register(net.milkbowl.vault.economy.Economy.class,
-                new EconomyHandler(),
-                Main.getInstance(),
-                ServicePriority.Normal
-        );
     }
 }

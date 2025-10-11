@@ -1,5 +1,6 @@
 package cz.goldzone.horizon.commands.warp;
 
+import cz.goldzone.horizon.managers.BackCommandManager;
 import cz.goldzone.horizon.managers.ConfigManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalconfig.config.Configuration;
@@ -58,6 +59,7 @@ public class WarpCommand implements CommandExecutor {
             player.sendMessage(Lang.getPrefix("Warps") + "<red>Warp location not set for " + warpName + "!");
             return;
         }
+        BackCommandManager.setLastLocation(player, player.getLocation());
 
         player.teleport(location);
         player.sendMessage(Lang.getPrefix("Warps") + "<gray>You have been teleported to warp <red>" + warpName + "<gray>!");

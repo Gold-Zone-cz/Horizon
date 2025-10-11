@@ -101,6 +101,22 @@ commands:
         - ratemsg
   setspawnlocation:
     description: Set the spawn location for first-time players
+  flyspeed:
+    description: Set your fly speed
+    aliases:
+      - fs
+  invsee:
+    description: View and modify another player's inventory
+  playerweather:
+    description: Changes your personal weather
+    aliases:
+      - pweather
+  feed:
+    description: Feed yourself or another player
+  heal:
+    description: Heal yourself or another player
+  playtime:
+    description: Check your or another player's playtime
 
 
 

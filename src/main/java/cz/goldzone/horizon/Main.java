@@ -19,11 +19,11 @@ import cz.goldzone.horizon.commands.warp.DelWarpCommand;
 import cz.goldzone.horizon.commands.warp.SetWarpCommand;
 import cz.goldzone.horizon.commands.warp.WarpCommand;
 import cz.goldzone.horizon.listeners.ClickListener;
+import cz.goldzone.horizon.listeners.DeathListener;
 import cz.goldzone.horizon.listeners.JoinListener;
 import cz.goldzone.horizon.managers.*;
-import cz.goldzone.horizon.misc.EconomyHandler;
-import cz.goldzone.horizon.placeholders.EconomyPlaceholders;
-import cz.goldzone.horizon.placeholders.VotePlaceholders;
+import cz.goldzone.horizon.placeholders.EconomyPlaceholder;
+import cz.goldzone.horizon.placeholders.VotePlaceholder;
 import dev.digitality.digitalgui.DigitalGUI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -68,14 +68,14 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Arrays.asList(new FreezeManager(), new JoinListener(), new ClickListener())
+        Arrays.asList(new FreezeManager(), new JoinListener(), new ClickListener(), new DeathListener())
                 .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
 
     private void registerPlaceholders() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new VotePlaceholders().register();
-            new EconomyPlaceholders().register();
+            new VotePlaceholder().register();
+            new EconomyPlaceholder().register();
             getLogger().info("PlaceholderAPI registered successfully, support enabled.");
         } else {
             getLogger().warning("PlaceholderAPI not found. Placeholders will not work.");
@@ -125,6 +125,12 @@ public final class Main extends JavaPlugin {
         register(commands, "repair", new RepairCommand());
         register(commands, "hat", new HatCommand());
         register(commands, "timevote", new TimeVoteCommand());
+        register(commands, "playerweather" , new PlayerWeatherCommand());
+        register(commands, "back", new BackCommand());
+        register(commands, "flyspeed", new FlySpeedCommand());
+        register(commands, "feed", new FeedCommand());
+        register(commands, "heal", new HealCommand());
+        register(commands, "playtime", new PlayTimeCommand());
 
         // --- Admin ---
         register(commands, "freeze", new FreezeCommand());
@@ -134,6 +140,7 @@ public final class Main extends JavaPlugin {
         register(commands, "unjail", new UnJailCommand());
         register(commands, "netherlist", new NetherListCommand());
         register(commands, "setspawnlocation", new SpawnLocationCommand());
+        register(commands, "invsee", new InvseeCommand());
 
         commands.forEach((cmd, executor) -> {
             var c = getCommand(cmd);
@@ -164,8 +171,8 @@ public final class Main extends JavaPlugin {
             return;
         }
 
+        EconomyManager.register();
         boolean success = EconomyManager.setup(this);
-        EconomyHandler.register();
         if (success) {
             getLogger().info("Vault and Economy provider found. Economy features enabled.");
         } else {

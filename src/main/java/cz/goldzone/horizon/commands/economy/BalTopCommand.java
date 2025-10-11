@@ -29,12 +29,13 @@ public class BalTopCommand implements CommandExecutor {
                 .limit(10)
                 .collect(Collectors.toList());
 
-        player.sendMessage("<red>----- <gray>Top Balances <red>-----");
+        player.sendMessage("<red>───── <gray>Top Balances <red>───── ");
         int rank = 1;
         for (Map.Entry<String, Double> entry : topPlayers) {
-            player.sendMessage("<red>" + rank + ". <gray>" + entry.getKey() + " <red>" + EconomyManager.formatCurrency(entry.getValue()));
+            player.sendMessage("<red>" + rank + ". <gray>" + entry.getKey() + " <dark_gray>─" + " <red>" + EconomyManager.formatCurrency(entry.getValue()));
             rank++;
         }
+        player.sendMessage("<red>────────────────────────────");
 
         return true;
     }

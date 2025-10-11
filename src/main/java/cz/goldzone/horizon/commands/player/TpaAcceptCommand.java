@@ -1,6 +1,7 @@
 package cz.goldzone.horizon.commands.player;
 
 import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.managers.BackCommandManager;
 import cz.goldzone.horizon.managers.TeleportManager;
 import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.Location;
@@ -31,7 +32,7 @@ public class TpaAcceptCommand implements CommandExecutor {
         }
 
         TeleportManager.TeleportRequest request = teleportManager.getTeleportRequest(requestTarget);
-        Player requestSender = request.getSender();
+        Player requestSender = request.sender();
 
         if (requestSender == null || !requestSender.isOnline()) {
             requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<red>Player who sent you the request is offline.");
@@ -72,6 +73,8 @@ public class TpaAcceptCommand implements CommandExecutor {
     }
 
     private void performTeleport(Player requestSender, Player requestTarget) {
+        BackCommandManager.setLastLocation(requestSender, requestSender.getLocation());
+
         requestSender.teleport(requestTarget);
         requestSender.sendMessage(Lang.getPrefix("Teleport") + "<gray>Teleported to <red>" + requestTarget.getName() + "<gray>.");
         requestTarget.sendMessage(Lang.getPrefix("Teleport") + "<gray>Teleported <red>" + requestSender.getName() + "<gray> to you.");

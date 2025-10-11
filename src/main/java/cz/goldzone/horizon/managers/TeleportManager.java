@@ -1,6 +1,5 @@
 package cz.goldzone.horizon.managers;
 
-import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -10,15 +9,7 @@ public class TeleportManager {
 
     private final Map<Player, TeleportRequest> activeRequests = new HashMap<>();
 
-    @Getter
-    public static class TeleportRequest {
-        private final Player sender;
-        private final Player target;
-
-        public TeleportRequest(Player sender, Player target) {
-            this.sender = sender;
-            this.target = target;
-        }
+    public record TeleportRequest(Player sender, Player target) {
     }
 
     public void addTpaRequest(Player sender, Player target) {
@@ -34,8 +25,8 @@ public class TeleportManager {
     public void removeTeleportRequest(Player player) {
         TeleportRequest request = activeRequests.remove(player);
         if (request != null) {
-            activeRequests.remove(request.getSender());
-            activeRequests.remove(request.getTarget());
+            activeRequests.remove(request.sender());
+            activeRequests.remove(request.target());
         }
     }
 

@@ -1,6 +1,7 @@
 package cz.goldzone.horizon.commands.home;
 
 import cz.goldzone.horizon.gui.HomesGUI;
+import cz.goldzone.horizon.managers.BackCommandManager;
 import cz.goldzone.horizon.managers.HomesManager;
 import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.Location;
@@ -52,6 +53,8 @@ public class HomeCommand implements CommandExecutor {
     private void teleportToHome(Player player, String homeName) {
         Location homeLocation = HomesManager.getHome(player, homeName);
         if (homeLocation != null) {
+            BackCommandManager.setLastLocation(player, player.getLocation());
+
             player.teleport(homeLocation);
             player.sendMessage(Lang.getPrefix("Homes") + "<gray>You have been teleported to home <red>" + homeName + "<gray>!");
         } else {

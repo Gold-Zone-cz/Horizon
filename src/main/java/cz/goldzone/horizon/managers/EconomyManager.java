@@ -1,10 +1,14 @@
 package cz.goldzone.horizon.managers;
 
+import cz.goldzone.horizon.Main;
+import cz.goldzone.horizon.misc.EconomyHandler;
 import cz.goldzone.neuron.shared.Core;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
@@ -46,6 +50,14 @@ public class EconomyManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void register() {
+        Bukkit.getServicesManager().register(net.milkbowl.vault.economy.Economy.class,
+                new EconomyHandler(),
+                Main.getInstance(),
+                ServicePriority.Normal
+        );
     }
 
     private static boolean setupEconomy(JavaPlugin plugin) {
@@ -148,10 +160,7 @@ public class EconomyManager {
     }
 
     public static String formatCurrency(double amount) {
-        if (economy != null) {
-             return economy.format(amount);}
-        return String.format("$%.2f", amount);
-
+        return String.format("$%,.0f", amount);
     }
 }
 

@@ -1,6 +1,7 @@
 package cz.goldzone.horizon.gui;
 
 import com.cryptomorin.xseries.XMaterial;
+import cz.goldzone.horizon.managers.BackCommandManager;
 import cz.goldzone.horizon.managers.HomesManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalgui.DigitalGUI;
@@ -49,6 +50,8 @@ public class HomesGUI implements IGUI {
                     "<gray>\n" +
                     "<red>➥ <gray>Left click to <green>teleport\n" + "<red>➥ <gray>Right click to <red>delete\n" + "<gray>");
             item.onLeftClick((player) -> {
+                BackCommandManager.setLastLocation(player, player.getLocation());
+
                 player.teleport(homeLocation);
                 player.sendMessage(Lang.getPrefix("Homes") + "<gray>You have been teleported to home <red>" + homeName);
             });
