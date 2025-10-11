@@ -10,47 +10,32 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BalTopCommand implements CommandExecutor {
 
-    public BalTopCommand() {
-        if (!EconomyManager.hasEconomy()) {
-            Bukkit.getLogger().warning("Vault or Economy plugin not found!");
-        }
-    }
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(Lang.get("core.only_pl", sender));
             return true;
         }
 
-        List<Map.Entry<String, Double>> topPlayers = getTopPlayers();
+        List<OfflinePlayer> players = Arrays.asList(Bukkit.getOfflinePlayers());
+        List<Map.Entry<String, Double>> topPlayers = players.stream()
+                .map(p -> new AbstractMap.SimpleEntry<>(p.getName(), EconomyManager.getBalance(p)))
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                .limit(10)
+                .collect(Collectors.toList());
 
-        sender.sendMessage("\n<red>----- <gray>Baltop <red>-----");
+        player.sendMessage("<red>----- <gray>Top Balances <red>-----");
         int rank = 1;
         for (Map.Entry<String, Double> entry : topPlayers) {
-            // sender.sendMessage("<red>" + rank + ". <gray>" + entry.getKey() + " <red>$" + EconomyManager.format(entry.getValue()));
+            player.sendMessage("<red>" + rank + ". <gray>" + entry.getKey() + " <red>" + EconomyManager.formatCurrency(entry.getValue()));
             rank++;
         }
+
         return true;
-    }
-
-    private List<Map.Entry<String, Double>> getTopPlayers() {
-        List<Map.Entry<String, Double>> sortedPlayers = new ArrayList<>();
-
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            double balance = EconomyManager.getBalance(player);
-            sortedPlayers.add(new AbstractMap.SimpleEntry<>(player.getName(), balance));
-        }
-
-        sortedPlayers.sort((entry1, entry2) -> Double.compare(entry2.getValue(), entry1.getValue()));
-
-        return sortedPlayers.subList(0, Math.min(10, sortedPlayers.size()));
     }
 }

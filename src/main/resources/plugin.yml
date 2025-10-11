@@ -3,6 +3,7 @@ author: jogg15
 version: ${version}
 main: cz.goldzone.horizon.Main
 api-version: '1.21'
+softdepend: [Vault]
 
 commands:
   horizon:

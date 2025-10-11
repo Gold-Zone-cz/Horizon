@@ -7,18 +7,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class SetBalanceCommand implements CommandExecutor {
-
-    public SetBalanceCommand() {
-        if (!EconomyManager.hasEconomy()) {
-            Bukkit.getLogger().warning("Vault or Economy plugin not found!");
-        }
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -32,46 +25,33 @@ public class SetBalanceCommand implements CommandExecutor {
             return false;
         }
 
-        Player targetPlayer = Bukkit.getPlayerExact(args[1]);
-
-        if (targetPlayer == null) {
-            OfflinePlayer targetOffline = getOfflinePlayerByName(args[1]);
-            if (targetOffline == null || !targetOffline.hasPlayedBefore()) {
-                sender.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found or has never played before.");
-                return false;
-            }
-            targetPlayer = (Player) targetOffline;
+        OfflinePlayer target = getOfflinePlayerByName(args[1]);
+        if (target == null || !target.hasPlayedBefore()) {
+            sender.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found!");
+            return false;
         }
 
         double amount;
         try {
             amount = Double.parseDouble(args[2]);
-            if (amount < 0) {
-                sender.sendMessage(Lang.getPrefix("Economy") + "<red>Amount cannot be negative!");
-                return false;
-            }
         } catch (NumberFormatException e) {
-            sender.sendMessage(Lang.getPrefix("Economy") + "<red>Invalid amount! Please enter a valid number.");
+            sender.sendMessage(Lang.getPrefix("Economy") + "<red>Invalid amount!");
             return false;
         }
 
-        EconomyManager.setBalance(targetPlayer, amount);
-
-        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You have set <red>" + targetPlayer.getName() + " <gray>'s balance to <red>$" + amount);
-
-        if (targetPlayer.isOnline()) {
-            targetPlayer.sendMessage(Lang.getPrefix("Economy") + "<gray>Your balance has been updated to <red>$" + amount + "<gray> by an admin.");
-        } else {
-            Bukkit.getLogger().info("Target player " + targetPlayer.getName() + " is offline. Balance updated, but no message sent.");
+        EconomyManager.setBalance(target, amount);
+        sender.sendMessage(Lang.getPrefix("Economy") + "<gray>You set <red>" + target.getName() + " <gray>balance to <red>" + EconomyManager.formatCurrency(amount));
+        if (target.isOnline()) {
+            Objects.requireNonNull(target.getPlayer()).sendMessage(Lang.getPrefix("Economy") + "<gray>Your balance was set to <red>" + EconomyManager.formatCurrency(amount) + "<gray> by an admin.");
         }
 
         return true;
     }
 
-    private OfflinePlayer getOfflinePlayerByName(String playerName) {
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            if (Objects.requireNonNull(player.getName()).equalsIgnoreCase(playerName)) {
-                return player;
+    private OfflinePlayer getOfflinePlayerByName(String name) {
+        for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+            if (p.getName() != null && p.getName().equalsIgnoreCase(name)) {
+                return p;
             }
         }
         return null;

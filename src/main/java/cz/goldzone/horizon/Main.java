@@ -21,6 +21,7 @@ import cz.goldzone.horizon.commands.warp.WarpCommand;
 import cz.goldzone.horizon.listeners.ClickListener;
 import cz.goldzone.horizon.listeners.JoinListener;
 import cz.goldzone.horizon.managers.*;
+import cz.goldzone.horizon.misc.EconomyHandler;
 import cz.goldzone.horizon.placeholders.EconomyPlaceholders;
 import cz.goldzone.horizon.placeholders.VotePlaceholders;
 import dev.digitality.digitalgui.DigitalGUI;
@@ -48,7 +49,6 @@ public final class Main extends JavaPlugin {
         registerListeners();
         registerPlaceholders();
         registerVault();
-
     }
 
     @Override
@@ -59,12 +59,12 @@ public final class Main extends JavaPlugin {
 
     private void initializeManagers() {
         HomesManager.createHomesTable();
-        EconomyManager.createBalanceTable();
         PlayerWarpsManager.createPlayerWarpTable();
         WebhookManager.initialize();
         FreezeManager.startTask();
         JailManager.startTask();
         VoteManager.loadVotes();
+        EconomyManager.createTable();
     }
 
     private void registerListeners() {
@@ -159,14 +159,17 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerVault() {
-        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-            if (EconomyManager.setupEconomy()) {
-                getLogger().info("Economy provider found and registered successfully.");
-            } else {
-                getLogger().warning("Economy provider not found. Economy features will not work.");
-            }
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            getLogger().info("Economy provider not found. Economy features will not work.");
+            return;
+        }
+
+        boolean success = EconomyManager.setup(this);
+        EconomyHandler.register();
+        if (success) {
+            getLogger().info("Vault and Economy provider found. Economy features enabled.");
         } else {
-            getLogger().warning("Economy provider not found. Economy features will not work.");
+            getLogger().warning("No Economy provider found. Economy features will not work.");
         }
     }
 }

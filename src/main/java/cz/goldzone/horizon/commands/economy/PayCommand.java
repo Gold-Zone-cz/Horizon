@@ -1,21 +1,18 @@
 package cz.goldzone.horizon.commands.economy;
 
+import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.managers.EconomyManager;
 import cz.goldzone.neuron.shared.Lang;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class PayCommand implements CommandExecutor {
-
-    public PayCommand() {
-        if (!EconomyManager.hasEconomy()) {
-            Bukkit.getLogger().warning("Vault or Economy plugin not found!");
-        }
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -29,50 +26,85 @@ public class PayCommand implements CommandExecutor {
             return false;
         }
 
-        Player target = Bukkit.getPlayerExact(args[0]);
-        if (target == null || !target.isOnline()) {
-            player.sendMessage(Lang.getPrefix("Economy") + Lang.get("core.player_offline", player));
-            return false;
-        }
+        String targetName = args[0];
+        String amountRaw = args[1];
 
-        if (player.equals(target)) {
-            player.sendMessage(Lang.getPrefix("Economy") + "<red>You can't pay yourself!");
-            return false;
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                OfflinePlayer target = getOfflinePlayerByName(targetName);
+                if (target == null || !target.hasPlayedBefore()) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found!");
+                }
 
-        if (!PayToggleCommand.isPayEnabled(target)) {
-            player.sendMessage(Lang.getPrefix("Economy") + "<red>The player has disabled payments.");
-            return false;
-        }
+                if (target == null) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>Player not found!");
+                    return;
+                }
 
-        double amount;
-        try {
-            amount = Double.parseDouble(args[1]);
-            if (amount <= 0) {
-                player.sendMessage(Lang.getPrefix("Economy") + "<red>Amount must be greater than 0!");
-                return false;
+                if (!EconomyManager.isPayEnabled(target)) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>Player " + target.getName() + " has disabled payments.");
+                }
+
+
+                if (!EconomyManager.isPayEnabled(target)) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>Player " + target.getName() + " has disabled payments.");
+                }
+
+                double amount;
+                try {
+                    amount = Double.parseDouble(amountRaw);
+                } catch (NumberFormatException e) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>Invalid amount!");
+                    return;
+                }
+
+                if (amount <= 0) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>Amount must be greater than 0!");
+                    return;
+                }
+
+                if (player.getUniqueId().equals(target.getUniqueId())) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>You cannot pay yourself!");
+                    return;
+                }
+
+                if (!EconomyManager.hasEnough(player, amount)) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>You don't have enough money!");
+                    return;
+                }
+
+                if (!EconomyManager.isPayEnabled(target)) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>" + target.getName() + " has disabled receiving payments.");
+                    return;
+                }
+
+                boolean successWithdraw = EconomyManager.withdraw(player, amount);
+                boolean successDeposit = EconomyManager.deposit(target, amount);
+
+                if (successWithdraw && successDeposit) {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<gray>You sent <red>" + EconomyManager.formatCurrency(amount) + "<gray> to <red>" + target.getName());
+                    if (target.isOnline()) {
+                        Player onlineTarget = target.getPlayer();
+                        if (onlineTarget != null) {
+                            onlineTarget.sendMessage(Lang.getPrefix("Economy") + "<red>" + player.getName() + "<gray> sent you <red>" + EconomyManager.formatCurrency(amount));
+                        }
+                    }
+                } else {
+                    player.sendMessage(Lang.getPrefix("Economy") + "<red>Transaction failed!");
+                }
             }
-            if (amount > 1_000_000) {
-                player.sendMessage(Lang.getPrefix("Economy") + "<red>Maximum transaction limit is 1,000,000!");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            player.sendMessage(Lang.getPrefix("Economy") + "<red>Invalid amount!");
-            return false;
-        }
-
-        if (!EconomyManager.hasEnough(player, amount)) {
-            player.sendMessage(Lang.getPrefix("Economy") + "<red>You don't have enough money!");
-            return false;
-        }
-
-        if (EconomyManager.withdraw(player, amount) && EconomyManager.deposit(target, amount)) {
-            player.sendMessage(Lang.getPrefix("Economy") + "<gray>You sent <red>$" + amount + " <gray>to <red>" + target.getName());
-            target.sendMessage(Lang.getPrefix("Economy") + "<red>" + player.getName() + "<gray> sent you <red>$" + amount);
-        } else {
-            player.sendMessage(Lang.getPrefix("Economy") + "<red>Transaction failed!");
-        }
+        }.runTaskAsynchronously(Main.getInstance());
 
         return true;
+    }
+
+    private OfflinePlayer getOfflinePlayerByName(String name) {
+        for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+            if (p.getName() != null && p.getName().equalsIgnoreCase(name)) {
+                return p;
+            }
+        }
+        return null;
     }
 }
