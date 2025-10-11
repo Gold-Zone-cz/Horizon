@@ -131,6 +131,7 @@ public final class Main extends JavaPlugin {
         register(commands, "feed", new FeedCommand());
         register(commands, "heal", new HealCommand());
         register(commands, "playtime", new PlayTimeCommand());
+        register(commands, "god", new GodCommand());
 
         // --- Admin ---
         register(commands, "freeze", new FreezeCommand());

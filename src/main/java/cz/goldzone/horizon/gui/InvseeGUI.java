@@ -5,6 +5,7 @@ import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalgui.DigitalGUI;
 import dev.digitality.digitalgui.api.IGUI;
 import dev.digitality.digitalgui.api.InteractiveItem;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,9 +34,21 @@ public record InvseeGUI(Player target) implements IGUI {
                 meta.setOwningPlayer(target);
                 meta.setDisplayName("<red>" + target.getName());
 
+                String gameModeColor;
+                switch (target.getGameMode()) {
+                    case SURVIVAL -> gameModeColor = "<green>Survival";
+                    case ADVENTURE -> gameModeColor = "<yellow>Adventure";
+                    case CREATIVE -> gameModeColor = "<orange>Creative";
+                    case SPECTATOR -> gameModeColor = "<aqua>Spectator";
+                    default -> gameModeColor = "<gray>Unknown";
+                }
+
                 List<String> lore = new ArrayList<>();
+                lore.add("Joined on: <red>" + target.getFirstPlayed());
                 lore.add(" ");
-                lore.add("<gray>UUID: " + target.getUniqueId());
+                lore.add("<gray>Rank: " + PlaceholderAPI.setPlaceholders(target, "%core_rank_prefix%"));
+                lore.add("<gray>Gamemode: " + gameModeColor);
+                lore.add(" ");
                 lore.add("<gray>Health: <red>" + String.format("%.1f", target.getHealth()) + " ❤");
                 lore.add("<gray>Food Level: <red>" + target.getFoodLevel() + " 🍗");
                 lore.add("<gray>XP Level: <green>" + target.getLevel());

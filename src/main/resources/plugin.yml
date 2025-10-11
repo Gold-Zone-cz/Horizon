@@ -117,6 +117,8 @@ commands:
     description: Heal yourself or another player
   playtime:
     description: Check your or another player's playtime
+  god:
+    description: Toggle god mode for yourself
 
 
 

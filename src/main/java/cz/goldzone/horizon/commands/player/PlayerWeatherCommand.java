@@ -17,6 +17,11 @@ public class PlayerWeatherCommand implements CommandExecutor {
             return false;
         }
 
+        if (!player.hasPermission("horizon.player.pweather")) {
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>You don't have permission to use this command.");
+            return false;
+        }
+
         if (args.length != 1) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/pweather <clear|rain");
             return false;

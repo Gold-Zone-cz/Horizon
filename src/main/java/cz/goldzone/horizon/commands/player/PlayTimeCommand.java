@@ -22,7 +22,7 @@ public class PlayTimeCommand implements CommandExecutor {
         if (args.length == 0) {
             target = player;
         } else {
-            if (!player.hasPermission("horizon.player.playtime")) {
+            if (!player.hasPermission("horizon.staff.playtime")) {
                 player.sendMessage(Lang.getPrefix("Horizon") + "<red>You don't have permission to do that.");
                 return false;
             }

@@ -13,6 +13,8 @@ public final class CooldownManager {
     private CooldownManager() {}
 
     public static boolean isInCooldown(Player player, String command, long cooldownMillis) {
+        if (player.hasPermission("horizon.cooldown.bypass")) return false;
+
         cooldowns.putIfAbsent(command, new HashMap<>());
         Map<UUID, Long> map = cooldowns.get(command);
 
@@ -25,6 +27,8 @@ public final class CooldownManager {
     }
 
     public static long getRemaining(Player player, String command, long cooldownMillis) {
+        if (player.hasPermission("horizon.cooldown.bypass")) return 0;
+
         Map<UUID, Long> map = cooldowns.getOrDefault(command, new HashMap<>());
         long now = System.currentTimeMillis();
         if (!map.containsKey(player.getUniqueId())) return 0;

@@ -24,7 +24,7 @@ public class SpawnLocationCommand implements CommandExecutor {
             return true;
         }
 
-        if (!player.hasPermission("horizon.admin")) {
+        if (!player.hasPermission("horizon.admin.spawn")) {
             player.sendMessage("Unknown command. Type \"/help\" for help.");
             return true;
         }

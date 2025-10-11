@@ -32,7 +32,7 @@ public class FeedCommand implements CommandExecutor {
             seconds %= 60;
 
             player.sendMessage(Lang.getPrefix("Horizon") +
-                    "<red>You can use /feed again in <yellow>" + minutes + "m " + seconds + "s");
+                    "<red>You can use feed again in <yellow>" + minutes + "m " + seconds + "s");
             return true;
         }
 

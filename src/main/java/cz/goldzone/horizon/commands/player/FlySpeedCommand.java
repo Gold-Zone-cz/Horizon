@@ -15,6 +15,11 @@ public class FlySpeedCommand implements CommandExecutor {
             return false;
         }
 
+        if (!player.hasPermission("horizon.player.flyspeed")) {
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>You don't have permission to use this command.");
+            return false;
+        }
+
         if (args.length != 1) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/flyspeed <0-10>");
             return false;

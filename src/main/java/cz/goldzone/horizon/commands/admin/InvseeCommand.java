@@ -23,14 +23,21 @@ public class InvseeCommand implements CommandExecutor {
             return false;
         }
 
+
         if (args.length != 1) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/invsee <player>");
             return false;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
+
         if (target == null) {
             player.sendMessage(Lang.getPrefix("Horizon") + "<red>That player is not online.");
+            return false;
+        }
+
+        if (target.hasPermission("horizon.invsee.bypass")) {
+            player.sendMessage(Lang.getPrefix("Horizon") + "<red>You cannot view this player's inventory.");
             return false;
         }
 
