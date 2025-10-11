@@ -5,7 +5,7 @@ Horizon Plugin
 
 #### Created on: March 22, 2025
 
-#### Version: 1.0.3
+#### Version: 1.0.4
 
 ## Permissions:
 ### **Staff:**
@@ -15,6 +15,7 @@ Horizon Plugin
 - horizon.staff.notify
 - horizon.staff.timevote.end
 - horizon.staff.freeze
+- horizon.staff.playtime
 
 ### **Admin:**
 
@@ -24,6 +25,8 @@ Horizon Plugin
 - horizon.admin.warp
 - horizon.admin.economy
 - horizon.admin.jail
+- horizon.admin.invsee
+- horizon.admin.spawn
 
 ### **Player:**
 
@@ -33,8 +36,18 @@ Horizon Plugin
 - horizon.player.ec
 - horizon.player.paytoggle
 - horizon.player.tptoggle
+- horizon.player.feed
+- horizon.player.back
+- horizon.player.heal
+- horizon.player.flyspeed
+- horizon.player.pweather
+- horizon.player.god
 
 ### **VIP:**
 - horizon.homes.7
 - horizon.homes.5
 - horizon.homes.3
+
+### **Other:**  
+- horizon.cooldown.bypass
+- horizon.invsee.bypass
