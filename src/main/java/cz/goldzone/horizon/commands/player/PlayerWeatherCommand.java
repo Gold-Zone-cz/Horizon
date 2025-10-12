@@ -23,7 +23,7 @@ public class PlayerWeatherCommand implements CommandExecutor {
         }
 
         if (args.length != 1) {
-            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/pweather <clear|rain");
+            player.sendMessage(Lang.getPrefix("Horizon") + "<gray>Usage: <red>/pweather <clear|rain>");
             return false;
         }
 
@@ -40,7 +40,7 @@ public class PlayerWeatherCommand implements CommandExecutor {
                 return true;
             }
             default -> {
-                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Invalid weather type! Use <yellow>clear, rain, or thunder");
+                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Invalid weather type! Use <yellow>clear <gray>or <aqua>rain");
                 return false;
             }
         }
