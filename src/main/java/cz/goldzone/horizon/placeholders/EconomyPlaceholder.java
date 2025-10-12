@@ -40,7 +40,7 @@ public class EconomyPlaceholder extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
         if (player == null) return null;
 
-        if (identifier.equals("horizon_player_money")) {
+        if (identifier.equals("player_money")) {
             double balance = EconomyManager.getBalance(player);
             return EconomyManager.formatCurrency(balance);
         }
