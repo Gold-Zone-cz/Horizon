@@ -24,31 +24,31 @@ public class PlayTimeCommand implements CommandExecutor {
         } else {
             if (!player.hasPermission("horizon.staff.playtime")) {
                 player.sendMessage(Lang.getPrefix("Horizon") + "<red>You don't have permission to do that.");
-                return false;
+                return true;
             }
 
             target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
-                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Player not found.");
-                return false;
+                player.sendMessage(Lang.getPrefix("Horizon") + "<red>Player not found or not online.");
+                return true;
             }
         }
 
-        int minutesPlayed = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
-        int totalSeconds = minutesPlayed * 60;
+        long ticksPlayed = target.getStatistic(Statistic.PLAY_ONE_MINUTE);
+        long totalSeconds = ticksPlayed / 20L;
 
-        int days = totalSeconds / 86400;
-        int hours = (totalSeconds % 86400) / 3600;
-        int minutes = (totalSeconds % 3600) / 60;
-        int seconds = totalSeconds % 60;
+        long days = totalSeconds / 86400;
+        long hours = (totalSeconds % 86400) / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        String timeStr = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
 
         String message;
         if (player.equals(target)) {
-            message = Lang.getPrefix("Horizon") + "<gray>Your playtime: <red>" +
-                    days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+            message = Lang.getPrefix("Horizon") + "<gray>Your playtime: <red>" + timeStr;
         } else {
-            message = Lang.getPrefix("Horizon") + "<red>" + target.getName() + "<gray>'s playtime: <red>" +
-                    days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+            message = Lang.getPrefix("Horizon") + "<red>" + target.getName() + "<gray>'s playtime: <red>" + timeStr;
         }
 
         player.sendMessage(message);

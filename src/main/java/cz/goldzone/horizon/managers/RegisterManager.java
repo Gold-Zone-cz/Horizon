@@ -22,7 +22,7 @@ import cz.goldzone.horizon.listeners.ClickListener;
 import cz.goldzone.horizon.listeners.DeathListener;
 import cz.goldzone.horizon.listeners.JoinListener;
 import cz.goldzone.horizon.placeholders.EconomyPlaceholder;
-import cz.goldzone.horizon.placeholders.VotePlaceholder;
+import dev.digitality.digitalgui.DigitalGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,7 +39,7 @@ public record RegisterManager(JavaPlugin plugin) {
         registerPlaceholders();
         registerCommands();
         registerVault();
-        registerNeuron();
+        DigitalGUI.register(plugin);
     }
 
     private void registerListeners() {
@@ -53,7 +53,6 @@ public record RegisterManager(JavaPlugin plugin) {
 
     private void registerPlaceholders() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new VotePlaceholder().register();
             new EconomyPlaceholder().register();
             plugin.getLogger().info("PlaceholderAPI registered successfully, support enabled.");
         } else {
@@ -133,10 +132,6 @@ public record RegisterManager(JavaPlugin plugin) {
         });
     }
 
-    private void register(Map<String, CommandExecutor> commands, String commandName, CommandExecutor executor) {
-        commands.put(commandName, executor);
-    }
-
     private void setTabCompleter(String command) {
         if (command.equals("i")) {
             Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(new FillTabItemManager());
@@ -145,13 +140,8 @@ public record RegisterManager(JavaPlugin plugin) {
         }
     }
 
-    private void registerNeuron() {
-        if (Bukkit.getPluginManager().getPlugin("Neuron-spigot") != null) {
-            plugin.getLogger().info("Neuron plugin found - Integrating with Neuron.");
-        } else {
-            plugin.getLogger().warning("Neuron plugin not found - Disabling Horizon.");
-            Bukkit.getPluginManager().disablePlugin(plugin);
-        }
+    private void register(Map<String, CommandExecutor> commands, String commandName, CommandExecutor executor) {
+        commands.put(commandName, executor);
     }
 
     private void registerVault() {

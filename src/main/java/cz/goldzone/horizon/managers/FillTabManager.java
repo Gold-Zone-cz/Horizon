@@ -69,6 +69,11 @@ public class FillTabManager implements TabCompleter {
 
         switch (cmd) {
             case "pay", "tpa" -> suggestOnlinePlayersExcept(sender, suggestions);
+            case "invsee" -> {
+                if (sender.hasPermission("horizon.admin.invsee")) {
+                    suggestOnlinePlayersExcept(sender, suggestions);
+                }
+            }
             case "balance" -> {
                 if (sender.hasPermission("horizon.admin.economy")) suggestions.add("set");
 

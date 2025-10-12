@@ -22,20 +22,41 @@ public class BalTopCommand implements CommandExecutor {
             return true;
         }
 
+        int page = 1;
+        if (args.length > 0) {
+            try {
+                page = Math.max(1, Integer.parseInt(args[0]));
+            } catch (NumberFormatException e) {
+                player.sendMessage("<red>✖ <gray>Invalid page number.");
+                return true;
+            }
+        }
+
         List<OfflinePlayer> players = Arrays.asList(Bukkit.getOfflinePlayers());
-        List<Map.Entry<String, Double>> topPlayers = players.stream()
+        List<Map.Entry<String, Double>> sortedPlayers = players.stream()
+                .filter(p -> p.getName() != null)
                 .map(p -> new AbstractMap.SimpleEntry<>(p.getName(), EconomyManager.getBalance(p)))
                 .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
-                .limit(10)
                 .collect(Collectors.toList());
 
-        player.sendMessage("<red>───── <gray>Top Balances <red>───── ");
-        int rank = 1;
-        for (Map.Entry<String, Double> entry : topPlayers) {
-            player.sendMessage("<red>" + rank + ". <gray>" + entry.getKey() + " <dark_gray>─" + " <red>" + EconomyManager.formatCurrency(entry.getValue()));
+        int totalPages = (int) Math.ceil((double) sortedPlayers.size() / 10);
+        if (page > totalPages && totalPages != 0) {
+            player.sendMessage(Lang.getPrefix("Economy") + "<red>✖ <gray>Page " + page + " does not exist. Max page: " + totalPages);
+            return true;
+        }
+
+        int start = (page - 1) * 10;
+        int end = Math.min(start + 10, sortedPlayers.size());
+        List<Map.Entry<String, Double>> pageEntries = sortedPlayers.subList(start, end);
+
+        player.sendMessage("<red>───── <gray>Top Balances <gray>(Page " + page + "<dark_gray>/ <gray>" + totalPages + ") <red>─────");
+        int rank = start + 1;
+        for (Map.Entry<String, Double> entry : pageEntries) {
+            player.sendMessage("<red>" + rank + ". <gray>" + entry.getKey()
+                    + " <dark_gray>─ <red>" + EconomyManager.formatCurrency(entry.getValue()));
             rank++;
         }
-        player.sendMessage("<red>────────────────────────────");
+        player.sendMessage("<red>───────────────────────");
 
         return true;
     }

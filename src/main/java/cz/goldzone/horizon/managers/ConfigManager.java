@@ -11,7 +11,7 @@ import java.util.Map;
 public class ConfigManager {
 
     private static final Map<String, Configuration> configs = new HashMap<>();
-    private static final String[] configFiles = {"warps", "votes", "config", "jail"};
+    private static final String[] configFiles = {"warps", "config", "jail"};
 
     public static void initialize() {
         loadConfigs();

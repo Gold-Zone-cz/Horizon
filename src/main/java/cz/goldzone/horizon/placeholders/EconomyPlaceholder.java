@@ -10,7 +10,7 @@ public class EconomyPlaceholder extends PlaceholderExpansion {
     @NotNull
     @Override
     public String getIdentifier() {
-        return "Horizon";
+        return "horizon";
     }
 
     @NotNull
@@ -38,16 +38,13 @@ public class EconomyPlaceholder extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
+        if (player == null) return null;
 
         if (identifier.equals("horizon_player_money")) {
             double balance = EconomyManager.getBalance(player);
-            return formatCurrency(balance);
+            return EconomyManager.formatCurrency(balance);
         }
 
         return null;
-    }
-
-    public static String formatCurrency(double amount) {
-        return String.format("$%,.0f", amount).replace(",", " ");
     }
 }

@@ -22,7 +22,7 @@ public class PlayerWarpsManager {
 
     private static final String TABLE_NAME = "survival_playerwarps";
 
-    public static void createPlayerWarpTable() {
+    public static void createTable() {
         String sql = Lang.format(
                 "CREATE TABLE IF NOT EXISTS %{1} ("
                         + "id BIGINT NOT NULL AUTO_INCREMENT UNIQUE,"

@@ -74,7 +74,7 @@ commands:
   unfreeze:
     description: Unfreeze player
   rtp:
-    description: Random teleport
+    description: Random teleport to wilderness
     aliases:
       - randomteleport
       - rt
@@ -119,6 +119,8 @@ commands:
     description: Check your or another player's playtime
   god:
     description: Toggle god mode for yourself
+  back:
+    description: Teleport back to your last location
 
 
 

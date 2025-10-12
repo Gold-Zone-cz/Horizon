@@ -3,6 +3,7 @@ package cz.goldzone.horizon.gui;
 import com.cryptomorin.xseries.XMaterial;
 import cz.goldzone.horizon.Main;
 import cz.goldzone.horizon.managers.BackCommandManager;
+import cz.goldzone.horizon.managers.EconomyManager;
 import cz.goldzone.horizon.managers.WorldManager;
 import cz.goldzone.neuron.shared.Lang;
 import dev.digitality.digitalgui.DigitalGUI;
@@ -17,13 +18,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.event.Listener;
 
 import java.util.*;
 
-public class RandomTeleportGUI implements Listener, IGUI {
-    private final Random random = new Random();
+public class RandomTeleportGUI implements IGUI {
+
     private static final Map<String, String[]> VALID_TELEPORTATION = new HashMap<>();
+    private final Random random = new Random();
 
     static {
         VALID_TELEPORTATION.put("world", new String[]{"world_nether", "world_the_end"});
@@ -48,51 +49,79 @@ public class RandomTeleportGUI implements Listener, IGUI {
         InteractiveItem item = new InteractiveItem(Objects.requireNonNull(material.parseItem()));
 
         item.setDisplayName(color + "<bold>" + name);
-        if (material == XMaterial.END_STONE && "Not available".equals(price)) {
+        if ("Not available".equalsIgnoreCase(price)) {
             item.setLore("<gray>\n<gray>This world will unlock soon...\n<gray>");
         } else {
             item.setLore(Lang.format("<gray>Price: %{1}<gray>\n<gray>Click to teleport to a %{2}", color + price, color + "random location"));
-            item.onClick((player, clickType) -> teleportPlayer(player, worldName));
+            item.onClick((player, clickType) -> handleTeleportClick(player, worldName, price));
         }
 
         inv.setItem(slot, item);
     }
 
-    private void teleportPlayer(Player player, String worldName) {
-        String playerWorldName = player.getWorld().getName();
+    private void handleTeleportClick(Player player, String worldName, String price) {
+        if (!price.equalsIgnoreCase("Free") && !price.equalsIgnoreCase("Not available")) {
+            double amount = parsePrice(price);
+            double balance = EconomyManager.getBalance(player);
 
-        if (!isValidWorld(playerWorldName)) {
+            if (balance < amount) {
+                player.sendMessage(Lang.getPrefix("RTP") + Lang.format("<red>You don't have enough money! You need <gray>$%,.0f", String.valueOf(amount)));
+                player.closeInventory();
+                return;
+            }
+
+            EconomyManager.withdraw(player, amount);
+            player.sendMessage(Lang.getPrefix("RTP") + Lang.format("<gray>You paid <red>$%,.0f <gray>for teleportation.", String.valueOf(amount)));
+        }
+
+        teleportPlayer(player, worldName);
+    }
+
+    private double parsePrice(String price) {
+        try {
+            return Double.parseDouble(price.replace("$", "").replace(",", "").trim());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+
+    private void teleportPlayer(Player player, String worldName) {
+        String currentWorld = player.getWorld().getName();
+
+        if (!isValidWorld(currentWorld)) {
             player.sendMessage(Lang.getPrefix("RTP") + "<red>You cannot teleport from this world!");
             return;
         }
 
-        if (isTeleportationBlocked(playerWorldName, worldName)) {
-            player.sendMessage(Lang.getPrefix("RTP") + "<red>You cannot teleport from the " + playerWorldName + " to the " + worldName + "!");
+        if (isTeleportationBlocked(currentWorld, worldName)) {
+            player.sendMessage(Lang.getPrefix("RTP") + "<red>You cannot teleport from the " + currentWorld + " to the " + worldName);
             return;
         }
 
         World targetWorld = Bukkit.getWorld(worldName);
         if (!WorldManager.isValidSourceWorld(targetWorld)) {
-            player.sendMessage(Lang.getPrefix("RTP") + Lang.format("<red>%{1} world not found! Please contact an admin.", worldName));
-            player.closeInventory();
+            player.sendMessage(Lang.getPrefix("RTP") + "<red>Target world not found!");
             return;
         }
 
         player.closeInventory();
         player.sendMessage(Lang.getPrefix("RTP") + "<gray>Teleporting in <red>3 <gray>seconds...");
+
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 Location randomLocation = getRandomSafeLocation(targetWorld);
 
                 if (randomLocation == null) {
-                    player.sendMessage(Lang.getPrefix("RTP") + "<red>Could not find a safe location to teleport.");
+                    player.sendMessage(Lang.getPrefix("RTP") + "<red>Could not find a safe location.");
                     return;
                 }
-                BackCommandManager.setLastLocation(player, player.getLocation());
 
+                BackCommandManager.setLastLocation(player, player.getLocation());
                 player.teleport(randomLocation);
-                player.sendMessage(Lang.getPrefix("RTP") + Lang.format("<gray>Teleported to the <green>%{1}", worldName));
+                player.sendMessage(Lang.getPrefix("RTP") + "<gray>Teleported to <green>" + worldName);
             }
         }.runTaskLater(Main.getInstance(), 60L);
     }
@@ -102,35 +131,21 @@ public class RandomTeleportGUI implements Listener, IGUI {
     }
 
     private boolean isTeleportationBlocked(String fromWorld, String toWorld) {
-        return !fromWorld.equals(toWorld) && (!VALID_TELEPORTATION.containsKey(fromWorld) || !Arrays.asList(VALID_TELEPORTATION.get(fromWorld)).contains(toWorld));
+        return !VALID_TELEPORTATION.containsKey(fromWorld)
+                || !Arrays.asList(VALID_TELEPORTATION.get(fromWorld)).contains(toWorld);
     }
 
     private Location getRandomSafeLocation(World world) {
-        int x = random.nextInt(10000) - 5000;
-        int z = random.nextInt(10000) - 5000;
-        int y;
+        for (int i = 0; i < 30; i++) {
+            int x = random.nextInt(10000) - 5000;
+            int z = random.nextInt(10000) - 5000;
+            int y = world.getHighestBlockYAt(x, z);
 
-        return switch (world.getEnvironment()) {
-            case NORMAL -> findSafeLocation(world, x, world.getHighestBlockYAt(x, z), z);
-            case NETHER -> {
-                y = random.nextInt(128) + 64;
-                yield findSafeLocation(world, x, y, z);
+            Block block = world.getBlockAt(x, y - 1, z);
+            if (block.getType().isSolid() && block.getType() != Material.LAVA && block.getType() != Material.WATER) {
+                return new Location(world, x + 0.5, y, z + 0.5);
             }
-            case THE_END -> {
-                y = random.nextInt(50) + 50;
-                yield findSafeLocation(world, x, y, z);
-            }
-            default -> null;
-        };
-    }
-
-    private static Location findSafeLocation(World world, int x, int y, int z) {
-        Block block = world.getBlockAt(x, y, z);
-        while (!block.getType().isSolid() || block.getType() == Material.LAVA || block.getType() == Material.WATER) {
-            y++;
-            block = world.getBlockAt(x, y, z);
-            if (y > 255 || y <= 0) return null;
         }
-        return new Location(world, x, y + 1, z);
+        return null;
     }
 }

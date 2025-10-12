@@ -133,9 +133,9 @@ public class PlayerWarpsGUI implements IGUI {
 
     public String getColorForCategory() {
         return switch (category) {
-            case FARMS -> "&e";
-            case SHOPS -> "&a";
-            case MISC -> "&b";
+            case FARMS -> "<yellow>";
+            case SHOPS -> "<green>";
+            case MISC -> "<aqua>";
         };
     }
 
