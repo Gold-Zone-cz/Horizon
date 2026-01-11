@@ -62,7 +62,7 @@ dependencies {
     implementation("net.md-5:bungeecord-chat:1.21-R0.4")
     implementation("com.github.cryptomorin:XSeries:13.5.1")
     implementation("dev.digitality:digitalconfig:1.2.0")
-    implementation("dev.digitality:digitalgui:1.1.4")
+    implementation("dev.digitality:digitalgui:1.2.0")
 
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
