@@ -64,7 +64,7 @@ dependencies {
     implementation("dev.digitality:digitalconfig:1.2.0")
     implementation("dev.digitality:digitalgui:1.1.4")
 
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     implementation("org.projectlombok:lombok:1.18.42")
